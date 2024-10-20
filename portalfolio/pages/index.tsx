@@ -8,8 +8,8 @@ const Home: NextPage = () => {
   return (
     <div className="w-screen h-screen bg-gray-900">
       <Head>
-        <title>My Portfolio</title>
-        <meta name="description" content="My personal portfolio with 3D portal animations" />
+        <title>Portalfolio</title>
+        <meta name="description" content="My personal portalfolio with 3D portal animations" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       {/* Full-screen 3D Canvas */}
