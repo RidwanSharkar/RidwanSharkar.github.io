@@ -2,7 +2,7 @@
 
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import PortalCanvas from '../warpgate/PortalCanvas';
+import PlanetCanvas from '../warpgate/SpaceTime';
 
 const Home: NextPage = () => {
   return (
@@ -13,7 +13,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       {/* Full-screen 3D Canvas */}
-      <PortalCanvas />
+      <PlanetCanvas />
     </div>
   );
 };
