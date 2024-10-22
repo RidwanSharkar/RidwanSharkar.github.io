@@ -1,5 +1,4 @@
 // warpgate/OrbitalPlanet.tsx
-
 import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Mesh } from 'three';

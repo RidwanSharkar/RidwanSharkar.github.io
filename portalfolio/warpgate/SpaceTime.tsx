@@ -1,8 +1,8 @@
-// warpgate/SpaceTime.tsx
+// SpaceTime.tsx
 import React from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
 import { OrbitControls, Stars, Html } from '@react-three/drei';
-import PlanetGroup from './SolarSystem';
+import EnhancedPlanetGroup from './HDsolarSystem'; // Ensure this path is correct
 
 const ResponsiveCamera: React.FC = () => {
   const { camera, size } = useThree();
@@ -33,7 +33,7 @@ const PlanetCanvas: React.FC = () => {
         fade
       />
       <React.Suspense fallback={<Html center>Loading...</Html>}>
-        <PlanetGroup />
+        <EnhancedPlanetGroup /> {/* No props needed */}
       </React.Suspense>
       <OrbitControls
         enableZoom={true}
