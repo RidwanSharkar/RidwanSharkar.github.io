@@ -5,6 +5,15 @@ import Sun from './Sun';
 import Explosion from './Explosion';
 import { Vector3 } from 'three';
 
+interface MoonData {
+  orbitRadius: number;
+  orbitSpeed: number;
+  size: number;
+  moonColor: string;
+  link?: string;
+  label?: string;
+}
+
 interface PlanetData {
   position: [number, number, number];
   link: string;
@@ -20,6 +29,7 @@ interface PlanetData {
   }[]; // Updated for multiple rings
   size: number;
   rotationSpeed?: number; // Optional rotation speed
+  moons?: MoonData[]; // Optional moons
 }
 
 interface ExplosionData {
@@ -55,6 +65,16 @@ const EnhancedPlanetGroup: React.FC = () => {
       ],
       size: 0.7,
       rotationSpeed: 0.015,
+      moons: [
+        {
+          orbitRadius: 1.5,
+          orbitSpeed: 2.0,
+          size: 0.2,
+          moonColor: '#CCCCCC',
+          link: 'https://fretboardx.com',
+          label: 'GitHub Moon',
+        },
+      ],
     },
     {
       position: [0, 0, 0],
@@ -65,6 +85,16 @@ const EnhancedPlanetGroup: React.FC = () => {
       planetColor: '#FF6B6B', // Coral red
       size: 0.6,
       rotationSpeed: 0.025,
+      moons: [
+        {
+          orbitRadius: 1.0,
+          orbitSpeed: 2,
+          size: 0.15,
+          moonColor: '#AAAAAA',
+          link: 'https://www.facebook.com/MythosCarver/',
+          label: 'Art Portfolio Moon',
+        },
+      ],
     },
     {
       position: [0, 0, 0],
@@ -80,6 +110,7 @@ const EnhancedPlanetGroup: React.FC = () => {
       rotationSpeed: 0.018,
     },
   ];
+  
 
   const handleCollision = (index: number) => {
     const planet = planets[index];

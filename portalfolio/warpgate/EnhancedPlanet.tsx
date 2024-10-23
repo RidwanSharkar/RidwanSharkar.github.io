@@ -3,6 +3,7 @@ import React, { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Mesh, Euler } from 'three';
 import * as THREE from 'three';
+import Moon from './Moon';
 
 interface PlanetData {
   position: [number, number, number];
@@ -19,6 +20,16 @@ interface PlanetData {
   }[]; // Updated for multiple rings
   size: number;
   rotationSpeed?: number; // Optional rotation speed
+  moons?: MoonData[]; // Optional moons
+}
+
+interface MoonData {
+  orbitRadius: number;
+  orbitSpeed: number;
+  size: number;
+  moonColor: string;
+  link?: string;
+  label?: string;
 }
 
 interface EnhancedPlanetProps extends PlanetData {
@@ -35,6 +46,8 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
   index,
   onCollision,
   rotationSpeed = 0.01, // Default rotation speed
+  moons,
+  link,
 }) => {
   const meshRef = useRef<Mesh>(null);
 
@@ -56,11 +69,28 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
     }
   });
 
+  const handleClick = () => {
+    if (link) {
+      window.open(link, '_blank');
+    }
+  };
+
   return (
-    <mesh ref={meshRef}>
+    <mesh
+      ref={meshRef}
+      onClick={handleClick}
+      onPointerOver={(e) => {
+        e.stopPropagation();
+        document.body.style.cursor = 'pointer';
+      }}
+      onPointerOut={(e) => {
+        e.stopPropagation();
+        document.body.style.cursor = 'auto';
+      }}
+    >
       <sphereGeometry args={[size, 32, 32]} />
       <meshStandardMaterial color={planetColor} />
-      
+
       {/* Render multiple rings if any */}
       {rings && rings.map((ring, idx) => (
         <mesh 
@@ -85,6 +115,14 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
             opacity={0.8} // Optional: make rings slightly transparent
           />
         </mesh>
+      ))}
+
+      {/* Render moons if any */}
+      {moons && moons.map((moon, idx) => (
+        <Moon
+          key={`moon-${idx}`}
+          {...moon}
+        />
       ))}
     </mesh>
   );
