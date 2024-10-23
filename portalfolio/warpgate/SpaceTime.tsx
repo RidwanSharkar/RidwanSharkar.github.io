@@ -2,7 +2,7 @@
 import React from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
 import { OrbitControls, Stars, Html } from '@react-three/drei';
-import EnhancedPlanetGroup from './HDsolarSystem'; // Ensure this path is correct
+import EnhancedPlanetGroup from './EnhancedPlanetGroup'; // Ensure this path is correct
 
 const ResponsiveCamera: React.FC = () => {
   const { camera, size } = useThree();

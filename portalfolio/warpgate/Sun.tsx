@@ -1,6 +1,7 @@
-import { useRef } from 'react';
+import React, { forwardRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Mesh, ShaderMaterial } from 'three';
+import { Mesh, ShaderMaterial, Color } from 'three';
+import * as THREE from 'three';
 
 const vertexShader = `
   varying vec3 vNormal;
@@ -25,52 +26,103 @@ const fragmentShader = `
   }
 `;
 
-const Sun = () => {
-  const sunRef = useRef<Mesh>(null!);
-  const glowRef = useRef<Mesh>(null!);
+interface PhysicsState {
+  velocity: THREE.Vector3;
+  mass: number;
+  lastCollisionTime: number;
+  fragments: Fragment[];
+}
 
+interface Fragment {
+  position: THREE.Vector3;
+  velocity: THREE.Vector3;
+  rotation: THREE.Euler;
+  size: number;
+  color: string;
+}
+
+interface SunProps {
+  size?: number;
+  color?: string | THREE.Color;
+  glowIntensity?: number;
+  rotationSpeed?: number;
+  emissiveIntensity?: number;
+}
+
+const Sun = forwardRef<Mesh, SunProps>(({
+  size = 1.1,
+  color = "#FDB813",
+  glowIntensity = 0.2,
+  rotationSpeed = 0.001,
+  emissiveIntensity = 0.7,
+}, ref) => {
+  const glowRef = React.useRef<Mesh>(null!);
+  
+  // Add repulsive force field
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
     
-    // Rotate the sun
-    sunRef.current.rotation.y += 0.001;
+    if (ref && typeof ref !== 'function' && ref.current) {
+      ref.current.rotation.y += rotationSpeed;
+      
+      // Apply repulsive force to nearby planets
+      const sunPosition = ref.current.position;
+      const repulsiveForce = 0.5; // Adjust force strength
+      const minDistance = size * 2; // Minimum safe distance
+      
+      // Find all planet meshes in the scene
+      ref.current.parent?.traverse((child) => {
+        if (child instanceof THREE.Mesh && child !== ref.current && child !== glowRef.current) {
+          const distance = child.position.distanceTo(sunPosition);
+          if (distance < minDistance) {
+            const direction = child.position.clone().sub(sunPosition).normalize();
+            const force = repulsiveForce * (1 - distance / minDistance);
+            const physicsState = child.userData.physicsState as PhysicsState;
+            if (physicsState?.velocity) {
+              physicsState.velocity.add(direction.multiplyScalar(force));
+            }
+          }
+        }
+      });
+    }
     
-    // Pulse the glow
-    const glowMaterial = glowRef.current.material as ShaderMaterial;
-    glowMaterial.uniforms.intensity.value = 1.0 + Math.sin(t) * 0.2;
+    // Update glow effect
+    const glowMaterial = glowRef.current?.material as ShaderMaterial;
+    if (glowMaterial?.uniforms) {
+      glowMaterial.uniforms.intensity.value = 1.0 + Math.sin(t) * 0.1;
+    }
   });
 
   return (
     <group>
-      {/* Main sun sphere */}
-      <mesh ref={sunRef}>
-        <sphereGeometry args={[1.5, 64, 64]} />
+      <mesh ref={ref}>
+        <sphereGeometry args={[size, 64, 64]} />
         <meshStandardMaterial
-          color="#FDB813"
-          emissive="#FDB813"
-          emissiveIntensity={1}
+          color={color}
+          emissive={color}
+          emissiveIntensity={emissiveIntensity}
           roughness={0.7}
           metalness={0.3}
         />
       </mesh>
-      
-      {/* Glow effect */}
-      <mesh ref={glowRef} scale={1.2}>
-        <sphereGeometry args={[1.5, 32, 32]} />
+      <mesh ref={glowRef} scale={size * 1.01}>
+        <sphereGeometry args={[size, 32, 32]} />
         <shaderMaterial
           transparent
           vertexShader={vertexShader}
           fragmentShader={fragmentShader}
           uniforms={{
-            glowColor: { value: [1.0, 0.8, 0.3] },
-            intensity: { value: 1.0 }
+            glowColor: { value: new Color(color) },
+            intensity: { value: glowIntensity }
           }}
-          blending={2}
-          side={2}
+          blending={THREE.AdditiveBlending}
+          side={THREE.DoubleSide}
         />
       </mesh>
     </group>
   );
-};
+});
+
+Sun.displayName = 'Sun';
 
 export default Sun;

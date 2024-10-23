@@ -1,7 +1,7 @@
-
+// EnhancedPlanet.tsx
 import React, { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Mesh } from 'three';
+import { Mesh, Euler } from 'three';
 import * as THREE from 'three';
 
 interface PlanetData {
@@ -11,8 +11,14 @@ interface PlanetData {
   orbitRadius: number;
   orbitSpeed: number;
   planetColor: string;
-  ringColor?: string;
+  rings?: { 
+    color: string; 
+    innerScale?: number; 
+    outerScale?: number; 
+    inclination?: number; // Inclination in radians
+  }[]; // Updated for multiple rings
   size: number;
+  rotationSpeed?: number; // Optional rotation speed
 }
 
 interface EnhancedPlanetProps extends PlanetData {
@@ -24,18 +30,23 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
   orbitRadius,
   orbitSpeed,
   planetColor,
-  ringColor,
+  rings,
   size,
   index,
   onCollision,
+  rotationSpeed = 0.01, // Default rotation speed
 }) => {
   const meshRef = useRef<Mesh>(null);
 
   useFrame(({ clock }) => {
     const elapsed = clock.getElapsedTime();
     if (meshRef.current) {
+      // Update orbit position
       meshRef.current.position.x = Math.cos(elapsed * orbitSpeed) * orbitRadius;
       meshRef.current.position.z = Math.sin(elapsed * orbitSpeed) * orbitRadius;
+
+      // Rotate the planet on its own axis (simulating day rotation)
+      meshRef.current.rotation.y += rotationSpeed; // Adjust rotation speed as needed
 
       // Placeholder collision detection logic
       const distance = meshRef.current.position.length();
@@ -46,22 +57,35 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
   });
 
   return (
-
-    
     <mesh ref={meshRef}>
       <sphereGeometry args={[size, 32, 32]} />
       <meshStandardMaterial color={planetColor} />
-      {ringColor && (
-        <mesh>
-          <ringGeometry args={[size * 1.1, size * 1.3, 32]} />
-          <meshStandardMaterial color={ringColor} side={THREE.DoubleSide} />
+      
+      {/* Render multiple rings if any */}
+      {rings && rings.map((ring, idx) => (
+        <mesh 
+          key={idx} 
+          rotation={new Euler(
+            ring.inclination || 0, // Rotate around X-axis for inclination
+            0, 
+            0
+          )}
+        >
+          <ringGeometry
+            args={[
+              size * (ring.innerScale || 1.1),
+              size * (ring.outerScale || 1.3),
+              32,
+            ]}
+          />
+          <meshStandardMaterial 
+            color={ring.color} 
+            side={THREE.DoubleSide} 
+            transparent 
+            opacity={0.8} // Optional: make rings slightly transparent
+          />
         </mesh>
-      )}
-      {/* Orbit path visualization */}
-        <mesh rotation-x={Math.PI / 2}>
-        <ringGeometry args={[orbitRadius, orbitRadius + 0.05, 64]} />
-        <meshBasicMaterial color="#ffffff" opacity={0.1} transparent />
-      </mesh>
+      ))}
     </mesh>
   );
 };
