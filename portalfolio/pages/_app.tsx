@@ -1,5 +1,4 @@
-// pages/_app.tsx
-
+// App.tsx
 import '../styles/globals.css';
 import type { AppProps } from 'next/app';
 

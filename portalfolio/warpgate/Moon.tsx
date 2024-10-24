@@ -1,7 +1,8 @@
 // Moon.tsx
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Mesh } from 'three';
+import { Html } from '@react-three/drei';
 
 interface MoonProps {
   orbitRadius: number;
@@ -18,8 +19,10 @@ const Moon: React.FC<MoonProps> = ({
   size,
   moonColor,
   link,
+  label,
 }) => {
   const meshRef = useRef<Mesh>(null);
+  const [hovered, setHovered] = useState(false);
 
   useFrame(({ clock }) => {
     const elapsed = clock.getElapsedTime();
@@ -41,16 +44,35 @@ const Moon: React.FC<MoonProps> = ({
       onClick={handleClick}
       onPointerOver={(e) => {
         e.stopPropagation();
+        setHovered(true);
         document.body.style.cursor = 'pointer';
       }}
       onPointerOut={(e) => {
         e.stopPropagation();
+        setHovered(false);
         document.body.style.cursor = 'auto';
       }}
     >
       <sphereGeometry args={[size, 16, 16]} />
       <meshStandardMaterial color={moonColor} />
       {/* Optional: Add label or tooltip here */}
+      {hovered && label && (
+        <Html
+          distanceFactor={10}
+          position={[0, size + 0.3, 0]}
+          style={{
+            background: 'rgba(0, 0, 0, 0.6)',
+            padding: '3px 6px',
+            borderRadius: '4px',
+            color: 'white',
+            whiteSpace: 'nowrap',
+            pointerEvents: 'none',
+            fontSize: '0.8rem',
+          }}
+        >
+          <span>{label}</span>
+        </Html>
+      )}
     </mesh>
   );
 };

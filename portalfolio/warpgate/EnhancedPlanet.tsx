@@ -1,9 +1,19 @@
 // EnhancedPlanet.tsx
-import React, { useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
-import { Mesh, Euler } from 'three';
-import * as THREE from 'three';
+import React, { useRef, useState } from 'react';
+import { useFrame, useLoader } from '@react-three/fiber';
+import { Mesh, Euler, TextureLoader } from 'three';
+import { Html } from '@react-three/drei';
 import Moon from './Moon';
+import * as THREE from 'three';
+
+interface MoonData {
+  orbitRadius: number;
+  orbitSpeed: number;
+  size: number;
+  moonColor: string;
+  link?: string;
+  label?: string;
+}
 
 interface PlanetData {
   position: [number, number, number];
@@ -21,15 +31,7 @@ interface PlanetData {
   size: number;
   rotationSpeed?: number; // Optional rotation speed
   moons?: MoonData[]; // Optional moons
-}
-
-interface MoonData {
-  orbitRadius: number;
-  orbitSpeed: number;
-  size: number;
-  moonColor: string;
-  link?: string;
-  label?: string;
+  logoTexturePath?: string; // Path to the logo texture
 }
 
 interface EnhancedPlanetProps extends PlanetData {
@@ -48,8 +50,17 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
   rotationSpeed = 0.01, // Default rotation speed
   moons,
   link,
+  label,
+  logoTexturePath,
 }) => {
   const meshRef = useRef<Mesh>(null);
+  const [hovered, setHovered] = useState(false);
+
+  // Load the logo texture; fallback to a transparent texture if not provided
+  const logoTexture = useLoader(
+    TextureLoader,
+    logoTexturePath || '/textures/transparent.png' // Ensure you have a transparent.png in your textures folder
+  );
 
   useFrame(({ clock }) => {
     const elapsed = clock.getElapsedTime();
@@ -75,20 +86,31 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
     }
   };
 
+  // Optional: Animate the logo's rotation to simulate a storm
+  const logoRef = useRef<Mesh>(null);
+
+  useFrame(() => {
+    if (logoRef.current) {
+      logoRef.current.rotation.y += 0.01; // Adjust rotation speed for storm effect
+    }
+  });
+
   return (
     <mesh
       ref={meshRef}
       onClick={handleClick}
       onPointerOver={(e) => {
         e.stopPropagation();
+        setHovered(true);
         document.body.style.cursor = 'pointer';
       }}
       onPointerOut={(e) => {
         e.stopPropagation();
+        setHovered(false);
         document.body.style.cursor = 'auto';
       }}
     >
-      <sphereGeometry args={[size, 32, 32]} />
+      <sphereGeometry args={[size, 64, 64]} />
       <meshStandardMaterial color={planetColor} />
 
       {/* Render multiple rings if any */}
@@ -124,6 +146,41 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
           {...moon}
         />
       ))}
+
+      {/* Logo Texture */}
+      {logoTexturePath && (
+        <mesh
+          ref={logoRef}
+          position={[0, size + 0.2, 0]} // Position the logo slightly above the planet
+          rotation={[0, 0, 0]}
+          scale={[0.5, 0.5, 0.5]} // Adjust the size as needed
+        >
+          <planeGeometry args={[1, 1]} />
+          <meshBasicMaterial 
+            map={logoTexture} 
+            transparent={true} 
+            side={THREE.DoubleSide} 
+          />
+        </mesh>
+      )}
+
+      {/* Label/Tooltip */}
+      {hovered && (
+        <Html
+          distanceFactor={10}
+          position={[0, size + 0.5, 0]}
+          style={{
+            background: 'rgba(0, 0, 0, 0.6)',
+            padding: '5px 10px',
+            borderRadius: '4px',
+            color: 'white',
+            whiteSpace: 'nowrap',
+            pointerEvents: 'none',
+          }}
+        >
+          <span>{label}</span>
+        </Html>
+      )}
     </mesh>
   );
 };
