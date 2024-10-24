@@ -55,7 +55,7 @@ const Moon: React.FC<MoonProps> = ({
     >
       <sphereGeometry args={[size, 16, 16]} />
       <meshStandardMaterial color={moonColor} />
-      {/* Optional: Add label or tooltip here */}
+      {/* Tooltip */}
       {hovered && label && (
         <Html
           distanceFactor={10}

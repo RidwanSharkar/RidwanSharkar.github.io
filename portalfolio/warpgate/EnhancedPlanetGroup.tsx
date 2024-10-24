@@ -53,9 +53,9 @@ const EnhancedPlanetGroup: React.FC = () => {
       orbitRadius: 2.75,
       orbitSpeed: 0.75,
       planetColor: '#60AFFF',
-      size: 0.35,
+      size: 0.40,
       rotationSpeed: 0.02, 
-      logoTexturePath: '/textures/Instagram_logo.svg', 
+      logoTexturePath: '/textures/Linkedin_logo.svg', 
     },
 
 
@@ -107,7 +107,7 @@ const EnhancedPlanetGroup: React.FC = () => {
           label: 'MMA Arbitrager',
         },
       ],
-      logoTexturePath: '/textures/Github_logo.png', 
+      logoTexturePath: '/textures/Github_logo.svg', 
     },
 
     // PLANET 3: ARTSTATION IG

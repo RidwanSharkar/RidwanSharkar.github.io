@@ -18,7 +18,7 @@ const Explosion: React.FC<ExplosionProps> = ({ position, color }) => {
   const startTime = useRef(Date.now());
   
   useEffect(() => {
-    // Create explosion particles
+    // Particles
     particles.current = Array.from({ length: 50 }, () => {
       const mesh = new Mesh(
         new SphereGeometry(0.1, 8, 8),

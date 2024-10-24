@@ -5,11 +5,11 @@
   "homepage": "https://RidwanSharkar.github.io",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "predeploy": "npm run build && next export",
+    "deploy": "gh-pages -d out",
+    "build": "next build"
   },
   "dependencies": {
     "@react-three/drei": "^9.114.4",

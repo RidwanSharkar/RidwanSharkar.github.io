@@ -71,7 +71,7 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
 
       // COLLISION
       const distance = meshRef.current.position.length();
-      if (distance < 0.1) { // Arbitrary condition for collision
+      if (distance < 0.1) { // placeholder logic
         onCollision(index);
       }
     }
@@ -161,7 +161,7 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
         </mesh>
       )}
 
-      {/* Label/Tooltip */}
+      {/* Tooltip */}
       {hovered && (
         <Html
           distanceFactor={10}
