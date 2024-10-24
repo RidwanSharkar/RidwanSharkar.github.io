@@ -29,10 +29,10 @@ jobs:
         run: |
           touch ./Portalfolio/out/.nojekyll
           echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; URL=/"></head><body></body></html>' > ./Portalfolio/out/404.html
-        working-directory: ./Planetfolio
+        working-directory: ./Portalfolio
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./Planetfolio/out
+          publish_dir: ./Portalfolio/out
