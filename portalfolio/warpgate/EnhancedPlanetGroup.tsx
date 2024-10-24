@@ -4,6 +4,7 @@ import EnhancedPlanet from './EnhancedPlanet';
 import Sun from './Sun';
 import Explosion from './Explosion';
 import { Vector3 } from 'three';
+import * as THREE from 'three';
 
 interface MoonData {
   orbitRadius: number;
@@ -42,112 +43,129 @@ interface ExplosionData {
 const EnhancedPlanetGroup: React.FC = () => {
   const [explosions, setExplosions] = useState<ExplosionData[]>([]);
 
+  
   const planets: PlanetData[] = [
+    // PLANET 1: LINKEDIN
     {
       position: [0, 0, 0],
       link: 'https://www.linkedin.com/in/RidwanSharkar',
       label: 'LinkedIn',
-      orbitRadius: 4,
-      orbitSpeed: 0.6,
-      planetColor: '#0077B5', // LinkedIn blue
-      size: 0.8,
-      rotationSpeed: 0.02, // Example rotation speed
-      logoTexturePath: '/textures/Github_logo.png', // Path to LinkedIn logo
+      orbitRadius: 2.75,
+      orbitSpeed: 0.75,
+      planetColor: '#60AFFF',
+      size: 0.35,
+      rotationSpeed: 0.02, 
+      logoTexturePath: '/textures/Instagram_logo.svg', 
     },
+
+
+    // PLANET 2: GITHUB
     {
       position: [0, 0, 0],
       link: 'https://github.com/RidwanSharkar',
       label: 'GitHub',
-      orbitRadius: 6,
+      orbitRadius: 5.0,
       orbitSpeed: 0.1,
-      planetColor: '#6e5494', // GitHub purple
+      planetColor: '#0d1117', 
       rings: [
-        { color: '#6e5494', innerScale: 1.1, outerScale: 1.3, inclination: 0 }, // First ring: Flat
-        { color: '#4078c0', innerScale: 1.4, outerScale: 1.6, inclination: Math.PI / 2 }, // Second ring: Perpendicular
+        { color: '#73ced4', innerScale: 1.1, outerScale: 1.3, inclination: 0 }, 
+        { color: '#d2fbfd', innerScale: 1.4, outerScale: 1.6, inclination: Math.PI / 2 }, // Perpendicular
       ],
-      size: 0.7,
-      rotationSpeed: 0.015,
+      size: 0.4,
+      rotationSpeed: 0.010,
       moons: [
-        {
-          orbitRadius: 1.5,
+        { // Moon 1: Fretboard Explorer 
+          orbitRadius: 1.0,
           orbitSpeed: 2.0,
-          size: 0.25,
-          moonColor: '#CCCCCC',
+          size: 0.18,
+          moonColor: '#d2fbfd',
           link: 'https://fretboardx.com',
           label: 'Fretboard Explorer',
         },
-        {
-          orbitRadius: 1,
-          orbitSpeed: 1.4,
-          size: 0.2,
-          moonColor: '#CCCCCC',
+        { // Moon 2: Nimbus Weather App
+          orbitRadius: 1.38,
+          orbitSpeed: 1.5,
+          size: 0.12,
+          moonColor: '#3ad8ff',
           link: 'http://nimbusweatherapp.com',
           label: 'Nimbus Weather',
         },
-        {
-          orbitRadius: 2,
+        { // Moon 3: Compound Classifier
+          orbitRadius: 1.75,
           orbitSpeed: 0.9,
           size: 0.15,
-          moonColor: '#CCCCCC',
+          moonColor: '#80FF72',
           link: 'https://github.com/RidwanSharkar/Pharmacological-Compound-Classifier.com',
           label: 'Compound Classifier',
         },
-        {
-          orbitRadius: 2.5,
+        { // Moon 4: MMA Arbitrager
+          orbitRadius: 2.1,
           orbitSpeed: 0.1,
-          size: 0.15,
-          moonColor: '#CCCCCC',
+          size: 0.11,
+          moonColor: '#f0a5ab',
           link: 'https://github.com/RidwanSharkar/Arbitrage-Better',
           label: 'MMA Arbitrager',
         },
       ],
-      logoTexturePath: '/textures/Github_logo.png', // Path to GitHub logo
+      logoTexturePath: '/textures/Github_logo.png', 
     },
-    {
-      position: [0, 0, 0],
-      link: 'https://mythos.store',
-      label: 'Art Portfolio',
-      orbitRadius: 8,
-      orbitSpeed: 0.3,
-      planetColor: '#FF6B6B', // Coral red
-      size: 0.6,
-      rotationSpeed: 0.025,
-      moons: [
-        {
-          orbitRadius: 1.0,
-          orbitSpeed: 1.2,
-          size: 0.15,
-          moonColor: '#AAAAAA',
-          link: 'https://www.facebook.com/MythosCarver/',
-          label: 'Art Portfolio Moon',
-        },
-      ],
-      logoTexturePath: '/textures/Mythos_logo.jpg', // Path to Art Portfolio logo
-    },
+
+    // PLANET 3: ARTSTATION IG
     {
       position: [0, 0, 0],
       link: 'https://instagram.com/ridwansharkar/?hl=en',
       label: 'Instagram',
-      orbitRadius: 10,
+      orbitRadius: 8,
       orbitSpeed: 0.2,
-      planetColor: '#E4405F', // Instagram pink
+      planetColor: '#BDA0BC', 
       rings: [
-        { color: '#FCAF45', innerScale: 1.1, outerScale: 1.6, inclination: -Math.PI / 6 }, // Second ring: -30 degrees
+        { color: '#BAD29F', innerScale: 1.1, outerScale: 1.4, inclination: -Math.PI / 6 }, // -30 degrees
       ],
-      size: 0.9,
-      rotationSpeed: 0.018,
+      size: 0.5,
+      rotationSpeed: 0.03,
       moons: [
         {
-          orbitRadius: 1.0,
-          orbitSpeed: 0.5,
-          size: 0.15,
-          moonColor: '#AAAAAA',
+          orbitRadius: 1.2,
+          orbitSpeed: 2.5,
+          size: 0.16,
+          moonColor: '#EAC4D5',
           link: 'https://https://www.artstation.com/ridwansharkar',
           label: 'Art Station',
         },
       ],
-      logoTexturePath: '/textures/Artstation_logo.png', // Path to Instagram logo
+      logoTexturePath: '/textures/Instagram_logo.svg',
     },
+
+
+    // PLANET 4: OLD MYTHOS SITE
+    {
+      position: [0, 0, 0],
+      link: 'https://mythos.store',
+      label: 'Art Portfolio',
+      orbitRadius: 10,
+      orbitSpeed: 0.3,
+      planetColor: '#fec99e',
+      rings: [
+        { color: '#ffe7ce', innerScale: 1.1, outerScale: 1.4, inclination: -Math.PI / 3 }, 
+      ],
+      size: 0.4,
+      rotationSpeed: 0.01,
+      moons: [
+        {
+          orbitRadius: 1.0,
+          orbitSpeed: 4.0,
+          size: 0.15,
+          moonColor: '#53F4FF',
+          link: 'https://www.facebook.com/MythosCarver/',
+          label: 'Facebook',
+        },
+      ],
+      logoTexturePath: '/textures/Mythos_logo.jpg',
+    },
+
+
+
+
   ];
 
   const handleCollision = (index: number) => {
@@ -167,14 +185,14 @@ const EnhancedPlanetGroup: React.FC = () => {
 
     setExplosions((prev) => [...prev, newExplosion]);
 
-    // Remove explosion after animation
+    // Remove after
     setTimeout(() => {
       setExplosions((prev) => prev.filter((exp) => exp.id !== newExplosion.id));
     }, 2000);
   };
 
   return (
-    <Suspense fallback={null}> {/* Add Suspense boundary */}
+    <Suspense fallback={null}> {/* Suspense boundary */}
       <Sun />
 
       {/* Render orbit paths */}
@@ -187,7 +205,7 @@ const EnhancedPlanetGroup: React.FC = () => {
               64,
             ]}
           />
-          <meshBasicMaterial color="#ffffff" opacity={0.1} transparent />
+          <meshBasicMaterial color="#ffffff" opacity={0.1} transparent side={THREE.DoubleSide}/>
         </mesh>
       ))}
 

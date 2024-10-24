@@ -1,4 +1,3 @@
-// EnhancedPlanet.tsx
 import React, { useRef, useState } from 'react';
 import { useFrame, useLoader } from '@react-three/fiber';
 import { Mesh, Euler, TextureLoader } from 'three';
@@ -26,12 +25,12 @@ interface PlanetData {
     color: string; 
     innerScale?: number; 
     outerScale?: number; 
-    inclination?: number; // Inclination in radians
-  }[]; // Updated for multiple rings
+    inclination?: number; 
+  }[]; 
   size: number;
-  rotationSpeed?: number; // Optional rotation speed
-  moons?: MoonData[]; // Optional moons
-  logoTexturePath?: string; // Path to the logo texture
+  rotationSpeed?: number; 
+  moons?: MoonData[]; 
+  logoTexturePath?: string; 
 }
 
 interface EnhancedPlanetProps extends PlanetData {
@@ -47,7 +46,7 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
   size,
   index,
   onCollision,
-  rotationSpeed = 0.01, // Default rotation speed
+  rotationSpeed = 0.01,
   moons,
   link,
   label,
@@ -56,23 +55,21 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
   const meshRef = useRef<Mesh>(null);
   const [hovered, setHovered] = useState(false);
 
-  // Load the logo texture; fallback to a transparent texture if not provided
   const logoTexture = useLoader(
     TextureLoader,
-    logoTexturePath || '/textures/transparent.png' // Ensure you have a transparent.png in your textures folder
+    logoTexturePath || '/textures/transparent.png' // TEMP
   );
 
   useFrame(({ clock }) => {
     const elapsed = clock.getElapsedTime();
     if (meshRef.current) {
-      // Update orbit position
       meshRef.current.position.x = Math.cos(elapsed * orbitSpeed) * orbitRadius;
       meshRef.current.position.z = Math.sin(elapsed * orbitSpeed) * orbitRadius;
 
-      // Rotate the planet on its own axis (simulating day rotation)
-      meshRef.current.rotation.y += rotationSpeed; // Adjust rotation speed as needed
+      // PLANET ROTATION
+      meshRef.current.rotation.y += rotationSpeed;
 
-      // Placeholder collision detection logic
+      // COLLISION
       const distance = meshRef.current.position.length();
       if (distance < 0.1) { // Arbitrary condition for collision
         onCollision(index);
@@ -86,12 +83,12 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
     }
   };
 
-  // Optional: Animate the logo's rotation to simulate a storm
+  // STORM?
   const logoRef = useRef<Mesh>(null);
 
   useFrame(() => {
     if (logoRef.current) {
-      logoRef.current.rotation.y += 0.01; // Adjust rotation speed for storm effect
+      logoRef.current.rotation.y += 0.01; // storm effect rotation speed
     }
   });
 
@@ -113,12 +110,12 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
       <sphereGeometry args={[size, 64, 64]} />
       <meshStandardMaterial color={planetColor} />
 
-      {/* Render multiple rings if any */}
+      {/* If Multiple rings */}
       {rings && rings.map((ring, idx) => (
         <mesh 
           key={idx} 
           rotation={new Euler(
-            ring.inclination || 0, // Rotate around X-axis for inclination
+            ring.inclination || 0, // Inclination - around X-axis 
             0, 
             0
           )}
@@ -134,7 +131,7 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
             color={ring.color} 
             side={THREE.DoubleSide} 
             transparent 
-            opacity={0.8} // Optional: make rings slightly transparent
+            opacity={0.8} // Ring Transparency
           />
         </mesh>
       ))}
@@ -147,13 +144,13 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
         />
       ))}
 
-      {/* Logo Texture */}
-      {logoTexturePath && (
+      {/* Render Logo only on hover */}
+      {hovered && logoTexturePath && (
         <mesh
           ref={logoRef}
-          position={[0, size + 0.2, 0]} // Position the logo slightly above the planet
+          position={[0, size + 0.2, 0]} // LOGO POSITION** above planet
           rotation={[0, 0, 0]}
-          scale={[0.5, 0.5, 0.5]} // Adjust the size as needed
+          scale={[0.5, 0.5, 0.5]} // LOGO SIZING**
         >
           <planeGeometry args={[1, 1]} />
           <meshBasicMaterial 

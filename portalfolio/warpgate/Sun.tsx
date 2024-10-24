@@ -50,7 +50,7 @@ interface SunProps {
 }
 
 const Sun = forwardRef<Mesh, SunProps>(({
-  size = 1.1,
+  size = 1.15,
   color = "#FDB813",
   glowIntensity = 0.2,
   rotationSpeed = 0.001,
@@ -58,19 +58,17 @@ const Sun = forwardRef<Mesh, SunProps>(({
 }, ref) => {
   const glowRef = React.useRef<Mesh>(null!);
   
-  // Add repulsive force field
+  // DISCONTINUED repulsive force**
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
     
     if (ref && typeof ref !== 'function' && ref.current) {
       ref.current.rotation.y += rotationSpeed;
       
-      // Apply repulsive force to nearby planets
       const sunPosition = ref.current.position;
-      const repulsiveForce = 0.5; // Adjust force strength
-      const minDistance = size * 2; // Minimum safe distance
+      const repulsiveForce = 0.5; // force strength
+      const minDistance = size * 2; // min safe distance
       
-      // Find all planet meshes in the scene
       ref.current.parent?.traverse((child) => {
         if (child instanceof THREE.Mesh && child !== ref.current && child !== glowRef.current) {
           const distance = child.position.distanceTo(sunPosition);
@@ -86,7 +84,7 @@ const Sun = forwardRef<Mesh, SunProps>(({
       });
     }
     
-    // Update glow effect
+    // Glow
     const glowMaterial = glowRef.current?.material as ShaderMaterial;
     if (glowMaterial?.uniforms) {
       glowMaterial.uniforms.intensity.value = 1.0 + Math.sin(t) * 0.1;
