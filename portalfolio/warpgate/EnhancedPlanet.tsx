@@ -148,9 +148,9 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
       {hovered && logoTexturePath && (
         <mesh
           ref={logoRef}
-          position={[0, size + 0.2, 0]} // LOGO POSITION** above planet
+          position={[0, size + 0.5, 0]} // LOGO POSITION** above planet
           rotation={[0, 0, 0]}
-          scale={[0.5, 0.5, 0.5]} // LOGO SIZING**
+          scale={[0.7, 0.7, 0.7]} // LOGO SIZING**
         >
           <planeGeometry args={[1, 1]} />
           <meshBasicMaterial 
@@ -165,7 +165,7 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
       {hovered && (
         <Html
           distanceFactor={10}
-          position={[0, size + 0.5, 0]}
+          position={[0, size + 1.5, 0]}
           style={{
             background: 'rgba(0, 0, 0, 0.6)',
             padding: '5px 10px',
