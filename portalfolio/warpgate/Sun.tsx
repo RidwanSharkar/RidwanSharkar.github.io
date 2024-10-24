@@ -50,7 +50,7 @@ interface SunProps {
 }
 
 const Sun = forwardRef<Mesh, SunProps>(({
-  size = 1.15,
+  size = 1.10,
   color = "#FDB813",
   glowIntensity = 0.2,
   rotationSpeed = 0.001,
