@@ -12,25 +12,27 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-        with:
-          persist-credentials: false
-          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18' # Ensure this matches your project requirements
+          node-version: '16'
 
       - name: Install Dependencies
         run: npm install
+
+      - name: Build Project
+        run: npm run build
         working-directory: ./Portalfolio
 
-      - name: Build and Export
-        run: npm run deploy
-        working-directory: ./Portalfolio
+      - name: Add .nojekyll and 404.html
+        run: |
+          touch ./Portalfolio/out/.nojekyll
+          echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; URL=/"></head><body></body></html>' > ./Portalfolio/out/404.html
+        working-directory: ./Planetfolio
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./Portalfolio/out
+          publish_dir: ./Planetfolio/out
