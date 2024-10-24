@@ -23,16 +23,16 @@ jobs:
 
       - name: Build Project
         run: npm run build
-        working-directory: ./Portalfolio
+        working-directory: ./portalfolio
 
       - name: Add .nojekyll and 404.html
         run: |
-          touch ./Portalfolio/out/.nojekyll
-          echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; URL=/"></head><body></body></html>' > ./Portalfolio/out/404.html
-        working-directory: ./Portalfolio
+          touch ./portalfolio/out/.nojekyll
+          echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; URL=/"></head><body></body></html>' > ./portalfolio/out/404.html
+        working-directory: ./portalfolio
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./Portalfolio/out
+          publish_dir: ./portalfolio/out
