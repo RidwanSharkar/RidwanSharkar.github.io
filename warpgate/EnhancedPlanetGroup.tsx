@@ -55,7 +55,7 @@ const EnhancedPlanetGroup: React.FC = () => {
       planetColor: '#60AFFF',
       size: 0.40,
       rotationSpeed: 0.02, 
-      logoTexturePath: '/textures/Linkedin_logo.svg', 
+      logoTexturePath: '/textures/LinkedIn_logo.svg', 
     },
 
 
