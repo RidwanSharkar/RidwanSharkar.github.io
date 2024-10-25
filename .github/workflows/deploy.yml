@@ -16,24 +16,21 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '20' 
 
       - name: Install Dependencies
         run: npm install
-        working-directory: ./Portalfolio
 
       - name: Build Project
         run: npm run build
-        working-directory: ./Portalfolio
 
       - name: Add .nojekyll and 404.html
         run: |
           touch out/.nojekyll
           echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; URL=/"></head><body></body></html>' > out/404.html
-        working-directory: ./Portalfolio
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./Portalfolio/out
+          publish_dir: ./out
