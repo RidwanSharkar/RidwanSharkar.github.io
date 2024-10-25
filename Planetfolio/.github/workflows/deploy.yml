@@ -20,19 +20,20 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
+        working-directory: ./Portalfolio
 
       - name: Build Project
         run: npm run build
-        working-directory: ./portalfolio
+        working-directory: ./Portalfolio
 
       - name: Add .nojekyll and 404.html
         run: |
-          touch ./portalfolio/out/.nojekyll
-          echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; URL=/"></head><body></body></html>' > ./portalfolio/out/404.html
-        working-directory: ./portalfolio
+          touch out/.nojekyll
+          echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; URL=/"></head><body></body></html>' > out/404.html
+        working-directory: ./Portalfolio
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./portalfolio/out
+          publish_dir: ./Portalfolio/out
