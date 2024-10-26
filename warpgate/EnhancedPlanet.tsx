@@ -4,6 +4,7 @@ import { Mesh, Euler, TextureLoader } from 'three';
 import { Html } from '@react-three/drei';
 import Moon from './Moon';
 import * as THREE from 'three';
+import { CelestialObjectGlow } from './CelestialObjectGlow';
 
 interface MoonData {
   orbitRadius: number;
@@ -93,92 +94,102 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
   });
 
   return (
-    <mesh
-      ref={meshRef}
-      onClick={handleClick}
-      onPointerOver={(e) => {
-        e.stopPropagation();
-        setHovered(true);
-        document.body.style.cursor = 'pointer';
-      }}
-      onPointerOut={(e) => {
-        e.stopPropagation();
-        setHovered(false);
-        document.body.style.cursor = 'auto';
-      }}
-    >
-      <sphereGeometry args={[size, 64, 64]} />
-      <meshStandardMaterial color={planetColor} />
+    <group>
+      <mesh
+        ref={meshRef}
+        onClick={handleClick}
+        onPointerOver={(e) => {
+          e.stopPropagation();
+          setHovered(true);
+          document.body.style.cursor = 'pointer';
+        }}
+        onPointerOut={(e) => {
+          e.stopPropagation();
+          setHovered(false);
+          document.body.style.cursor = 'auto';
+        }}
+      >
+        <sphereGeometry args={[size, 64, 64]} />
+        <meshStandardMaterial color={planetColor} />
 
-      {/* If Multiple rings */}
-      {rings && rings.map((ring, idx) => (
-        <mesh 
-          key={idx} 
-          rotation={new Euler(
-            ring.inclination || 0, // Inclination - around X-axis 
-            0, 
-            0
-          )}
-        >
-          <ringGeometry
-            args={[
-              size * (ring.innerScale || 1.1),
-              size * (ring.outerScale || 1.3),
-              32,
-            ]}
+        {hovered && (
+          <CelestialObjectGlow 
+            color={planetColor} 
+            size={size} 
+            intensity={0.4} 
           />
-          <meshStandardMaterial 
-            color={ring.color} 
-            side={THREE.DoubleSide} 
-            transparent 
-            opacity={0.8} // Ring Transparency
+        )}
+
+        {/* If Multiple rings */}
+        {rings && rings.map((ring, idx) => (
+          <mesh 
+            key={idx} 
+            rotation={new Euler(
+              ring.inclination || 0, // Inclination - around X-axis 
+              0, 
+              0
+            )}
+          >
+            <ringGeometry
+              args={[
+                size * (ring.innerScale || 1.1),
+                size * (ring.outerScale || 1.3),
+                32,
+              ]}
+            />
+            <meshStandardMaterial 
+              color={ring.color} 
+              side={THREE.DoubleSide} 
+              transparent 
+              opacity={0.8} // Ring Transparency
+            />
+          </mesh>
+        ))}
+
+        {/* Render moons if any */}
+        {moons && moons.map((moon, idx) => (
+          <Moon
+            key={`moon-${idx}`}
+            {...moon}
           />
-        </mesh>
-      ))}
+        ))}
 
-      {/* Render moons if any */}
-      {moons && moons.map((moon, idx) => (
-        <Moon
-          key={`moon-${idx}`}
-          {...moon}
-        />
-      ))}
+        {/* Render Logo only on hover */}
+        {hovered && logoTexturePath && (
+          <mesh
+            ref={logoRef}
+            position={[0, size + 0.5, 0]} // LOGO POSITION** above planet
+            rotation={[0, 0, 0]}
+            scale={[0.7, 0.7, 0.7]} // LOGO SIZING**
+          >
+            <planeGeometry args={[1, 1]} />
+            <meshBasicMaterial 
+              map={logoTexture} 
+              transparent={true} 
+              side={THREE.DoubleSide} 
+            />
+          </mesh>
+        )}
 
-      {/* Render Logo only on hover */}
-      {hovered && logoTexturePath && (
-        <mesh
-          ref={logoRef}
-          position={[0, size + 0.5, 0]} // LOGO POSITION** above planet
-          rotation={[0, 0, 0]}
-          scale={[0.7, 0.7, 0.7]} // LOGO SIZING**
-        >
-          <planeGeometry args={[1, 1]} />
-          <meshBasicMaterial 
-            map={logoTexture} 
-            transparent={true} 
-            side={THREE.DoubleSide} 
-          />
-        </mesh>
-      )}
-
-      {/* Tooltip */}
-      {hovered && (
-        <Html
-          distanceFactor={10}
-          position={[0, size + 1.5, 0]}
-          style={{
-            background: 'rgba(0, 0, 0, 0.6)',
-            padding: '5px 10px',
-            borderRadius: '4px',
-            color: 'white',
-            whiteSpace: 'nowrap',
-            pointerEvents: 'none',
-          }}
-        >
-          <span>{label}</span>
-        </Html>
-      )}
-    </mesh>
+        {/* Tooltip */}
+        {hovered && (
+          <Html
+            distanceFactor={10}
+            position={[0, size + 1.5, 0]}
+            style={{
+              background: 'rgba(0, 0, 0, 0.6)',
+              padding: '5px 10px',
+              borderRadius: '4px',
+              color: 'white',
+              whiteSpace: 'nowrap',
+              pointerEvents: 'none',
+            }}
+          >
+            <span>{label}</span>
+          </Html>
+        )}
+      </mesh>
+    </group>
   );
 };
 
