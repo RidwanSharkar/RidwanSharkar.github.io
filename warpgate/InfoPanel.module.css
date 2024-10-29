@@ -2,20 +2,19 @@
 
 .infoPanel {
   position: fixed;
-  top: 20px; /* Distance from the top of the screen */
-  left: 50%; /* Center horizontally */
-  transform: translateX(-50%); /* Adjust to center */
+  top:30px; /* Distance from the top of the screen */
+  left: 39%; /* Center horizontally */
   background: rgba(0, 0, 0, 0.7); /* Semi-transparent dark background */
   color: #ffffff;
-  padding: 20px 30px;
-  border-radius: 10px;
+  padding: 15px 22.5px;
+  border-radius: 20px;
   width: 300px;
   max-width: 90%;
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px); /* Frosted glass effect */
   opacity: 0;
   transition: opacity 0.5s ease, transform 0.5s ease;
-  z-index: 1000; /* Ensure it appears above other elements */
+  z-index: 1000; 
   border: 2px solid transparent;
   background-clip: padding-box;
   font-family: 'Roboto', sans-serif;
@@ -53,7 +52,7 @@
 
 .infoPanel h2 {
   margin-top: 0;
-  font-family: 'Orbitron', sans-serif; /* Futuristic font */
+  font-family: 'Orbitron', sans-serif;
   font-size: 1.5rem;
   letter-spacing: 1px;
 }
