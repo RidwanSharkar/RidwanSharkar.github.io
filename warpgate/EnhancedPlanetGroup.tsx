@@ -71,7 +71,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
     // PLANET 2: GITHUB
     {
       position: [0, 0, 0],
-      link: 'https://github.com/ridwansharkar',
+      link: 'https://github.com/RidwanSharkar',
       label: 'GitHub',
       description: 'Explore()',
       orbitRadius: 5.0,
@@ -105,7 +105,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
           orbitSpeed: 0.9,
           size: 0.15,
           moonColor: '#80FF72',
-          link: 'https://github.com/ridwansharkar/Pharmacological-Compound-Classifier.com',
+          link: 'https://github.com/RidwanSharkar/Pharmacological-Compound-Classifier',
           label: 'Compound Classifier',
         },
         { // Moon 4: MMA Arbitrager
@@ -113,7 +113,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
           orbitSpeed: 0.1,
           size: 0.11,
           moonColor: '#f0a5ab',
-          link: 'https://github.com/ridwansharkar/Arbitrage-Better',
+          link: 'https://github.com/RidwanSharkar/Arbitrage-Better',
           label: 'MMA Arbitrager',
         },
       ],
@@ -151,7 +151,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
     {
       position: [0, 0, 0],
       link: 'https://mythos.store',
-      label: 'Mythos',
+      label: 'Mythos.store',
       description: 'browse() and buy()',
       orbitRadius: 10,
       orbitSpeed: 0.3,

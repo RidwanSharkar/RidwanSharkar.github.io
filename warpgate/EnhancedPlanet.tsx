@@ -5,6 +5,8 @@ import Moon from './Moon';
 import * as THREE from 'three';
 import { CelestialObjectGlow } from './CelestialObjectGlow';
 import { PlanetData } from './EnhancedPlanetGroup';
+import { ThreeEvent } from '@react-three/fiber';
+
 
 interface EnhancedPlanetProps extends PlanetData {
   index: number;
@@ -12,6 +14,8 @@ interface EnhancedPlanetProps extends PlanetData {
   onSelectPlanet: (index: number, planet: PlanetData) => void;
   selected: boolean;
 }
+
+/*=============================================================================================================*/
 
 const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({ 
   planetColor, 
@@ -35,7 +39,7 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
 
   const logoTexture = useLoader(
     TextureLoader,
-    logoTexturePath || '/textures/transparent.png'
+    logoTexturePath || '/textures/transparent.png'//placeholder
   );
 
   useFrame(({ clock }) => {
@@ -74,6 +78,20 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
 
   const logoRef = useRef<Mesh>(null);
 
+  const handlePointerOver = (e: ThreeEvent<PointerEvent>) => {
+    e.stopPropagation();
+    setTimeout(() => setHovered(true), 50);
+    document.body.style.cursor = 'pointer';
+  };
+  
+  const handlePointerOut = (e: ThreeEvent<PointerEvent>) => {
+    e.stopPropagation();
+    setTimeout(() => setHovered(false), 50);
+    if (!selected) document.body.style.cursor = 'auto';
+  };
+  
+/*=============================================================================================================*/
+
   useFrame(() => {
     if (logoRef.current) {
       logoRef.current.rotation.y += 0.01; // Logo rotation speed
@@ -97,25 +115,15 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
       <mesh
         ref={meshRef}
         onClick={handleClick}
-        onPointerOver={(e) => {
-          e.stopPropagation();
-          setHovered(true);
-          document.body.style.cursor = 'pointer'; // Set cursor here for consistency
-        }}
-        onPointerOut={(e) => {
-          e.stopPropagation();
-          setHovered(false);
-          if (!selected) {
-            document.body.style.cursor = 'auto'; // Reset cursor if not selected
-          }
-        }}
+        onPointerOver={handlePointerOver}
+        onPointerOut={handlePointerOut}
         scale={selected ? [1.0, 1.0, 1.0] : [1, 1, 1]} // scale when selected meh
       >
-        <sphereGeometry args={[size, 96, 96]} />
+        <sphereGeometry args={[size, 64, 64]} />
         <meshStandardMaterial color={planetColor} />
 
         {/* HOVER + SELECT GLOW */}
-        {(hovered || selected) && (
+        {(selected) && (
           <CelestialObjectGlow 
             color={planetColor} 
             size={size} 
@@ -164,7 +172,7 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
             ref={logoRef}
             position={[0, size + 0.5, 0]} 
             rotation={[0, 0, 0]}
-            scale={[0.7, 0.7, 0.7]} 
+            scale={[1, 1, 1]} 
           >
             <planeGeometry args={[1, 1]} />
             <meshBasicMaterial 
@@ -176,8 +184,6 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
         )}
 
 
-
-        
       </mesh>
     </group>
   );

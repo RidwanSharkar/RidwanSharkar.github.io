@@ -13,26 +13,37 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ planet, onClose }) => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    setVisible(true);
+    setVisible(true); // Show panel on mount
   }, []);
+
+  const handleClose = () => {
+    setVisible(false); // Trigger exit animation
+    setTimeout(onClose, 500); // Wait for animation to finish before closing
+  };
 
   return (
     <AnimatePresence>
       {visible && (
-        <motion.div
+        <>
+          {/* Overlay detects external click */}
+          <div className={styles.overlay} onClick={handleClose}></div>
+          
+          <motion.div
           className={styles.infoPanel}
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.5 }}
         >
-          <button className={styles.closeButton} onClick={onClose}>×</button>
-          <h2>{planet.label}</h2>
-          <p>{planet.description || 'No description available.'}</p>
+          <div>
+            <h2>{planet.label}</h2>
+            <p>{planet.description || 'No description available.'}</p>
+          </div>
           <a href={planet.link} target="_blank" rel="noopener noreferrer" className={styles.infoButton}>
             Visit
           </a>
-        </motion.div>
+          </motion.div>
+        </>
       )}
     </AnimatePresence>
   );

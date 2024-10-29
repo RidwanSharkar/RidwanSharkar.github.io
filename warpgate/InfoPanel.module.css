@@ -3,11 +3,10 @@
 .infoPanel {
   position: fixed;
   top: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex; /* Flexbox for row layout */
-  align-items: center; /* Center content vertically */
-  justify-content: space-between; /* Space between elements */
+  left: 35.5%;
+  display: flex; 
+  align-items: center;
+  justify-content: space-between; 
   background: rgba(0, 0, 0, 0.7);
   color: #ffffff;
   padding: 15px 22.5px;
@@ -25,7 +24,6 @@
 }
 
 
-
 .infoPanel::before {
   content: '';
   position: absolute;
@@ -38,6 +36,16 @@
   filter: blur(15px);
   opacity: 0.7;
   border-radius: 12px;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent dark background */
+  z-index: 999; /* Behind the info panel */
 }
 
 .closeButton:hover {
