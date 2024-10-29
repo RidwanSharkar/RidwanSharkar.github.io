@@ -186,7 +186,6 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
               pointerEvents: 'none',
             }}
           >
-            <span>{label}</span>
           </Html>
         )}
 
