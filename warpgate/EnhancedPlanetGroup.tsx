@@ -105,7 +105,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
           orbitSpeed: 0.9,
           size: 0.15,
           moonColor: '#80FF72',
-          link: 'https://github.com/ridwansharkar/pharmacological-compound-classifier.com',
+          link: 'https://github.com/ridwansharkar/Pharmacological-Compound-Classifier.com',
           label: 'Compound Classifier',
         },
         { // Moon 4: MMA Arbitrager
@@ -113,7 +113,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
           orbitSpeed: 0.1,
           size: 0.11,
           moonColor: '#f0a5ab',
-          link: 'https://github.com/ridwansharkar/arbitrage-better',
+          link: 'https://github.com/ridwansharkar/Arbitrage-Better',
           label: 'MMA Arbitrager',
         },
       ],

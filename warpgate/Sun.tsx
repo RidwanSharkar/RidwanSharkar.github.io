@@ -87,7 +87,7 @@ const Sun = forwardRef<Mesh, SunProps>(({
     // Glow
     const glowMaterial = glowRef.current?.material as ShaderMaterial;
     if (glowMaterial?.uniforms) {
-      glowMaterial.uniforms.intensity.value = 1.0 + Math.sin(t) * 0.1;
+      glowMaterial.uniforms.intensity.value = 1.0 + Math.sin(t) * 0.4;
     }
   });
 

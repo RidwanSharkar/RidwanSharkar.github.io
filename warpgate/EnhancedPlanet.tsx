@@ -1,7 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useFrame, useLoader } from '@react-three/fiber';
 import { Mesh, Euler, TextureLoader } from 'three';
-import { Html } from '@react-three/drei';
 import Moon from './Moon';
 import * as THREE from 'three';
 import { CelestialObjectGlow } from './CelestialObjectGlow';
@@ -58,7 +57,7 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
 
   const handleClick = () => {
     onSelectPlanet(index, { 
-      position: [0, 0, 0], // MAKE RANDOM
+      position: [0, 0, 0], 
       link,
       label,
       description,
@@ -101,14 +100,18 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
         onPointerOver={(e) => {
           e.stopPropagation();
           setHovered(true);
+          document.body.style.cursor = 'pointer'; // Set cursor here for consistency
         }}
         onPointerOut={(e) => {
           e.stopPropagation();
           setHovered(false);
+          if (!selected) {
+            document.body.style.cursor = 'auto'; // Reset cursor if not selected
+          }
         }}
-        scale={selected ? [1.1, 1.1, 1.1] : [1, 1, 1]} // scale when selected
+        scale={selected ? [1.0, 1.0, 1.0] : [1, 1, 1]} // scale when selected meh
       >
-        <sphereGeometry args={[size, 64, 64]} />
+        <sphereGeometry args={[size, 96, 96]} />
         <meshStandardMaterial color={planetColor} />
 
         {/* HOVER + SELECT GLOW */}
@@ -172,22 +175,7 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
           </mesh>
         )}
 
-        {/* Tooltip */}
-        {(hovered || selected) && label && (
-          <Html
-            distanceFactor={10}
-            position={[0, size + 1.5, 0]}
-            style={{
-              background: 'rgba(0, 0, 0, 0.6)',
-              padding: '5px 10px',
-              borderRadius: '4px',
-              color: 'white',
-              whiteSpace: 'nowrap',
-              pointerEvents: 'none',
-            }}
-          >
-          </Html>
-        )}
+
 
         
       </mesh>

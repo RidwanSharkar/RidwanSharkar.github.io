@@ -2,23 +2,29 @@
 
 .infoPanel {
   position: fixed;
-  top:30px; /* Distance from the top of the screen */
-  left: 39%; /* Center horizontally */
-  background: rgba(0, 0, 0, 0.7); /* Semi-transparent dark background */
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex; /* Flexbox for row layout */
+  align-items: center; /* Center content vertically */
+  justify-content: space-between; /* Space between elements */
+  background: rgba(0, 0, 0, 0.7);
   color: #ffffff;
   padding: 15px 22.5px;
   border-radius: 20px;
-  width: 300px;
-  max-width: 90%;
+  width: 30%; /* Adjust width as needed */
+  max-width: 600px; /* Set a maximum width */
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px); /* Frosted glass effect */
+  backdrop-filter: blur(10px);
   opacity: 0;
   transition: opacity 0.5s ease, transform 0.5s ease;
-  z-index: 1000; 
+  z-index: 1000;
   border: 2px solid transparent;
   background-clip: padding-box;
   font-family: 'Roboto', sans-serif;
 }
+
+
 
 .infoPanel::before {
   content: '';
@@ -32,18 +38,6 @@
   filter: blur(15px);
   opacity: 0.7;
   border-radius: 12px;
-}
-
-.closeButton {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  background: transparent;
-  border: none;
-  color: #ffffff;
-  font-size: 1.5rem;
-  cursor: pointer;
-  transition: color 0.3s ease;
 }
 
 .closeButton:hover {
