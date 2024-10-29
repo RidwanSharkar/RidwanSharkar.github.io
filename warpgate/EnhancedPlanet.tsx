@@ -48,7 +48,7 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
       // Planet rotation
       meshRef.current.rotation.y += rotationSpeed;
 
-      // Collision detection (placeholder logic)
+      // Collision detection placeholder logic
       const distance = meshRef.current.position.length();
       if (distance < 0.1) { 
         onCollision(index);
@@ -58,7 +58,7 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
 
   const handleClick = () => {
     onSelectPlanet(index, { 
-      position: [0, 0, 0], // Ensure this is correctly set
+      position: [0, 0, 0], // MAKE RANDOM
       link,
       label,
       description,
@@ -106,18 +106,18 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
           e.stopPropagation();
           setHovered(false);
         }}
-        scale={selected ? [1.1, 1.1, 1.1] : [1, 1, 1]} // Optional: scale when selected
+        scale={selected ? [1.1, 1.1, 1.1] : [1, 1, 1]} // scale when selected
       >
         <sphereGeometry args={[size, 64, 64]} />
         <meshStandardMaterial color={planetColor} />
 
-        {/* Show glow on hover or if selected */}
+        {/* HOVER + SELECT GLOW */}
         {(hovered || selected) && (
           <CelestialObjectGlow 
             color={planetColor} 
             size={size} 
             intensity={0.4} 
-            isSelected={selected} // Pass selected state
+            isSelected={selected} 
           />
         )}
 
@@ -189,6 +189,8 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
             <span>{label}</span>
           </Html>
         )}
+
+        
       </mesh>
     </group>
   );

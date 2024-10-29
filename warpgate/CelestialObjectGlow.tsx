@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import React, { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { ShaderMaterial, Color } from 'three';
-import { glowVertexShader, glowFragmentShader } from './Glow'; // Ensure these shaders are correctly defined
+import { glowVertexShader, glowFragmentShader } from './Glow';
 
 interface GlowProps {
   color: string;
@@ -25,7 +25,7 @@ export const CelestialObjectGlow: React.FC<GlowProps> = ({
     if (glowRef.current) {
       const t = clock.getElapsedTime();
       const dynamicIntensity = isSelected 
-        ? intensity * 1.2 // Increase intensity when selected
+        ? intensity * 1.2 // intensity when selected
         : intensity * (1.0 + Math.sin(t * 2) * 0.1);
       glowRef.current.uniforms.intensity.value = dynamicIntensity;
     }

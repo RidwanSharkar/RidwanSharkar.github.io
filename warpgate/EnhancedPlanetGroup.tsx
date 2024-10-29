@@ -6,10 +6,7 @@ import { Vector3 } from 'three';
 import * as THREE from 'three';
 import { extend } from '@react-three/fiber';
 import { OrbitControls, TransformControls } from 'three-stdlib';
-
-// Extend R3F's catalogue
 extend({ OrbitControls, TransformControls });
-
 
 interface EnhancedPlanetGroupProps {
   onSelectPlanet: (index: number, planet: PlanetData) => void;
@@ -24,7 +21,6 @@ interface MoonData {
   link?: string;
   label?: string;
 }
-
 
 export interface PlanetData {
   position: [number, number, number];
@@ -51,6 +47,8 @@ interface ExplosionData {
   color: string;
   id: number;
 }
+
+//========================================================================================================
 
 const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlanet, selectedPlanet }) => {
   const [explosions, setExplosions] = useState<ExplosionData[]>([]);
@@ -122,7 +120,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       logoTexturePath: '/textures/Github_logo.svg', 
     },
 
-    // PLANET 3: INSTAGRAM
+    // PLANET 3: INSTAGRAM ART STATION
     {
       position: [0, 0, 0],
       link: 'https://instagram.com/ridwansharkar/?hl=en',
@@ -177,6 +175,8 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
     },
   ]; 
 
+  //========================================================================================================
+
   const handleCollision = (index: number) => {
     const planet = planets[index];
     const currentTime = Date.now();
@@ -224,12 +224,12 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
           {...planet}
           index={index}
           onCollision={handleCollision}
-          onSelectPlanet={onSelectPlanet} // Pass the handler prop
-          selected={selectedPlanet?.index === index} // Correctly determine if this planet is selected
+          onSelectPlanet={onSelectPlanet} 
+          selected={selectedPlanet?.index === index} 
         />
       ))}
 
-      {/* Render explosions */}
+      {/* Render explosions - dormant */}
       {explosions.map((explosion) => (
         <Explosion
           key={explosion.id}

@@ -19,20 +19,19 @@ const HomePage: NextPage = () => {
   };
 
   return (
-    <div className="w-screen h-screen bg-gray-900 relative"> {/* Full-screen container */}
+    <div className="w-screen h-screen bg-gray-900 relative"> {/* Full-screen */}
       <Head>
         <title>Planetfolio</title>
         <meta name="description" content="Ridwan Sharkar Landing Page" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {/* Render PlanetCanvas with the onSelectPlanet handler */}
       <PlanetCanvas 
         onSelectPlanet={handleSelectPlanet} 
-        selectedPlanet={selectedPlanet} // Add this line to fix the error
+        selectedPlanet={selectedPlanet}
       />
 
-      {/* Render InfoPanel as an overlay */}
+      {/* InfoPanel overlay */}
       {selectedPlanet && (
         <InfoPanel
           planet={selectedPlanet.planet}

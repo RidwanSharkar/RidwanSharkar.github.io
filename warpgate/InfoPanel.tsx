@@ -1,8 +1,8 @@
 // warpgate/InfoPanel.tsx
 import React, { useEffect, useState } from 'react';
 import { PlanetData } from './EnhancedPlanetGroup';
-import styles from './InfoPanel.module.css'; // Import the CSS Module
-import { motion, AnimatePresence } from 'framer-motion'; // Optional for enhanced animations
+import styles from './InfoPanel.module.css'; 
+import { motion, AnimatePresence } from 'framer-motion'; 
 
 interface InfoPanelProps {
   planet: PlanetData;
@@ -13,16 +13,14 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ planet, onClose }) => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    // Trigger the animation after component mounts
     setVisible(true);
   }, []);
 
-  // Optional: Use framer-motion for more advanced animations
   return (
     <AnimatePresence>
       {visible && (
         <motion.div
-          className={styles.infoPanel} // Use CSS Module class
+          className={styles.infoPanel}
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
