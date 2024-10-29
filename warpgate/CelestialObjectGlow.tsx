@@ -1,35 +1,41 @@
-// CelestialObjectGlow.tsx
-import React from 'react';
-import { useFrame } from '@react-three/fiber';
-import { Mesh, Color, ShaderMaterial } from 'three';
-import { glowVertexShader, glowFragmentShader } from './Glow';
+// warpgate/CelestialObjectGlow.tsx
+
 import * as THREE from 'three';
+import React, { useRef } from 'react';
+import { useFrame } from '@react-three/fiber';
+import { ShaderMaterial, Color } from 'three';
+import { glowVertexShader, glowFragmentShader } from './Glow'; // Ensure these shaders are correctly defined
 
 interface GlowProps {
   color: string;
   size: number;
   intensity?: number;
+  isSelected?: boolean;
 }
 
 export const CelestialObjectGlow: React.FC<GlowProps> = ({ 
   color, 
   size, 
-  intensity = 0.5 
+  intensity = 0.5,
+  isSelected = false,
 }) => {
-  const glowRef = React.useRef<Mesh>(null);
+  const glowRef = useRef<ShaderMaterial>(null);
 
   useFrame(({ clock }) => {
-    const glowMaterial = glowRef.current?.material as ShaderMaterial;
-    if (glowMaterial?.uniforms) {
+    if (glowRef.current) {
       const t = clock.getElapsedTime();
-      glowMaterial.uniforms.intensity.value = intensity * (1.0 + Math.sin(t * 2) * 0.1);
+      const dynamicIntensity = isSelected 
+        ? intensity * 1.2 // Increase intensity when selected
+        : intensity * (1.0 + Math.sin(t * 2) * 0.1);
+      glowRef.current.uniforms.intensity.value = dynamicIntensity;
     }
   });
 
   return (
-    <mesh ref={glowRef} scale={[1.2, 1.2, 1.2]}>
+    <mesh scale={[1.2, 1.2, 1.2]}>
       <sphereGeometry args={[size, 32, 32]} />
       <shaderMaterial
+        ref={glowRef}
         transparent
         vertexShader={glowVertexShader}
         fragmentShader={glowFragmentShader}

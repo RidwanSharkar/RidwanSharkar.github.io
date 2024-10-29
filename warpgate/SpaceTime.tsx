@@ -1,8 +1,9 @@
-// SpaceTime.tsx
+// warpgate/SpaceTime.tsx
+
 import React from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
 import { OrbitControls, Stars, Html } from '@react-three/drei';
-import EnhancedPlanetGroup from './EnhancedPlanetGroup';
+import EnhancedPlanetGroup, { PlanetData } from './EnhancedPlanetGroup';
 
 const ResponsiveCamera: React.FC = () => {
   const { camera, size } = useThree();
@@ -18,9 +19,14 @@ const ResponsiveCamera: React.FC = () => {
   return null;
 };
 
-const PlanetCanvas: React.FC = () => {
+interface PlanetCanvasProps {
+  onSelectPlanet: (index: number, planet: PlanetData) => void;
+  selectedPlanet: { index: number; planet: PlanetData } | null;
+}
+
+const PlanetCanvas: React.FC<PlanetCanvasProps> = ({ onSelectPlanet, selectedPlanet }) => {
   return (
-    <Canvas camera={{ position: [0, 20, 25], fov: 60 }}>
+    <Canvas camera={{ position: [0, 20, 25], fov: 60 }} className="w-full h-full">
       <ResponsiveCamera />
       <ambientLight intensity={0.2} />
       <pointLight position={[0, 0, 0]} intensity={1} color="#FDB813" />
@@ -33,7 +39,10 @@ const PlanetCanvas: React.FC = () => {
         fade
       />
       <React.Suspense fallback={<Html center>Loading...</Html>}>
-        <EnhancedPlanetGroup /> {/* No props needed */}
+        <EnhancedPlanetGroup 
+          onSelectPlanet={onSelectPlanet} 
+          selectedPlanet={selectedPlanet} 
+        />
       </React.Suspense>
       <OrbitControls
         enableZoom={true}

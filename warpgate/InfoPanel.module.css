@@ -1,0 +1,83 @@
+/* InfoPanel.module.css */
+
+.infoPanel {
+  position: fixed;
+  top: 20px; /* Distance from the top of the screen */
+  left: 50%; /* Center horizontally */
+  transform: translateX(-50%); /* Adjust to center */
+  background: rgba(0, 0, 0, 0.7); /* Semi-transparent dark background */
+  color: #ffffff;
+  padding: 20px 30px;
+  border-radius: 10px;
+  width: 300px;
+  max-width: 90%;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px); /* Frosted glass effect */
+  opacity: 0;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  z-index: 1000; /* Ensure it appears above other elements */
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  font-family: 'Roboto', sans-serif;
+}
+
+.infoPanel::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #00d2ff, #3a7bd5);
+  z-index: -1;
+  filter: blur(15px);
+  opacity: 0.7;
+  border-radius: 12px;
+}
+
+.closeButton {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.closeButton:hover {
+  color: #ff6b6b; /* Change color on hover */
+}
+
+.infoPanel h2 {
+  margin-top: 0;
+  font-family: 'Orbitron', sans-serif; /* Futuristic font */
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+}
+
+.infoPanel p {
+  font-family: 'Roboto', sans-serif;
+  line-height: 1.5;
+}
+
+.infoButton {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 10px 20px;
+  background: #00d2ff;
+  color: #000000;
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  font-family: 'Roboto', sans-serif;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.infoButton:hover {
+  background: #00aaff;
+  transform: scale(1.05);
+}

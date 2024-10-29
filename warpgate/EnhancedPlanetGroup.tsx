@@ -1,10 +1,20 @@
-// EnhancedPlanetGroup.tsx
 import React, { useState, Suspense } from 'react';
 import EnhancedPlanet from './EnhancedPlanet';
 import Sun from './Sun';
 import Explosion from './Explosion';
 import { Vector3 } from 'three';
 import * as THREE from 'three';
+import { extend } from '@react-three/fiber';
+import { OrbitControls, TransformControls } from 'three-stdlib';
+
+// Extend R3F's catalogue
+extend({ OrbitControls, TransformControls });
+
+
+interface EnhancedPlanetGroupProps {
+  onSelectPlanet: (index: number, planet: PlanetData) => void;
+  selectedPlanet: { index: number; planet: PlanetData } | null;
+}
 
 interface MoonData {
   orbitRadius: number;
@@ -15,10 +25,12 @@ interface MoonData {
   label?: string;
 }
 
-interface PlanetData {
+
+export interface PlanetData {
   position: [number, number, number];
   link: string;
   label: string;
+  description: string; 
   orbitRadius: number;
   orbitSpeed: number;
   planetColor: string;
@@ -35,21 +47,21 @@ interface PlanetData {
 }
 
 interface ExplosionData {
-  position: Vector3;
+  position: THREE.Vector3;
   color: string;
   id: number;
 }
 
-const EnhancedPlanetGroup: React.FC = () => {
+const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlanet, selectedPlanet }) => {
   const [explosions, setExplosions] = useState<ExplosionData[]>([]);
 
-  
   const planets: PlanetData[] = [
     // PLANET 1: LINKEDIN
     {
       position: [0, 0, 0],
-      link: 'https://www.linkedin.com/in/RidwanSharkar',
+      link: 'https://www.linkedin.com/in/ridwansharkar',
       label: 'LinkedIn',
+      description: 'Connect with me on LinkedIn to view my professional profile and network.',
       orbitRadius: 2.75,
       orbitSpeed: 0.75,
       planetColor: '#60AFFF',
@@ -58,12 +70,12 @@ const EnhancedPlanetGroup: React.FC = () => {
       logoTexturePath: '/textures/LinkedIn_logo.svg', 
     },
 
-
     // PLANET 2: GITHUB
     {
       position: [0, 0, 0],
-      link: 'https://github.com/RidwanSharkar',
+      link: 'https://github.com/ridwansharkar',
       label: 'GitHub',
+      description: 'Explore my GitHub repositories to see my projects and contributions.',
       orbitRadius: 5.0,
       orbitSpeed: 0.1,
       planetColor: '#0d1117', 
@@ -95,7 +107,7 @@ const EnhancedPlanetGroup: React.FC = () => {
           orbitSpeed: 0.9,
           size: 0.15,
           moonColor: '#80FF72',
-          link: 'https://github.com/RidwanSharkar/Pharmacological-Compound-Classifier.com',
+          link: 'https://github.com/ridwansharkar/pharmacological-compound-classifier.com',
           label: 'Compound Classifier',
         },
         { // Moon 4: MMA Arbitrager
@@ -103,18 +115,19 @@ const EnhancedPlanetGroup: React.FC = () => {
           orbitSpeed: 0.1,
           size: 0.11,
           moonColor: '#f0a5ab',
-          link: 'https://github.com/RidwanSharkar/Arbitrage-Better',
+          link: 'https://github.com/ridwansharkar/Arbitrage-Better',
           label: 'MMA Arbitrager',
         },
       ],
       logoTexturePath: '/textures/Github_logo.svg', 
     },
 
-    // PLANET 3: ARTSTATION IG
+    // PLANET 3: INSTAGRAM
     {
       position: [0, 0, 0],
       link: 'https://instagram.com/ridwansharkar/?hl=en',
       label: 'Instagram',
+      description: 'i Cut wood',
       orbitRadius: 8,
       orbitSpeed: 0.2,
       planetColor: '#BDA0BC', 
@@ -129,19 +142,19 @@ const EnhancedPlanetGroup: React.FC = () => {
           orbitSpeed: 2.5,
           size: 0.16,
           moonColor: '#EAC4D5',
-          link: 'https://https://www.artstation.com/ridwansharkar',
+          link: 'https://www.artstation.com/ridwansharkar',
           label: 'Art Station',
         },
       ],
       logoTexturePath: '/textures/Instagram_logo.svg',
     },
 
-
     // PLANET 4: OLD MYTHOS SITE
     {
       position: [0, 0, 0],
       link: 'https://mythos.store',
       label: 'Art Portfolio',
+      description: 'Visit my Art Portfolio to explore a collection of my creative works.',
       orbitRadius: 10,
       orbitSpeed: 0.3,
       planetColor: '#fec99e',
@@ -156,36 +169,32 @@ const EnhancedPlanetGroup: React.FC = () => {
           orbitSpeed: 4.0,
           size: 0.15,
           moonColor: '#53F4FF',
-          link: 'https://www.facebook.com/MythosCarver/',
+          link: 'https://www.facebook.com/mythoscarver/',
           label: 'Facebook',
         },
       ],
       logoTexturePath: '/textures/Mythos_logo.jpg',
     },
-
-
-
-
-  ];
+  ]; 
 
   const handleCollision = (index: number) => {
     const planet = planets[index];
     const currentTime = Date.now();
-    const position = new Vector3(
+    const explosionPosition = new Vector3(
       Math.cos(currentTime * planet.orbitSpeed) * planet.orbitRadius,
       0,
       Math.sin(currentTime * planet.orbitSpeed) * planet.orbitRadius
     );
 
     const newExplosion: ExplosionData = {
-      position,
+      position: explosionPosition,
       color: planet.planetColor,
       id: currentTime,
     };
 
     setExplosions((prev) => [...prev, newExplosion]);
 
-    // Remove after
+    // Remove after 2 seconds
     setTimeout(() => {
       setExplosions((prev) => prev.filter((exp) => exp.id !== newExplosion.id));
     }, 2000);
@@ -209,13 +218,14 @@ const EnhancedPlanetGroup: React.FC = () => {
         </mesh>
       ))}
 
-      {/* Render planets */}
       {planets.map((planet, index) => (
         <EnhancedPlanet
           key={index}
           {...planet}
           index={index}
           onCollision={handleCollision}
+          onSelectPlanet={onSelectPlanet} // Pass the handler prop
+          selected={selectedPlanet?.index === index} // Correctly determine if this planet is selected
         />
       ))}
 

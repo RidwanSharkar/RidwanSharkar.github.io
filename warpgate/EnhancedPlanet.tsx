@@ -1,56 +1,34 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useFrame, useLoader } from '@react-three/fiber';
 import { Mesh, Euler, TextureLoader } from 'three';
 import { Html } from '@react-three/drei';
 import Moon from './Moon';
 import * as THREE from 'three';
 import { CelestialObjectGlow } from './CelestialObjectGlow';
-
-interface MoonData {
-  orbitRadius: number;
-  orbitSpeed: number;
-  size: number;
-  moonColor: string;
-  link?: string;
-  label?: string;
-}
-
-interface PlanetData {
-  position: [number, number, number];
-  link: string;
-  label: string;
-  orbitRadius: number;
-  orbitSpeed: number;
-  planetColor: string;
-  rings?: { 
-    color: string; 
-    innerScale?: number; 
-    outerScale?: number; 
-    inclination?: number; 
-  }[]; 
-  size: number;
-  rotationSpeed?: number; 
-  moons?: MoonData[]; 
-  logoTexturePath?: string; 
-}
+import { PlanetData } from './EnhancedPlanetGroup';
 
 interface EnhancedPlanetProps extends PlanetData {
   index: number;
   onCollision: (index: number) => void;
+  onSelectPlanet: (index: number, planet: PlanetData) => void;
+  selected: boolean;
 }
 
-const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
-  orbitRadius,
-  orbitSpeed,
-  planetColor,
-  rings,
+const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({ 
+  planetColor, 
   size,
   index,
   onCollision,
-  rotationSpeed = 0.01,
-  moons,
+  onSelectPlanet,
+  selected,
   link,
   label,
+  description,
+  orbitRadius,
+  orbitSpeed,
+  rings,
+  rotationSpeed = 0.01,
+  moons,
   logoTexturePath,
 }) => {
   const meshRef = useRef<Mesh>(null);
@@ -58,7 +36,7 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
 
   const logoTexture = useLoader(
     TextureLoader,
-    logoTexturePath || '/textures/transparent.png' // TEMP
+    logoTexturePath || '/textures/transparent.png'
   );
 
   useFrame(({ clock }) => {
@@ -67,31 +45,53 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
       meshRef.current.position.x = Math.cos(elapsed * orbitSpeed) * orbitRadius;
       meshRef.current.position.z = Math.sin(elapsed * orbitSpeed) * orbitRadius;
 
-      // PLANET ROTATION
+      // Planet rotation
       meshRef.current.rotation.y += rotationSpeed;
 
-      // COLLISION
+      // Collision detection (placeholder logic)
       const distance = meshRef.current.position.length();
-      if (distance < 0.1) { // placeholder logic
+      if (distance < 0.1) { 
         onCollision(index);
       }
     }
   });
 
   const handleClick = () => {
-    if (link) {
-      window.open(link, '_blank');
-    }
+    onSelectPlanet(index, { 
+      position: [0, 0, 0], // Ensure this is correctly set
+      link,
+      label,
+      description,
+      orbitRadius,
+      orbitSpeed,
+      planetColor,
+      rings,
+      size,
+      rotationSpeed,
+      moons,
+      logoTexturePath,
+    });
   };
 
-  // STORM?
   const logoRef = useRef<Mesh>(null);
 
   useFrame(() => {
     if (logoRef.current) {
-      logoRef.current.rotation.y += 0.01; // storm effect rotation speed
+      logoRef.current.rotation.y += 0.01; // Logo rotation speed
     }
   });
+
+  useEffect(() => {
+    console.log(`Planet ${index} selected: ${selected}`);
+  }, [selected, index]);
+
+  useEffect(() => {
+    if (selected) {
+      document.body.style.cursor = 'pointer';
+    } else if (!hovered) {
+      document.body.style.cursor = 'auto';
+    }
+  }, [hovered, selected]);
 
   return (
     <group>
@@ -101,31 +101,32 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
         onPointerOver={(e) => {
           e.stopPropagation();
           setHovered(true);
-          document.body.style.cursor = 'pointer';
         }}
         onPointerOut={(e) => {
           e.stopPropagation();
           setHovered(false);
-          document.body.style.cursor = 'auto';
         }}
+        scale={selected ? [1.1, 1.1, 1.1] : [1, 1, 1]} // Optional: scale when selected
       >
         <sphereGeometry args={[size, 64, 64]} />
         <meshStandardMaterial color={planetColor} />
 
-        {hovered && (
+        {/* Show glow on hover or if selected */}
+        {(hovered || selected) && (
           <CelestialObjectGlow 
             color={planetColor} 
             size={size} 
             intensity={0.4} 
+            isSelected={selected} // Pass selected state
           />
         )}
 
-        {/* If Multiple rings */}
+        {/* Rings */}
         {rings && rings.map((ring, idx) => (
           <mesh 
             key={idx} 
             rotation={new Euler(
-              ring.inclination || 0, // Inclination - around X-axis 
+              ring.inclination || 0, 
               0, 
               0
             )}
@@ -141,12 +142,12 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
               color={ring.color} 
               side={THREE.DoubleSide} 
               transparent 
-              opacity={0.8} // Ring Transparency
+              opacity={0.8} 
             />
           </mesh>
         ))}
 
-        {/* Render moons if any */}
+        {/* Moons */}
         {moons && moons.map((moon, idx) => (
           <Moon
             key={`moon-${idx}`}
@@ -154,13 +155,13 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
           />
         ))}
 
-        {/* Render Logo only on hover */}
-        {hovered && logoTexturePath && (
+        {/* Logo */}
+        {(hovered || selected) && logoTexturePath && (
           <mesh
             ref={logoRef}
-            position={[0, size + 0.5, 0]} // LOGO POSITION** above planet
+            position={[0, size + 0.5, 0]} 
             rotation={[0, 0, 0]}
-            scale={[0.7, 0.7, 0.7]} // LOGO SIZING**
+            scale={[0.7, 0.7, 0.7]} 
           >
             <planeGeometry args={[1, 1]} />
             <meshBasicMaterial 
@@ -172,7 +173,7 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
         )}
 
         {/* Tooltip */}
-        {hovered && (
+        {(hovered || selected) && label && (
           <Html
             distanceFactor={10}
             position={[0, size + 1.5, 0]}

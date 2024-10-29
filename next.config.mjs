@@ -5,6 +5,10 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  webpack: (config) => {
+    config.ignoreWarnings = [/Module\.issuer/];
+    return config;
+  },
 };
 
 export default nextConfig;
