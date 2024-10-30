@@ -39,7 +39,7 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
 
   const logoTexture = useLoader(
     TextureLoader,
-    logoTexturePath || '/textures/transparent.png'//placeholder
+    logoTexturePath || '/textures/transparent.png' //placeholder
   );
 
   useFrame(({ clock }) => {
