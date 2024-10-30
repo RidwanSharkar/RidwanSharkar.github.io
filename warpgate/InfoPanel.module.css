@@ -38,19 +38,23 @@
   border-radius: 12px;
 }
 
+/* meh
 .overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5); /* Semi-transparent dark background */
-  z-index: 999; /* Behind the info panel */
+  background: rgba(0, 0, 0, 0.5); 
+  z-index: 999; 
 }
 
+DORMANT x out
 .closeButton:hover {
-  color: #ff6b6b; /* Change color on hover */
+  color: #ff6b6b;
 }
+
+*/
 
 .infoPanel h2 {
   margin-top: 0;

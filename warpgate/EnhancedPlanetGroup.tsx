@@ -5,6 +5,7 @@ import Explosion from './Explosion';
 import { Vector3 } from 'three';
 import * as THREE from 'three';
 import { extend } from '@react-three/fiber';
+
 import { OrbitControls, TransformControls } from 'three-stdlib';
 extend({ OrbitControls, TransformControls });
 
@@ -62,7 +63,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       description: 'Connect()',
       orbitRadius: 2.75,
       orbitSpeed: 0.60,
-      planetColor: '#00d2ff',
+      planetColor: '#9eccfa',
       size: 0.40,
       rotationSpeed: 0.02, 
       logoTexturePath: '/textures/LinkedIn_logo.svg', 
@@ -128,7 +129,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       description: 'cutWood()',
       orbitRadius: 8,
       orbitSpeed: 0.2,
-      planetColor: '#BDA0BC', 
+      planetColor: '#B8E0D2', 
       rings: [
         { color: '#BAD29F', innerScale: 1.1, outerScale: 1.4, inclination: -Math.PI / 6 }, // -30 degrees
       ],
