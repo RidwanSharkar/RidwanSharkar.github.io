@@ -7,8 +7,8 @@ interface AudioPlayerProps {
 
 const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
   const audioRef = useRef<HTMLAudioElement>(null);
-  const [isMuted, setIsMuted] = useState(true); // Start with muted as true
-  const [volume, setVolume] = useState(0.5); // Default volume at 50%
+  const [isMuted, setIsMuted] = useState(true); // browser workaround mute
+  const [volume, setVolume] = useState(0.5); // Default volume
 
   useEffect(() => {
     if (audioRef.current) {
