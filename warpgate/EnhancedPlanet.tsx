@@ -148,7 +148,7 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
       {/* Atmosphere layer */}
       <mesh
         ref={atmosphereRef}
-        scale={[1.12, 1.12, 1.12]}
+        scale={[1.18, 1.18, 1.18]}
       >
         <sphereGeometry args={[size, 64, 64]} />
         <primitive object={atmosphereMaterial} attach="material" />
@@ -176,27 +176,24 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
         )}
 
         {/* Rings */}
-        {rings && rings.map((ring, idx) => (
+        {rings?.map((ring, idx) => (
           <mesh 
             key={idx} 
-            rotation={new Euler(
-              ring.inclination || 0, 
-              0, 
-              0
-            )}
+            rotation={new Euler(ring.inclination || 0, 0, 0)}
           >
             <ringGeometry
               args={[
                 size * (ring.innerScale || 1.1),
                 size * (ring.outerScale || 1.3),
-                32,
+                64
               ]}
             />
             <meshStandardMaterial 
               color={ring.color} 
               side={THREE.DoubleSide} 
               transparent 
-              opacity={0.8} 
+              opacity={1.0}
+              alphaMap={new THREE.TextureLoader().load('/textures/ring-alpha.jpg')}
             />
           </mesh>
         ))}

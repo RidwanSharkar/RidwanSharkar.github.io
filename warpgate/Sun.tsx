@@ -90,13 +90,13 @@ const Sun = forwardRef<Mesh, SunProps>(({
       <pointLight
         color={color}
         intensity={8} // intensity
-        distance={800} // distance light will reach
-        decay={2} // how quickly the light falls off
+        distance={2000} // distance light will reach
+        decay={1.5} // how quickly the light falls off
       />
 
       {/* Atmosphere layer */}
       <mesh
-        scale={[1.10, 1.10, 1.10]}
+        scale={[1.09, 1.09, 1.09]}
       >
         <sphereGeometry args={[size, 64, 64]} />
         <primitive object={atmosphereMaterial} attach="material" />
@@ -115,7 +115,7 @@ const Sun = forwardRef<Mesh, SunProps>(({
       </mesh>
 
       {/* Glow effect */}
-      <mesh ref={glowRef} scale={size * 1.10}> 
+      <mesh ref={glowRef} scale={size * 1.07}> 
         <sphereGeometry args={[size, 32, 32]} />
         <shaderMaterial
           transparent

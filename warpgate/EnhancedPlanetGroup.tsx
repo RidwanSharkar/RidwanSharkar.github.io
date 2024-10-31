@@ -63,12 +63,15 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       label: 'Fretboard Explorer', 
       description: 'Connect()',
       orbitRadius: 2.2,
-      orbitSpeed: 1,
+      orbitSpeed: 1.1,
       planetColor: 'white',
-      size: 0.25,
+      size: 0.23,
       rotationSpeed: 0.02, 
       logoTexturePath: '/textures/LinkedIn_logo.svg', 
     },
+
+
+    //-----------------------------------------------------------------
 
     // PLANET 2: LINKEDIN
     {
@@ -79,10 +82,12 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       orbitRadius: 3.25,
       orbitSpeed: 0.60,
       planetColor: '#9eccfa',
-      size: 0.37,
+      size: 0.35,
       rotationSpeed: 0.01, 
       logoTexturePath: '/textures/LinkedIn_logo.svg', 
     },
+    
+    //-----------------------------------------------------------------
 
     // PLANET 3: GITHUB
     {
@@ -94,16 +99,16 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       orbitSpeed: 0.15,
       planetColor: '#4591f1', 
       rings: [
-        { color: '#73ced4', innerScale: 1.2, outerScale: 1.35, inclination: 0 }, 
-        { color: '#d2fbfd', innerScale: 1.5, outerScale: 1.65, inclination: Math.PI / 2 }, // Perpendicular
+        { color: 'white', innerScale: 1.20, outerScale: 1.35, inclination: 0 }, 
+        { color: 'white', innerScale: 1.4, outerScale: 1.7, inclination: Math.PI / 2 }, // Perpendicular
       ],
       size: 0.4,
       rotationSpeed: 0.010,
       moons: [
         { // Moon 1: Nimbus Weather App
-          orbitRadius: 0.8,
-          orbitSpeed: 3.5,
-          size: 0.12,
+          orbitRadius: 0.85,
+          orbitSpeed: 3,
+          size: 0.11,
           moonColor: '#3ad8ff',
           link: 'http://nimbusweatherapp.com',
           label: 'Nimbus Weather',
@@ -127,9 +132,8 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       ],
       logoTexturePath: '/textures/Github_logo.svg', 
     },
-
     
-
+    //-----------------------------------------------------------------
 
     // PLANET 3: INSTAGRAM ART STATION
     {
@@ -141,9 +145,9 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       orbitSpeed: 0.2,
       planetColor: '#B8E0D2', 
       rings: [
-        { color: '#BAD29F', innerScale: 1.1, outerScale: 1.4, inclination: -Math.PI / 6 }, // -30 degrees
+        { color: '#BAD29F', innerScale: 1.4, outerScale: 1.8, inclination: -Math.PI / 6 }, // -30 degrees
       ],
-      size: 0.5,
+      size: 0.42,
       rotationSpeed: 0.03,
       moons: [
         {
@@ -157,6 +161,8 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       ],
       logoTexturePath: '/textures/Instagram_logo.svg',
     },
+    
+    //-----------------------------------------------------------------
 
     // PLANET 4: OLD MYTHOS SITE
     {
@@ -170,12 +176,12 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       rings: [
         { color: '#ffe7ce', innerScale: 1.1, outerScale: 1.4, inclination: -Math.PI / 3 }, 
       ],
-      size: 0.4,
-      rotationSpeed: 0.01,
+      size: 0.3,
+      rotationSpeed: 0.1,
       moons: [
         {
-          orbitRadius: 1.0,
-          orbitSpeed: 4.0,
+          orbitRadius: 0.9,
+          orbitSpeed: 3.2,
           size: 0.15,
           moonColor: '#53F4FF',
           link: 'https://www.facebook.com/mythoscarver/',
@@ -204,15 +210,13 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
     };
 
     setExplosions((prev) => [...prev, newExplosion]);
-
-    // Remove after 2 seconds
     setTimeout(() => {
       setExplosions((prev) => prev.filter((exp) => exp.id !== newExplosion.id));
     }, 2000);
   };
 
   return (
-    <Suspense fallback={null}> {/* Suspense boundary */}
+    <Suspense fallback={null}> 
       <Sun />
 
       {/* Render orbit paths */}
