@@ -67,7 +67,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       planetColor: 'white',
       size: 0.23,
       rotationSpeed: 0.02, 
-      logoTexturePath: '/textures/LinkedIn_logo.svg', 
+      logoTexturePath: '/textures/Fretboardx_logo.png', 
     },
 
 
@@ -188,7 +188,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
           label: 'Facebook',
         },
       ],
-      logoTexturePath: '/textures/Mythos_logo.jpg',
+      logoTexturePath: '/textures/Mythos_logo.png',
     },
   ]; 
 
