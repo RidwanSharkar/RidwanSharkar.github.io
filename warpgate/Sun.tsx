@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Mesh, ShaderMaterial, Color } from 'three';
 import * as THREE from 'three';
@@ -24,6 +24,23 @@ const fragmentShader = `
     float strength = pow(0.6 - dot(vNormal, vPositionNormal), 3.0);
     gl_FragColor = vec4(glowColor, strength * intensity);
   }
+`;
+
+const atmosphereVertexShader = `
+varying vec3 vNormal;
+void main() {
+    vNormal = normalize(normalMatrix * normal);
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}
+`;
+
+const atmosphereFragmentShader = `
+varying vec3 vNormal;
+uniform vec3 glowColor;
+void main() {
+    float intensity = pow(0.7 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 2.0);
+    gl_FragColor = vec4(glowColor, 1.0) * intensity * 0.6;
+}
 `;
 
 interface PhysicsState {
@@ -57,6 +74,20 @@ const Sun = forwardRef<Mesh, SunProps>(({
   emissiveIntensity = 0.7,
 }, ref) => {
   const glowRef = React.useRef<Mesh>(null!);
+
+    
+  // Create atmosphere material
+  const atmosphereMaterial = new ShaderMaterial({
+    uniforms: {
+      glowColor: { value: new THREE.Color(color) }
+    },
+    vertexShader: atmosphereVertexShader,
+    fragmentShader: atmosphereFragmentShader,
+    blending: THREE.AdditiveBlending,
+    side: THREE.BackSide,
+    transparent: true
+  });
+
   
   // DISCONTINUED repulsive force**
   useFrame(({ clock }) => {
@@ -91,8 +122,18 @@ const Sun = forwardRef<Mesh, SunProps>(({
     }
   });
 
+  const atmosphereRef = useRef<Mesh>(null);
   return (
     <group>
+            {/* Atmosphere layer */}
+      <mesh
+        ref={atmosphereRef}
+        scale={[1.12, 1.12, 1.12]}
+      >
+        <sphereGeometry args={[size, 64, 64]} />
+        <primitive object={atmosphereMaterial} attach="material" />
+      </mesh>
+
       <mesh ref={ref}>
         <sphereGeometry args={[size, 64, 64]} />
         <meshStandardMaterial

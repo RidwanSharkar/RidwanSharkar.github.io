@@ -1,12 +1,30 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useFrame, useLoader } from '@react-three/fiber';
-import { Mesh, Euler, TextureLoader } from 'three';
+import { Mesh, Euler, TextureLoader, ShaderMaterial  } from 'three';
 import Moon from './Moon';
 import * as THREE from 'three';
 import { CelestialObjectGlow } from './CelestialObjectGlow';
 import { PlanetData } from './EnhancedPlanetGroup';
 import { ThreeEvent } from '@react-three/fiber';
 
+
+// Atmosphere shader
+const atmosphereVertexShader = `
+varying vec3 vNormal;
+void main() {
+    vNormal = normalize(normalMatrix * normal);
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}
+`;
+
+const atmosphereFragmentShader = `
+varying vec3 vNormal;
+uniform vec3 glowColor;
+void main() {
+    float intensity = pow(0.7 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 2.0);
+    gl_FragColor = vec4(glowColor, 1.0) * intensity * 0.6;
+}
+`;
 
 interface EnhancedPlanetProps extends PlanetData {
   index: number;
@@ -35,12 +53,26 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
   logoTexturePath,
 }) => {
   const meshRef = useRef<Mesh>(null);
+  const atmosphereRef = useRef<Mesh>(null);
   const [hovered, setHovered] = useState(false);
 
   const logoTexture = useLoader(
     TextureLoader,
     logoTexturePath || '/textures/transparent.png' //placeholder
   );
+  
+  // Create atmosphere material
+  const atmosphereMaterial = new ShaderMaterial({
+    uniforms: {
+      glowColor: { value: new THREE.Color(planetColor) }
+    },
+    vertexShader: atmosphereVertexShader,
+    fragmentShader: atmosphereFragmentShader,
+    blending: THREE.AdditiveBlending,
+    side: THREE.BackSide,
+    transparent: true
+  });
+
 
   useFrame(({ clock }) => {
     const elapsed = clock.getElapsedTime();
@@ -48,8 +80,12 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
       meshRef.current.position.x = Math.cos(elapsed * orbitSpeed) * orbitRadius;
       meshRef.current.position.z = Math.sin(elapsed * orbitSpeed) * orbitRadius;
       meshRef.current.rotation.y += rotationSpeed;         // Planet rotation
+      if (atmosphereRef.current) {
+        atmosphereRef.current.position.copy(meshRef.current.position);
+        atmosphereRef.current.rotation.copy(meshRef.current.rotation);
+      }
       const distance = meshRef.current.position.length();  // Collision detection placeholder logic
-      if (distance < 0.1) { 
+      if (distance < 0.4) { 
         onCollision(index);
       }
     }
@@ -108,6 +144,17 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
 
   return (
     <group>
+
+      {/* Atmosphere layer */}
+      <mesh
+        ref={atmosphereRef}
+        scale={[1.12, 1.12, 1.12]}
+      >
+        <sphereGeometry args={[size, 64, 64]} />
+        <primitive object={atmosphereMaterial} attach="material" />
+      </mesh>
+
+
       <mesh
         ref={meshRef}
         onClick={handleClick}
