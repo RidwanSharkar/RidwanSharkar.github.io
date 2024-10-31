@@ -210,9 +210,9 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
         {(hovered || selected) && logoTexturePath && (
           <mesh
             ref={logoRef}
-            position={[0, size + 0.5, 0]} 
+            position={[0, size + 0.65, 0]} 
             rotation={[0, 0, 0]}
-            scale={[1, 1, 1]} 
+            scale={[0.6, 0.6, 0.6]} 
           >
             <planeGeometry args={[1, 1]} />
             <meshBasicMaterial 

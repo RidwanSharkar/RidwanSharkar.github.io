@@ -33,7 +33,7 @@ const PlanetCanvas: React.FC<PlanetCanvasProps> = ({ onSelectPlanet, selectedPla
       <Stars
         radius={100}
         depth={60}
-        count={6500}
+        count={6000}
         factor={4}
         saturation={0}
         fade

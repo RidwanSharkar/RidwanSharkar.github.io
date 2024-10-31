@@ -47,7 +47,7 @@ const HomePage: NextPage = () => {
           <div>
             
             {/* Audio Player */}
-            <AudioPlayer src="/audio/BrownNoise.mp3" title="Static Void" />
+            <AudioPlayer src="/audio/BrownNoise.mp3" title="Br" />
 
             
           </div>

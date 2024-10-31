@@ -80,7 +80,7 @@ const Sun = forwardRef<Mesh, SunProps>(({
 
     const glowMaterial = glowRef.current?.material as ShaderMaterial;
     if (glowMaterial?.uniforms) {
-      glowMaterial.uniforms.intensity.value = 0.5 + Math.abs(Math.sin(t)) * 0.5; // Pulsing effect
+      glowMaterial.uniforms.intensity.value = 0.5 + Math.abs(Math.sin(t)) * 0.5; // Pulsing effect??cantnotice
     }
   });
 
@@ -89,14 +89,14 @@ const Sun = forwardRef<Mesh, SunProps>(({
       {/* PointLight for illuminating planets */}
       <pointLight
         color={color}
-        intensity={8} // intensity
-        distance={2000} // distance light will reach
+        intensity={8.5} 
+        distance={2000}
         decay={1.5} // how quickly the light falls off
       />
 
       {/* Atmosphere layer */}
       <mesh
-        scale={[1.09, 1.09, 1.09]}
+        scale={[1.08, 1.08, 1.08]}
       >
         <sphereGeometry args={[size, 64, 64]} />
         <primitive object={atmosphereMaterial} attach="material" />

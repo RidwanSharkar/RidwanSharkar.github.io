@@ -135,7 +135,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
     
     //-----------------------------------------------------------------
 
-    // PLANET 3: INSTAGRAM ART STATION
+    // PLANET 3: IG ART STATION
     {
       position: [0, 0, 0],
       link: 'https://instagram.com/ridwansharkar/?hl=en',
@@ -145,10 +145,10 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       orbitSpeed: 0.2,
       planetColor: '#B8E0D2', 
       rings: [
-        { color: '#BAD29F', innerScale: 1.4, outerScale: 1.8, inclination: -Math.PI / 6 }, // -30 degrees
+        { color: '#BAD29F', innerScale: 1.4, outerScale: 2.25, inclination: -Math.PI / 2.3 },
       ],
       size: 0.42,
-      rotationSpeed: 0.03,
+      rotationSpeed: 0.001,
       moons: [
         {
           orbitRadius: 1.2,
@@ -174,14 +174,14 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       orbitSpeed: 0.3,
       planetColor: '#fec99e',
       rings: [
-        { color: '#ffe7ce', innerScale: 1.1, outerScale: 1.4, inclination: -Math.PI / 3 }, 
+        { color: '#ffe7ce', innerScale: 1.1, outerScale: 1.6, inclination: -Math.PI }, 
       ],
       size: 0.3,
-      rotationSpeed: 0.1,
+      rotationSpeed: 0.05,
       moons: [
         {
           orbitRadius: 0.9,
-          orbitSpeed: 3.2,
+          orbitSpeed: 5,
           size: 0.15,
           moonColor: '#53F4FF',
           link: 'https://www.facebook.com/mythoscarver/',
@@ -217,6 +217,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
 
   return (
     <Suspense fallback={null}> 
+    
       <Sun />
 
       {/* Render orbit paths */}
