@@ -16,7 +16,7 @@ interface GlowProps {
 export const CelestialObjectGlow: React.FC<GlowProps> = ({ 
   color, 
   size, 
-  intensity = 0.5,
+  intensity = 0.3,
   isSelected = false,
 }) => {
   const glowRef = useRef<ShaderMaterial>(null);
@@ -25,14 +25,14 @@ export const CelestialObjectGlow: React.FC<GlowProps> = ({
     if (glowRef.current) {
       const t = clock.getElapsedTime();
       const dynamicIntensity = isSelected 
-        ? intensity * 1.2 // intensity when selected
+        ? intensity * 1.1 // intensity when selected
         : intensity * (1.0 + Math.sin(t * 2) * 0.1);
       glowRef.current.uniforms.intensity.value = dynamicIntensity;
     }
   });
 
   return (
-    <mesh scale={[1.2, 1.2, 1.2]}>
+    <mesh scale={[1.1, 1.1, 1.1]}>
       <sphereGeometry args={[size, 32, 32]} />
       <shaderMaterial
         ref={glowRef}

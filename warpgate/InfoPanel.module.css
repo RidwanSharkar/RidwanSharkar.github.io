@@ -11,8 +11,9 @@
   color: #ffffff;
   padding: 15px 22.5px;
   border-radius: 20px;
-  width: 30%; /* Adjust width as needed */
-  max-width: 600px; /* Set a maximum width */
+  width: 30%; 
+  max-width: 600px; 
+  min-width: 300px; 
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
   opacity: 0;
@@ -38,7 +39,48 @@
   border-radius: 12px;
 }
 
-.overlay {
+/* Sound Bar */
+.fixedBottomLeftPanel {
+  position: fixed;
+  bottom: 30px;
+  left: 30px;
+  /* inherit */
+  display: flex; 
+  align-items: center;
+  justify-content: space-between; 
+  background: rgba(0, 0, 0, 0.7);
+  color: #ffffff;
+  padding: 15px 22.5px;
+  border-radius: 20px;
+  width: 30%; 
+  max-width: 600px; 
+  min-width: 300px; 
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  z-index: 1000;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  font-family: 'Roboto', sans-serif;
+}
+
+.fixedBottomLeftPanel::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #00d2ff, #3a7bd5);
+  z-index: -1;
+  filter: blur(15px);
+  opacity: 0.7;
+  border-radius: 12px;
+}
+
+/* for click detection, no shadow */
+.overlay { 
   position: fixed;
   top: 0;
   left: 0;

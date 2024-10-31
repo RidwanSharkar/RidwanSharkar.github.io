@@ -55,64 +55,71 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
   const [explosions, setExplosions] = useState<ExplosionData[]>([]);
 
   const planets: PlanetData[] = [
-    // PLANET 1: LINKEDIN
+
+    // PLANET 1: FRETBOARDX
+    {
+      position: [0, 0, 0],
+      link: 'https://fretboardx.com',
+      label: 'Fretboard Explorer', 
+      description: 'Connect()',
+      orbitRadius: 2.2,
+      orbitSpeed: 1,
+      planetColor: 'white',
+      size: 0.25,
+      rotationSpeed: 0.02, 
+      logoTexturePath: '/textures/LinkedIn_logo.svg', 
+    },
+
+    // PLANET 2: LINKEDIN
     {
       position: [0, 0, 0],
       link: 'https://www.linkedin.com/in/ridwansharkar',
       label: 'LinkedIn', 
       description: 'Connect()',
-      orbitRadius: 2.75,
+      orbitRadius: 3.25,
       orbitSpeed: 0.60,
       planetColor: '#9eccfa',
-      size: 0.40,
-      rotationSpeed: 0.02, 
+      size: 0.37,
+      rotationSpeed: 0.01, 
       logoTexturePath: '/textures/LinkedIn_logo.svg', 
     },
 
-    // PLANET 2: GITHUB
+    // PLANET 3: GITHUB
     {
       position: [0, 0, 0],
       link: 'https://github.com/RidwanSharkar',
       label: 'GitHub',
       description: 'Explore()',
-      orbitRadius: 5.0,
-      orbitSpeed: 0.1,
+      orbitRadius: 5.5,
+      orbitSpeed: 0.15,
       planetColor: '#4591f1', 
       rings: [
-        { color: '#73ced4', innerScale: 1.1, outerScale: 1.3, inclination: 0 }, 
-        { color: '#d2fbfd', innerScale: 1.4, outerScale: 1.6, inclination: Math.PI / 2 }, // Perpendicular
+        { color: '#73ced4', innerScale: 1.2, outerScale: 1.35, inclination: 0 }, 
+        { color: '#d2fbfd', innerScale: 1.5, outerScale: 1.65, inclination: Math.PI / 2 }, // Perpendicular
       ],
       size: 0.4,
       rotationSpeed: 0.010,
       moons: [
-        { // Moon 1: Fretboard Explorer 
-          orbitRadius: 1.0,
-          orbitSpeed: 2.0,
-          size: 0.18,
-          moonColor: '#d2fbfd',
-          link: 'https://fretboardx.com',
-          label: 'Fretboard Explorer',
-        },
-        { // Moon 2: Nimbus Weather App
-          orbitRadius: 1.38,
-          orbitSpeed: 1.5,
+        { // Moon 1: Nimbus Weather App
+          orbitRadius: 0.8,
+          orbitSpeed: 3.5,
           size: 0.12,
           moonColor: '#3ad8ff',
           link: 'http://nimbusweatherapp.com',
           label: 'Nimbus Weather',
         },
-        { // Moon 3: Compound Classifier
-          orbitRadius: 1.75,
-          orbitSpeed: 0.9,
-          size: 0.15,
+        { // Moon 2: Compound Classifier
+          orbitRadius: 1.2,
+          orbitSpeed: 0.2,
+          size: 0.18,
           moonColor: '#80FF72',
           link: 'https://github.com/RidwanSharkar/Pharmacological-Compound-Classifier',
           label: 'Compound Classifier',
         },
-        { // Moon 4: MMA Arbitrager
-          orbitRadius: 2.1,
-          orbitSpeed: 0.1,
-          size: 0.11,
+        { // Moon 3: MMA Arbitrager
+          orbitRadius: 1.6,
+          orbitSpeed: 2.2,
+          size: 0.15,
           moonColor: '#f0a5ab',
           link: 'https://github.com/RidwanSharkar/Arbitrage-Better',
           label: 'MMA Arbitrager',
@@ -120,6 +127,9 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       ],
       logoTexturePath: '/textures/Github_logo.svg', 
     },
+
+    
+
 
     // PLANET 3: INSTAGRAM ART STATION
     {
@@ -142,7 +152,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
           size: 0.16,
           moonColor: '#EAC4D5',
           link: 'https://www.artstation.com/ridwansharkar',
-          label: 'Art Station - gotta update this',
+          label: 'Art Station',
         },
       ],
       logoTexturePath: '/textures/Instagram_logo.svg',

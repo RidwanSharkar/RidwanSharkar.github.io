@@ -1,0 +1,31 @@
+/* warpgate/SoundPlayer.module.css */
+
+.audioPlayer {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      
+      .title {
+        font-family: 'Roboto', sans-serif;
+        font-size: 0.5rem;
+        color: #ffffff;
+      }
+      
+      .playButton {
+        padding: 8px 16px;
+        background: #00d2ff;
+        color: #000000;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s ease, transform 0.3s ease;
+        font-weight: bold;
+        font-family: 'Roboto', sans-serif;
+      }
+      
+      .playButton:hover {
+        background: #00aaff;
+        transform: scale(1.05);
+      }
+      

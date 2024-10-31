@@ -5,6 +5,8 @@ import Head from 'next/head';
 import React, { useState } from 'react';
 import PlanetCanvas from '../warpgate/SpaceTime';
 import InfoPanel from '../warpgate/InfoPanel';
+import FixedInfoPanel from '../warpgate/SoundBar'; 
+import AudioPlayer from '../warpgate/SoundPlayer'; 
 import { PlanetData } from '../warpgate/EnhancedPlanetGroup';
 
 const HomePage: NextPage = () => {
@@ -19,7 +21,7 @@ const HomePage: NextPage = () => {
   };
 
   return (
-    <div className="w-screen h-screen bg-gray-900 relative"> {/* Full-screen */}
+    <div className="w-screen h-screen bg-gray-900 relative"> 
       <Head>
         <title>Planetfolio</title>
         <meta name="description" content="Ridwan Sharkar Landing Page" />
@@ -38,6 +40,19 @@ const HomePage: NextPage = () => {
           onClose={handleClosePanel}
         />
       )}
+
+      {/* Fixed Bottom Panel */}
+      <FixedInfoPanel
+        content={
+          <div>
+            
+            {/* Audio Player */}
+            <AudioPlayer src="/audio/BrownNoise.mp3" title="Static Void" />
+
+            
+          </div>
+        }
+      />
     </div>
   );
 };

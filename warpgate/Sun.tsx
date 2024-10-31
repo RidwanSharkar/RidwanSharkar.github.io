@@ -43,21 +43,6 @@ void main() {
 }
 `;
 
-interface PhysicsState {
-  velocity: THREE.Vector3;
-  mass: number;
-  lastCollisionTime: number;
-  fragments: Fragment[];
-}
-
-interface Fragment {
-  position: THREE.Vector3;
-  velocity: THREE.Vector3;
-  rotation: THREE.Euler;
-  size: number;
-  color: string;
-}
-
 interface SunProps {
   size?: number;
   color?: string | THREE.Color;
@@ -71,12 +56,10 @@ const Sun = forwardRef<Mesh, SunProps>(({
   color = "#FDB813",
   glowIntensity = 0.2,
   rotationSpeed = 0.001,
-  emissiveIntensity = 0.7,
+  emissiveIntensity = 0.8,
 }, ref) => {
-  const glowRef = React.useRef<Mesh>(null!);
+  const glowRef = useRef<Mesh>(null!);
 
-    
-  // Create atmosphere material
   const atmosphereMaterial = new ShaderMaterial({
     uniforms: {
       glowColor: { value: new THREE.Color(color) }
@@ -88,52 +71,38 @@ const Sun = forwardRef<Mesh, SunProps>(({
     transparent: true
   });
 
-  
-  // DISCONTINUED repulsive force**
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
     
     if (ref && typeof ref !== 'function' && ref.current) {
       ref.current.rotation.y += rotationSpeed;
-      
-      const sunPosition = ref.current.position;
-      const repulsiveForce = 0.5; // force strength
-      const minDistance = size * 2; // min safe distance
-      
-      ref.current.parent?.traverse((child) => {
-        if (child instanceof THREE.Mesh && child !== ref.current && child !== glowRef.current) {
-          const distance = child.position.distanceTo(sunPosition);
-          if (distance < minDistance) {
-            const direction = child.position.clone().sub(sunPosition).normalize();
-            const force = repulsiveForce * (1 - distance / minDistance);
-            const physicsState = child.userData.physicsState as PhysicsState;
-            if (physicsState?.velocity) {
-              physicsState.velocity.add(direction.multiplyScalar(force));
-            }
-          }
-        }
-      });
     }
-    
-    // Glow
+
     const glowMaterial = glowRef.current?.material as ShaderMaterial;
     if (glowMaterial?.uniforms) {
-      glowMaterial.uniforms.intensity.value = 1.0 + Math.sin(t) * 0.4;
+      glowMaterial.uniforms.intensity.value = 0.5 + Math.abs(Math.sin(t)) * 0.5; // Pulsing effect
     }
   });
 
-  const atmosphereRef = useRef<Mesh>(null);
   return (
     <group>
-            {/* Atmosphere layer */}
+      {/* PointLight for illuminating planets */}
+      <pointLight
+        color={color}
+        intensity={8} // intensity
+        distance={800} // distance light will reach
+        decay={2} // how quickly the light falls off
+      />
+
+      {/* Atmosphere layer */}
       <mesh
-        ref={atmosphereRef}
-        scale={[1.12, 1.12, 1.12]}
+        scale={[1.10, 1.10, 1.10]}
       >
         <sphereGeometry args={[size, 64, 64]} />
         <primitive object={atmosphereMaterial} attach="material" />
       </mesh>
 
+      {/* Sun sphere */}
       <mesh ref={ref}>
         <sphereGeometry args={[size, 64, 64]} />
         <meshStandardMaterial
@@ -144,7 +113,9 @@ const Sun = forwardRef<Mesh, SunProps>(({
           metalness={0.3}
         />
       </mesh>
-      <mesh ref={glowRef} scale={size * 1.01}>
+
+      {/* Glow effect */}
+      <mesh ref={glowRef} scale={size * 1.10}> 
         <sphereGeometry args={[size, 32, 32]} />
         <shaderMaterial
           transparent

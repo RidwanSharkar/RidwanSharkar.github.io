@@ -38,10 +38,12 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ planet, onClose }) => {
           <div>
             <h2>{planet.label}</h2>
             <p>{planet.description || 'No description available.'}</p>
-          </div>
-          <a href={planet.link} target="_blank" rel="noopener noreferrer" className={styles.infoButton}>
+            
+            <a href={planet.link} target="_blank" rel="noopener noreferrer" className={styles.infoButton}>
             Visit
           </a>
+          </div>
+
         </motion.div>
         </>
       )}
