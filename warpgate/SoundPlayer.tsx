@@ -12,12 +12,12 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
 
   const handleUserInteraction = () => {
     if (audioRef.current) {
-      audioRef.current.muted = false; // Unmute audio
-      audioRef.current.volume = volume; // Set volume to current level
+      audioRef.current.muted = false; // Unmute
+      audioRef.current.volume = volume; // set to current level
       audioRef.current.play().catch((error) => {
         console.error('Failed to play audio:', error);
       });
-      setIsMuted(false); // Update mute state
+      setIsMuted(false); // Update state
     }
   };
 
