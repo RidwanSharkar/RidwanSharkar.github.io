@@ -64,7 +64,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       description: 'explore()',
       orbitRadius: 2.2,
       orbitSpeed: 1.1,
-      planetColor: 'white',
+      planetColor: '#95B8D1',
       size: 0.23,
       rotationSpeed: 0.02, 
       logoTexturePath: '/textures/Fretboardx_logo.png', 

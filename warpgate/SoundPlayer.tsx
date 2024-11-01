@@ -46,15 +46,14 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
       </div>
       <audio ref={audioRef} controls>
         <source src={src} type="audio/mpeg" />
-        {/* Optionally add other formats */}
-        <source src={src.replace(".mp3", ".ogg")} type="audio/ogg" />
-        Your browser does not support the audio element.
+        
       </audio>
     </div>
   );
 };
-
+//      <audio src={src} ref={audioRef} autoPlay loop />
 export default AudioPlayer;
+
 
 
 
