@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import styles from './SoundPlayer.module.css';
 
 interface AudioPlayerProps {
@@ -7,23 +7,18 @@ interface AudioPlayerProps {
 
 const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
   const audioRef = useRef<HTMLAudioElement>(null);
-  const [isMuted, setIsMuted] = useState(true); // browser workaround mute
-  const [volume, setVolume] = useState(0.5); // Default volume
+  const [isMuted, setIsMuted] = useState(true); // Start with muted as true
+  const [volume, setVolume] = useState(0.5); // Default volume at 50%
 
-  useEffect(() => {
+  const handleUserInteraction = () => {
     if (audioRef.current) {
-      audioRef.current.volume = volume; // Set initial volume
-      audioRef.current.muted = isMuted; // Set initial mute state
+      audioRef.current.muted = false; // Unmute audio
+      audioRef.current.volume = volume; // Set volume to current level
       audioRef.current.play().catch((error) => {
-        console.error('Failed to auto-play audio:', error);
+        console.error('Failed to play audio:', error);
       });
+      setIsMuted(false); // Update mute state
     }
-  }, [volume, isMuted]);
-
-  const toggleMute = () => {
-    if (!audioRef.current) return;
-    audioRef.current.muted = !isMuted;
-    setIsMuted(!isMuted);
   };
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,7 +31,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
 
   return (
     <div className={styles.audioPlayer}>
-      <button onClick={toggleMute} className={styles.playButton}>
+      <button onClick={handleUserInteraction} className={styles.playButton}>
         {isMuted ? '🔇' : '🔊'}
       </button>
       <div className={styles.volumeControl}>
@@ -49,7 +44,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
           onChange={handleVolumeChange}
         />
       </div>
-      <audio src={src} ref={audioRef} autoPlay loop />
+      <audio src={src} ref={audioRef} />
     </div>
   );
 };
