@@ -105,13 +105,13 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       size: 0.4,
       rotationSpeed: 0.010,
       moons: [
-        { // Moon 1: Nimbus Weather App
+        { // Moon 1: Predictive Analysis
           orbitRadius: 0.85,
           orbitSpeed: 3,
           size: 0.11,
           moonColor: '#3ad8ff',
-          link: 'http://nimbusweatherapp.com',
-          label: 'Nimbus Weather',
+          link: 'https://github.com/RidwanSharkar/Predictive-Analysis-of-MMA-Fights',
+          label: 'MMA Analysis',
         },
         { // Moon 2: Compound Classifier
           orbitRadius: 1.2,

@@ -7,17 +7,27 @@ interface AudioPlayerProps {
 
 const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
   const audioRef = useRef<HTMLAudioElement>(null);
-  const [isMuted, setIsMuted] = useState(true); // Start with muted as true
-  const [volume, setVolume] = useState(0.5); // Default volume at 50%
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+  const [volume, setVolume] = useState(0.5);
 
-  const handleUserInteraction = () => {
+  const togglePlayPause = () => {
     if (audioRef.current) {
-      audioRef.current.muted = false; // Unmute audio
-      audioRef.current.volume = volume; // Set volume to current level
-      audioRef.current.play().catch((error) => {
-        console.error('Failed to play audio:', error);
-      });
-      setIsMuted(false); // Update mute state
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play().catch((error) => {
+          console.error('Failed to play audio:', error);
+        });
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const toggleMute = () => {
+    if (audioRef.current) {
+      audioRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
     }
   };
 
@@ -31,31 +41,24 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
 
   return (
     <div className={styles.audioPlayer}>
-      <button onClick={handleUserInteraction} className={styles.playButton}>
+      <button onClick={togglePlayPause} className={styles.playPauseButton}>
+        {isPlaying ? '⏸️' : '▶️'}
+      </button>
+      <button onClick={toggleMute} className={styles.muteButton}>
         {isMuted ? '🔇' : '🔊'}
       </button>
-      <div className={styles.volumeControl}>
-        <input
-          type="range"
-          min="0"
-          max="1"
-          step="0.01"
-          value={volume}
-          onChange={handleVolumeChange}
-        />
-      </div>
-      <audio ref={audioRef} controls>
-        <source src={src} type="audio/mpeg" />
-        
-      </audio>
+      <input
+        type="range"
+        min="0"
+        max="1"
+        step="0.01"
+        value={volume}
+        onChange={handleVolumeChange}
+        className={styles.volumeSlider}
+      />
+      <audio ref={audioRef} src={src} controls={false} />
     </div>
   );
 };
-//      <audio src={src} ref={audioRef} autoPlay loop />
+
 export default AudioPlayer;
-
-
-
-
-
-
