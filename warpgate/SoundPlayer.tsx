@@ -12,12 +12,12 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
 
   const handleUserInteraction = () => {
     if (audioRef.current) {
-      audioRef.current.muted = false; // Unmute
-      audioRef.current.volume = volume; // set to current level
+      audioRef.current.muted = false; // Unmute audio
+      audioRef.current.volume = volume; // Set volume to current level
       audioRef.current.play().catch((error) => {
         console.error('Failed to play audio:', error);
       });
-      setIsMuted(false); // Update state
+      setIsMuted(false); // Update mute state
     }
   };
 
@@ -44,9 +44,19 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
           onChange={handleVolumeChange}
         />
       </div>
-      <audio src={src} ref={audioRef} />
+      <audio ref={audioRef} controls>
+        <source src={src} type="audio/mpeg" />
+        {/* Optionally add other formats */}
+        <source src={src.replace(".mp3", ".ogg")} type="audio/ogg" />
+        Your browser does not support the audio element.
+      </audio>
     </div>
   );
 };
 
 export default AudioPlayer;
+
+
+
+
+
