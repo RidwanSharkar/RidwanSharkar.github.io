@@ -1,26 +1,63 @@
 .audioPlayer {
   display: flex;
   align-items: center;
-  justify-content: center; 
-  background: linear-gradient(135deg, #00d2ff, #007bbd); /* Blue panel background */
-  padding: 5px; 
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); 
-  width: auto; 
-  height: auto; 
+  gap: 0px;
+  background: linear-gradient(135deg, #00d2ff, #007bbd);
+  padding: 5px;
+  border-radius: 6.25px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  position: relative;
+  
 }
 
-.playButton {
+.playPauseButton,
+.muteButton {
   background: none;
   border: none;
   color: #ffffff;
-  font-size: 1.0rem; 
+  font-size: 0.85rem;
   cursor: pointer;
-  padding: 0; 
-  margin: 0;
-  transition: transform 0.3s ease;
+  transition: transform 0.2s;
 }
 
-.playButton:hover {
+.playPauseButton:hover,
+.muteButton:hover {
   transform: scale(1.1);
+}
+
+/* hidden by default */
+.volumeSlider {
+  width: 100px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  appearance: none;
+  background: #ffffff;
+  border-radius: 5px;
+  cursor: pointer;
+  position: absolute; 
+  bottom: 85px; 
+  right: -35px; 
+  transform: rotate(-90deg); /* vertical */
+}
+
+/* volume slider on hover */
+.audioPlayer:hover .volumeSlider {
+  opacity: 0.35;
+}
+
+.volumeSlider::-webkit-slider-thumb {
+  appearance: none;
+  width: 10px;
+  height: 10px;
+  background: #007bbd;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.volumeSlider::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  background: #007bbd;
+  border-radius: 50%;
+  cursor: pointer;
 }

@@ -56,7 +56,7 @@ const Sun = forwardRef<Mesh, SunProps>(({
   color = "#FDB813",
   glowIntensity = 0.2,
   rotationSpeed = 0.001,
-  emissiveIntensity = 0.8,
+  emissiveIntensity = 0.25,
 }, ref) => {
   const glowRef = useRef<Mesh>(null!);
 
@@ -89,9 +89,9 @@ const Sun = forwardRef<Mesh, SunProps>(({
       {/* PointLight for illuminating planets */}
       <pointLight
         color={color}
-        intensity={8.5} 
+        intensity={3} 
         distance={2000}
-        decay={1.5} // how quickly the light falls off
+        decay={0.6} 
       />
 
       {/* Atmosphere layer */}

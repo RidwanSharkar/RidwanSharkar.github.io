@@ -62,17 +62,14 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       link: 'https://fretboardx.com',
       label: 'Fretboard-x', 
       description: 'explore()',
-      orbitRadius: 2.2,
+      orbitRadius: 2.1,
       orbitSpeed: 1.1,
-      planetColor: '#95B8D1',
-      size: 0.23,
+      planetColor: '#fc8dad', // f0a5ab                                   <<<<<<<<<<<<<<<<<<<<<<<<<<<<< 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+      size: 0.22,
       rotationSpeed: 0.02, 
       logoTexturePath: '/textures/Fretboardx_logo.png', 
     },
-
-
     //-----------------------------------------------------------------
-
     // PLANET 2: LINKEDIN
     {
       position: [0, 0, 0],
@@ -81,109 +78,103 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       description: 'connect()',
       orbitRadius: 3.25,
       orbitSpeed: 0.60,
-      planetColor: '#9eccfa',
-      size: 0.35,
+      planetColor: '#4FB8FF', // 9eccfa 7692FF 06AED5*** 5EC2B7           <<<<<<<<<<<<<<<<<<<<<<<<<<<<< 2 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+      size: 0.325,
       rotationSpeed: 0.01, 
       logoTexturePath: '/textures/LinkedIn_logo.svg', 
     },
-    
     //-----------------------------------------------------------------
-
     // PLANET 3: GITHUB
     {
       position: [0, 0, 0],
       link: 'https://github.com/RidwanSharkar',
       label: 'GitHub',
-      description: 'browse()',
-      orbitRadius: 5.5,
+      description: 'collaborate()',
+      orbitRadius: 5.33,
       orbitSpeed: 0.15,
-      planetColor: '#4591f1', 
+      planetColor: '#8980F5', // 4591f1  7692FF                           <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 3 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       rings: [
-        { color: 'white', innerScale: 1.20, outerScale: 1.35, inclination: 0 }, 
-        { color: 'white', innerScale: 1.4, outerScale: 1.7, inclination: Math.PI / 2 }, // Perpendicular
+        { color: '#42F2F7', innerScale: 1.25, outerScale: 1.45, inclination: 0 }, 
+        { color: '#42F2F7', innerScale: 1.5, outerScale: 1.7, inclination: Math.PI / 2 }, // Perpendicular
       ],
-      size: 0.4,
+      size: 0.385,
       rotationSpeed: 0.010,
       moons: [
         { // Moon 1: Predictive Analysis
           orbitRadius: 0.85,
-          orbitSpeed: 3,
+          orbitSpeed: 2.25,
           size: 0.11,
-          moonColor: '#3ad8ff',
+          moonColor: '#42F2F7',
           link: 'https://github.com/RidwanSharkar/Predictive-Analysis-of-MMA-Fights',
-          label: 'MMA Analysis',
+          label: 'Predictive Analysis',
         },
         { // Moon 2: Compound Classifier
           orbitRadius: 1.2,
-          orbitSpeed: 0.2,
-          size: 0.18,
-          moonColor: '#80FF72',
+          orbitSpeed: 1.0,
+          size: 0.1675,
+          moonColor: '#80ED99',
           link: 'https://github.com/RidwanSharkar/Pharmacological-Compound-Classifier',
           label: 'Compound Classifier',
         },
         { // Moon 3: MMA Arbitrager
           orbitRadius: 1.6,
           orbitSpeed: 2.2,
-          size: 0.15,
-          moonColor: '#f0a5ab',
+          size: 0.13,
+          moonColor: '#D295BF',
           link: 'https://github.com/RidwanSharkar/Arbitrage-Better',
           label: 'MMA Arbitrager',
         },
       ],
       logoTexturePath: '/textures/Github_logo.svg', 
     },
-    
     //-----------------------------------------------------------------
-
-    // PLANET 3: IG ART STATION
+    // PLANET 4: IG ART STATION
     {
       position: [0, 0, 0],
       link: 'https://instagram.com/ridwansharkar/?hl=en',
       label: 'Instagram',
-      description: 'cutWood()',
+      description: 'carveWood()', 
       orbitRadius: 8,
       orbitSpeed: 0.2,
-      planetColor: '#B8E0D2', 
+      planetColor: '#2DE1FC', // 91C499 BEFFC7   41EAD4                   <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 4 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       rings: [
-        { color: '#BAD29F', innerScale: 1.4, outerScale: 2.25, inclination: -Math.PI / 2.3 },
+        { color: '#2DE1FC', innerScale: 1.4, outerScale: 2.25, inclination: -Math.PI / 2.3 },
       ],
-      size: 0.42,
+      size: 0.36,
       rotationSpeed: 0.001,
       moons: [
         {
           orbitRadius: 1.2,
-          orbitSpeed: 2.5,
-          size: 0.16,
-          moonColor: '#EAC4D5',
+          orbitSpeed: 2,
+          size: 0.125,
+          moonColor: '#91F5AD',
           link: 'https://www.artstation.com/ridwansharkar',
           label: 'Art Station',
         },
       ],
       logoTexturePath: '/textures/Instagram_logo.svg',
     },
-    
     //-----------------------------------------------------------------
-
-    // PLANET 4: OLD MYTHOS SITE
+    // PLANET 5: OLD MYTHOS SITE
     {
       position: [0, 0, 0],
       link: 'https://mythos.store',
       label: 'Mythos.store',
-      description: 'browse() and buy()',
+      description: 'browse()',
       orbitRadius: 10,
       orbitSpeed: 0.3,
-      planetColor: '#fec99e',
+      planetColor: '#FFAAEE', // C880B7                                   <<<<<<<<<<<<<<<<<<<<<<<<<<<<< 5 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       rings: [
-        { color: '#ffe7ce', innerScale: 1.1, outerScale: 1.6, inclination: -Math.PI }, 
+        { color: '#fec2e6', innerScale: 1.3, outerScale: 1.75, inclination: -Math.PI }, 
       ],
       size: 0.3,
-      rotationSpeed: 0.05,
+      rotationSpeed: 0.01,
       moons: [
         {
           orbitRadius: 0.9,
-          orbitSpeed: 5,
-          size: 0.15,
-          moonColor: '#53F4FF',
+          orbitSpeed: 4,
+          size: 0.10,
+          moonColor: '#66C3FF',  
           link: 'https://www.facebook.com/mythoscarver/',
           label: 'Facebook',
         },
