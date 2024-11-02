@@ -89,10 +89,12 @@ const Sun = forwardRef<Mesh, SunProps>(({
       {/* PointLight for illuminating planets */}
       <pointLight
         color={color}
-        intensity={3} 
+        intensity={2} 
         distance={2000}
         decay={0.6} 
       />
+
+
 
       {/* Atmosphere layer */}
       <mesh
@@ -109,7 +111,7 @@ const Sun = forwardRef<Mesh, SunProps>(({
           color={color}
           emissive={color}
           emissiveIntensity={emissiveIntensity}
-          roughness={0.7}
+          roughness={0.76}
           metalness={0.3}
         />
       </mesh>

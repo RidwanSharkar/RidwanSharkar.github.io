@@ -1,12 +1,15 @@
-import React, { useState, Suspense } from 'react';
+// EnhancedPlanetGroup.tsx
+import React, { useState, Suspense, useRef, useEffect, useMemo } from 'react';
 import EnhancedPlanet from './EnhancedPlanet';
 import Sun from './Sun';
 import Explosion from './Explosion';
 import { Vector3 } from 'three';
 import * as THREE from 'three';
 import { extend } from '@react-three/fiber';
-
+import { AsteroidField } from './AsteroidField';
 import { OrbitControls, TransformControls } from 'three-stdlib';
+import { Mesh } from 'three'; // Ensure Mesh is imported
+
 extend({ OrbitControls, TransformControls });
 
 interface EnhancedPlanetGroupProps {
@@ -50,12 +53,12 @@ interface ExplosionData {
 }
 
 //========================================================================================================
-
 const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlanet, selectedPlanet }) => {
   const [explosions, setExplosions] = useState<ExplosionData[]>([]);
+  const planetRefs = useRef<Array<React.RefObject<Mesh>>>([]);
 
-  const planets: PlanetData[] = [
-
+  // 1. Memoize the planets array
+  const planets: PlanetData[] = useMemo(() => [
     // PLANET 1: FRETBOARDX
     {
       position: [0, 0, 0],
@@ -64,12 +67,11 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       description: 'explore()',
       orbitRadius: 2.1,
       orbitSpeed: 1.1,
-      planetColor: '#fc8dad', // f0a5ab                                   <<<<<<<<<<<<<<<<<<<<<<<<<<<<< 1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+      planetColor: '#fc8dad',
       size: 0.22,
       rotationSpeed: 0.02, 
       logoTexturePath: '/textures/Fretboardx_logo.png', 
     },
-    //-----------------------------------------------------------------
     // PLANET 2: LINKEDIN
     {
       position: [0, 0, 0],
@@ -78,12 +80,11 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       description: 'connect()',
       orbitRadius: 3.25,
       orbitSpeed: 0.60,
-      planetColor: '#4FB8FF', // 9eccfa 7692FF 06AED5*** 5EC2B7           <<<<<<<<<<<<<<<<<<<<<<<<<<<<< 2 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+      planetColor: '#4FB8FF',
       size: 0.325,
       rotationSpeed: 0.01, 
       logoTexturePath: '/textures/LinkedIn_logo.svg', 
     },
-    //-----------------------------------------------------------------
     // PLANET 3: GITHUB
     {
       position: [0, 0, 0],
@@ -92,32 +93,32 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       description: 'collaborate()',
       orbitRadius: 5.33,
       orbitSpeed: 0.15,
-      planetColor: '#8980F5', // 4591f1  7692FF                           <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 3 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+      planetColor: '#8980F5',
       rings: [
-        { color: '#42F2F7', innerScale: 1.25, outerScale: 1.45, inclination: 0 }, 
-        { color: '#42F2F7', innerScale: 1.5, outerScale: 1.7, inclination: Math.PI / 2 }, // Perpendicular
+        { color: '#FFAAEE', innerScale: 1.25, outerScale: 1.45, inclination: 0 }, 
+        { color: '#FFAAEE', innerScale: 1.5, outerScale: 1.7, inclination: Math.PI / 2 },
       ],
       size: 0.385,
       rotationSpeed: 0.010,
       moons: [
-        { // Moon 1: Predictive Analysis
-          orbitRadius: 0.85,
+        { 
+          orbitRadius: 0.8,
           orbitSpeed: 2.25,
-          size: 0.11,
-          moonColor: '#42F2F7',
+          size: 0.10,
+          moonColor: '#999999',
           link: 'https://github.com/RidwanSharkar/Predictive-Analysis-of-MMA-Fights',
           label: 'Predictive Analysis',
         },
-        { // Moon 2: Compound Classifier
-          orbitRadius: 1.2,
-          orbitSpeed: 1.0,
-          size: 0.1675,
-          moonColor: '#80ED99',
+        { 
+          orbitRadius: 1.15,
+          orbitSpeed: 1.5,
+          size: 0.1625,
+          moonColor: '#a6b5b7',
           link: 'https://github.com/RidwanSharkar/Pharmacological-Compound-Classifier',
           label: 'Compound Classifier',
         },
-        { // Moon 3: MMA Arbitrager
-          orbitRadius: 1.6,
+        { 
+          orbitRadius: 1.50,
           orbitSpeed: 2.2,
           size: 0.13,
           moonColor: '#D295BF',
@@ -127,7 +128,6 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       ],
       logoTexturePath: '/textures/Github_logo.svg', 
     },
-    //-----------------------------------------------------------------
     // PLANET 4: IG ART STATION
     {
       position: [0, 0, 0],
@@ -136,9 +136,9 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       description: 'carveWood()', 
       orbitRadius: 8,
       orbitSpeed: 0.2,
-      planetColor: '#2DE1FC', // 91C499 BEFFC7   41EAD4                   <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 4 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+      planetColor: '#FFAAEE',
       rings: [
-        { color: '#2DE1FC', innerScale: 1.4, outerScale: 2.25, inclination: -Math.PI / 2.3 },
+        { color: '#FFAAEE', innerScale: 1.4, outerScale: 2.25, inclination: -Math.PI / 2.3 },
       ],
       size: 0.36,
       rotationSpeed: 0.001,
@@ -154,7 +154,6 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       ],
       logoTexturePath: '/textures/Instagram_logo.svg',
     },
-    //-----------------------------------------------------------------
     // PLANET 5: OLD MYTHOS SITE
     {
       position: [0, 0, 0],
@@ -163,9 +162,9 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       description: 'browse()',
       orbitRadius: 10,
       orbitSpeed: 0.3,
-      planetColor: '#FFAAEE', // C880B7                                   <<<<<<<<<<<<<<<<<<<<<<<<<<<<< 5 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+      planetColor: '#2DE1FC',
       rings: [
-        { color: '#fec2e6', innerScale: 1.3, outerScale: 1.75, inclination: -Math.PI }, 
+        { color: '#2DE1FC', innerScale: 1.3, outerScale: 1.75, inclination: -Math.PI }, 
       ],
       size: 0.3,
       rotationSpeed: 0.01,
@@ -174,43 +173,74 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
           orbitRadius: 0.9,
           orbitSpeed: 4,
           size: 0.10,
-          moonColor: '#66C3FF',  
+          moonColor: '#FFAAEE',  
           link: 'https://www.facebook.com/mythoscarver/',
           label: 'Facebook',
         },
       ],
       logoTexturePath: '/textures/Mythos_logo.png',
     },
-  ]; 
+  ], []); // Empty dependency array ensures planets are initialized only once
 
-  //========================================================================================================
+  // Initialize refs for each planet
+  useEffect(() => {
+    planetRefs.current = planets.map(() => React.createRef<Mesh>());
+  }, [planets.length, planets]);
 
-  const handleCollision = (index: number) => {
-    const planet = planets[index];
-    const currentTime = Date.now();
-    const explosionPosition = new Vector3(
-      Math.cos(currentTime * planet.orbitSpeed) * planet.orbitRadius,
-      0,
-      Math.sin(currentTime * planet.orbitSpeed) * planet.orbitRadius
-    );
 
-    const newExplosion: ExplosionData = {
-      position: explosionPosition,
-      color: planet.planetColor,
-      id: currentTime,
-    };
+  const getPlanetPositions = (): Vector3[] => {
+    const positions: Vector3[] = [];
+    planetRefs.current.forEach(ref => {
+      if (ref.current) {
+        const worldPosition = new Vector3();
+        ref.current.getWorldPosition(worldPosition);
+        positions.push(worldPosition.clone());
+      } else {
+        positions.push(new Vector3(0, 0, 0));
+      }
+    });
+    return positions;
+  };
 
-    setExplosions((prev) => [...prev, newExplosion]);
-    setTimeout(() => {
-      setExplosions((prev) => prev.filter((exp) => exp.id !== newExplosion.id));
-    }, 2000);
+
+
+  const getPlanetSizes = (): number[] => {
+    return planets.map(planet => planet.size);
+  };
+
+
+  const handleCollision = (planetIndex: number, collisionPosition: Vector3) => {
+    const planetRef = planetRefs.current[planetIndex];
+    if (planetRef.current) {
+      const planetWorldPosition = new Vector3();
+      planetRef.current.getWorldPosition(planetWorldPosition);
+
+      console.log(`Collision detected on Planet ${planetIndex} at position:`, collisionPosition.toArray());
+      console.log(`Planet ${planetIndex} world position:`, planetWorldPosition.toArray());
+
+      const newExplosion: ExplosionData = {
+        position: collisionPosition,
+        color: planets[planetIndex].planetColor,
+        id: Date.now(),
+      };
+
+      setExplosions(prev => [...prev, newExplosion]);
+
+      setTimeout(() => {
+        setExplosions(prev => prev.filter(exp => exp.id !== newExplosion.id));
+      }, 1000);
+    }
   };
 
   return (
     <Suspense fallback={null}> 
-    
       <Sun />
-
+      
+      <AsteroidField 
+        planetPositions={getPlanetPositions()} 
+        planetSizes={getPlanetSizes()}
+        onCollision={handleCollision} 
+      />
       {/* Render orbit paths */}
       {planets.map((planet, index) => (
         <mesh key={`orbit-${index}`} rotation-x={Math.PI / 2}>
@@ -225,23 +255,37 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
         </mesh>
       ))}
 
+      {/* collision points */}
+      {explosions.map((explosion) => (
+        <mesh key={explosion.id} position={explosion.position}>
+          <sphereGeometry args={[0.1, 16, 16]} />
+          <meshBasicMaterial color={explosion.color} />
+        </mesh>
+      ))}
+
+      {/* Render Planets */}
       {planets.map((planet, index) => (
         <EnhancedPlanet
           key={index}
           {...planet}
           index={index}
-          onCollision={handleCollision}
           onSelectPlanet={onSelectPlanet} 
-          selected={selectedPlanet?.index === index} 
+          selected={selectedPlanet?.index === index}
+          collisionTriggered={false} // Initialize
+          ref={planetRefs.current[index]} // tracks position
         />
       ))}
 
-      {/* Render explosions - dormant */}
+
+      {/* Render active explosions */}
       {explosions.map((explosion) => (
         <Explosion
           key={explosion.id}
           position={explosion.position}
           color={explosion.color}
+          size={0.5}
+          duration={1}
+          particleCount={30}
         />
       ))}
     </Suspense>

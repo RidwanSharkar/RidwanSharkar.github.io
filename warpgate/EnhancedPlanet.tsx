@@ -1,14 +1,15 @@
-import React, { useRef, useState, useEffect } from 'react';
+// EnhancedPlanet.tsx
+import React, { forwardRef, useRef, useState, useEffect, useMemo } from 'react';
 import { useFrame, useLoader } from '@react-three/fiber';
-import { Mesh, Euler, TextureLoader, ShaderMaterial  } from 'three';
+import { Mesh, Euler, TextureLoader, ShaderMaterial } from 'three';
 import Moon from './Moon';
 import * as THREE from 'three';
 import { CelestialObjectGlow } from './CelestialObjectGlow';
 import { PlanetData } from './EnhancedPlanetGroup';
 import { ThreeEvent } from '@react-three/fiber';
 
+/* ====================================== SHADERS(move) ====================================== */
 
-// Atmosphere shader
 const atmosphereVertexShader = `
 varying vec3 vNormal;
 void main() {
@@ -28,18 +29,18 @@ void main() {
 
 interface EnhancedPlanetProps extends PlanetData {
   index: number;
-  onCollision: (index: number) => void;
   onSelectPlanet: (index: number, planet: PlanetData) => void;
   selected: boolean;
+  collisionTriggered: boolean; 
 }
+
 
 /*=============================================================================================================*/
 
-const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({ 
+const EnhancedPlanet = forwardRef<Mesh, EnhancedPlanetProps>(({
   planetColor, 
   size,
   index,
-  onCollision,
   onSelectPlanet,
   selected,
   link,
@@ -51,18 +52,17 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
   rotationSpeed = 0.01,
   moons,
   logoTexturePath,
-}) => {
-  const meshRef = useRef<Mesh>(null);
+}, ref) => {
   const atmosphereRef = useRef<Mesh>(null);
   const [hovered, setHovered] = useState(false);
 
   const logoTexture = useLoader(
     TextureLoader,
-    logoTexturePath || '/textures/transparent.png' //placeholder
+    logoTexturePath || '/textures/transparent.png' // Placeholder texture
   );
-  
-  // Create atmosphere material
-  const atmosphereMaterial = new ShaderMaterial({
+
+  // Memoize atm material
+  const atmosphereMaterial = useMemo(() => new ShaderMaterial({
     uniforms: {
       glowColor: { value: new THREE.Color(planetColor) }
     },
@@ -71,26 +71,38 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
     blending: THREE.AdditiveBlending,
     side: THREE.BackSide,
     transparent: true
-  });
+  }), [planetColor]);
 
+  // Local meshRef
+  const meshRef = useRef<Mesh | null>(null);
+
+  // Ref callback to assign both meshRef and forwarded ref
+  const setRefs = (node: Mesh | null) => {
+    meshRef.current = node;
+    if (typeof ref === 'function') {
+      ref(node);
+    } else if (ref) {
+      (ref as React.MutableRefObject<Mesh | null>).current = node;
+    }
+  };
 
   useFrame(({ clock }) => {
     const elapsed = clock.getElapsedTime();
-    if (meshRef.current) {
+    if (meshRef.current) {                          // Update planet
       meshRef.current.position.x = Math.cos(elapsed * orbitSpeed) * orbitRadius;
       meshRef.current.position.z = Math.sin(elapsed * orbitSpeed) * orbitRadius;
-      meshRef.current.rotation.y += rotationSpeed;         // Planet rotation
+      meshRef.current.rotation.y += rotationSpeed;  // Planet rotation
       if (atmosphereRef.current) {
         atmosphereRef.current.position.copy(meshRef.current.position);
         atmosphereRef.current.rotation.copy(meshRef.current.rotation);
       }
-      const distance = meshRef.current.position.length();  // Collision detection placeholder logic
-      if (distance < 0.4) { 
-        onCollision(index);
+      if (logoRef.current) {
+        logoRef.current.rotation.y += 0.01;         // Logo rotation speed
       }
     }
   });
 
+  /* ====================================== CLICK ====================================== */
   const handleClick = () => {
     onSelectPlanet(index, { 
       position: [0, 0, 0], 
@@ -110,6 +122,8 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
 
   const logoRef = useRef<Mesh>(null);
 
+  
+  /* ====================================== HOVER ====================================== */
   const handlePointerOver = (e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation();
     setTimeout(() => setHovered(true), 50);
@@ -122,18 +136,11 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
     if (!selected) document.body.style.cursor = 'auto';
   };
   
-/*=============================================================================================================*/
-
-  useFrame(() => {
-    if (logoRef.current) {
-      logoRef.current.rotation.y += 0.01; // Logo rotation speed
-    }
-  });
-
   useEffect(() => {
     console.log(`Planet ${index} selected: ${selected}`);
   }, [selected, index]);
 
+  // cursor style
   useEffect(() => {
     if (selected) {
       document.body.style.cursor = 'pointer';
@@ -141,10 +148,10 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
       document.body.style.cursor = 'auto';
     }
   }, [hovered, selected]);
+  /* ====================================== HOVER ====================================== */
 
   return (
     <group>
-
       {/* Atmosphere layer */}
       <mesh
         ref={atmosphereRef}
@@ -154,18 +161,17 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
         <primitive object={atmosphereMaterial} attach="material" />
       </mesh>
 
-
       <mesh
-        ref={meshRef}
+        ref={setRefs} // Attach meshRef and f ref
         onClick={handleClick}
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}
-        scale={selected ? [1.0, 1.0, 1.0] : [1, 1, 1]} // scale when selected meh
+        scale={selected ? [1.0, 1.0, 1.0] : [1, 1, 1]} // dont
       >
         <sphereGeometry args={[size, 64, 64]} />
         <meshStandardMaterial color={planetColor} />
 
-        {/* HOVER + SELECT GLOW */}
+        {/* Hover + Select Glow */}
         {(selected) && (
           <CelestialObjectGlow 
             color={planetColor} 
@@ -222,11 +228,11 @@ const EnhancedPlanet: React.FC<EnhancedPlanetProps> = ({
             />
           </mesh>
         )}
-
-
       </mesh>
     </group>
   );
-};
+});
+
+EnhancedPlanet.displayName = 'EnhancedPlanet';
 
 export default EnhancedPlanet;
