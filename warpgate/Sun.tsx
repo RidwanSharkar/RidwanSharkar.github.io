@@ -89,9 +89,9 @@ const Sun = forwardRef<Mesh, SunProps>(({
       {/* PointLight for illuminating planets */}
       <pointLight
         color={color}
-        intensity={2} 
+        intensity={1.25} 
         distance={2000}
-        decay={0.6} 
+        decay={0.7} 
       />
 
 

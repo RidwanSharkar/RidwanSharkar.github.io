@@ -42,7 +42,7 @@ interface AsteroidFieldProps {
     const meshRef = useRef<Mesh | null>(null);
     const materialRef = useRef<MeshStandardMaterial | null>(null);
     const initialAngle = useMemo(() => Math.random() * Math.PI * 2, []);
-    const yOffset = useMemo(() => (Math.random() - 0.5) * 2, []);
+    const yOffset = useMemo(() => (Math.random() - 0.5) * 2.5, []); // field height 
     const [hasCollided, setHasCollided] = useState(false);
     const lastCollisionTime = useRef(0);
   
@@ -79,7 +79,7 @@ interface AsteroidFieldProps {
       const time = clock.getElapsedTime();
   
       if (hasCollided) {
-        if (time - lastCollisionTime.current > 0.5) {
+        if (time - lastCollisionTime.current > 2) {
           resetAsteroid(time);
         }
         return;
@@ -102,20 +102,18 @@ interface AsteroidFieldProps {
         const collisionThreshold = size + planetSizes[index];
         
         if (distance < collisionThreshold && !hasCollided && time - lastCollisionTime.current > 1) {
-      
+                    
           const collisionPoint = calculateCollisionPoint(
-            meshRef.current!.position,
+            meshRef.current!.position.clone(), // Clone the position to avoid modifying the original
             planetPos,
             planetSizes[index]
           );
   
-         
           if (materialRef.current) {
             materialRef.current.opacity = 0;
             materialRef.current.transparent = true;
           }
   
-        
           onCollision(index, collisionPoint);
           setHasCollided(true);
           lastCollisionTime.current = time;
@@ -132,7 +130,7 @@ interface AsteroidFieldProps {
           roughness={0.8}
           metalness={0.3}
           transparent
-          opacity={0.85}
+          opacity={1}
         />
       </mesh>
     );
@@ -143,7 +141,7 @@ interface AsteroidFieldProps {
     planetSizes,
     onCollision 
   }) => {
-    const asteroidCount = 100;
+    const asteroidCount = 300;
     const asteroids: AsteroidData[] = useMemo(() => 
       Array.from({ length: asteroidCount }).map(() => {
         const isInnerOrbit = Math.random() < 0.3;
@@ -153,8 +151,8 @@ interface AsteroidFieldProps {
   
         return {
           id: uuidv4(),
-          size: Math.random() * 0.08 + 0.05, // Size
-          speed: Math.random() * 0.3 + 0.1, // Speed
+          size: Math.random() * 0.06 + 0.01, // Size
+          speed: Math.random() * 0.5 + 0.1, // Speed
           orbitRadius,
           orbitCenter: new Vector3(0, 0, 0)
         };
