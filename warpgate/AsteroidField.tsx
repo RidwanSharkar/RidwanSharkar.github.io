@@ -1,7 +1,7 @@
 // AsteroidField.tsx
-import React, { useRef, useMemo, useState } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Mesh, Vector3, Color, MeshStandardMaterial } from 'three';
+import { Mesh, Vector3, MeshStandardMaterial } from 'three';
 import { v4 as uuidv4 } from 'uuid';
 
 
@@ -13,7 +13,8 @@ interface AsteroidProps {
     planetPositions: Vector3[];
     planetSizes: number[];
     onCollision: (planetIndex: number, position: Vector3) => void;
-  }
+    color: string;
+}
 
 interface AsteroidData {
     id: string;
@@ -21,6 +22,7 @@ interface AsteroidData {
     speed: number;
     orbitRadius: number;
     orbitCenter: Vector3;
+    color: string;
 }
 
 interface AsteroidFieldProps {
@@ -35,25 +37,27 @@ interface AsteroidFieldProps {
     speed, 
     orbitRadius,
     orbitCenter,
-    planetPositions,
-    planetSizes,
-    onCollision 
+    //planetPositions,
+    //planetSizes,
+   //onCollision,
+    color
   }) => {
     const meshRef = useRef<Mesh | null>(null);
     const materialRef = useRef<MeshStandardMaterial | null>(null);
     const initialAngle = useMemo(() => Math.random() * Math.PI * 2, []);
-    const yOffset = useMemo(() => (Math.random() - 0.5) * 2.5, []); // field height 
-    const [hasCollided, setHasCollided] = useState(false);
-    const lastCollisionTime = useRef(0);
+    const yOffset = useMemo(() => (Math.random() - 0.5) * 2.2, []); // field height 
+   // const [hasCollided, setHasCollided] = useState(false);
+    //const lastCollisionTime = useRef(0);
+    //const collisionsRef = useRef<Set<number>>(new Set());
   
     // Calculate collision point on planet surface
-    const calculateCollisionPoint = (asteroidPos: Vector3, planetPos: Vector3, planetSize: number): Vector3 => {
-      const direction = new Vector3().subVectors(asteroidPos, planetPos).normalize();
-      return new Vector3().addVectors(planetPos, direction.multiplyScalar(planetSize));
-    };
+   // const calculateCollisionPoint = (asteroidPos: Vector3, planetPos: Vector3, planetSize: number): Vector3 => {
+     // const direction = new Vector3().subVectors(asteroidPos, planetPos).normalize();
+    //  return planetPos.clone().add(direction.multiplyScalar(planetSize));
+    //};
   
-    // Reset asteroid to a new random position
-    const resetAsteroid = (time: number) => {
+    /* Reset asteroid to a new random position
+  const resetAsteroid = (time: number) => {
       if (meshRef.current && materialRef.current) {
         const newAngle = Math.random() * Math.PI * 2;
         const newOrbitRadius = Math.random() > 0.5 ? 
@@ -66,24 +70,25 @@ interface AsteroidFieldProps {
           orbitCenter.z + Math.sin(newAngle) * newOrbitRadius
         );
   
-        materialRef.current.color = new Color('#8B8B8B');
+        materialRef.current.color = new Color(color);
         materialRef.current.emissive = new Color('#000000');
         lastCollisionTime.current = time;
         setHasCollided(false);
       }
-    };
+    };*/
   
     useFrame(({ clock }) => {
       if (!meshRef.current) return;
   
       const time = clock.getElapsedTime();
   
-      if (hasCollided) {
-        if (time - lastCollisionTime.current > 2) {
-          resetAsteroid(time);
-        }
-        return;
-      }
+      // if (hasCollided) {
+      //   if (time - lastCollisionTime.current > 2) {
+      //     resetAsteroid(time);
+      //     collisionsRef.current.clear();
+      //   }
+      //   return;
+      // }
   
       const angle = initialAngle + time * speed;
       
@@ -97,28 +102,30 @@ interface AsteroidFieldProps {
       meshRef.current.rotation.y += 0.01;
   
 
-      planetPositions.forEach((planetPos, index) => {
-        const distance = meshRef.current!.position.distanceTo(planetPos);
-        const collisionThreshold = size + planetSizes[index];
+      // Commenting out collision detection
+      // planetPositions.forEach((planetPos, index) => {
+      //   const currentPlanetPos = planetPos.clone();
+      //   const distance = meshRef.current!.position.distanceTo(currentPlanetPos);
+      //   const collisionThreshold = size + planetSizes[index];
         
-        if (distance < collisionThreshold && !hasCollided && time - lastCollisionTime.current > 1) {
-                    
-          const collisionPoint = calculateCollisionPoint(
-            meshRef.current!.position.clone(), // Clone the position to avoid modifying the original
-            planetPos,
-            planetSizes[index]
-          );
-  
-          if (materialRef.current) {
-            materialRef.current.opacity = 0;
-            materialRef.current.transparent = true;
-          }
-  
-          onCollision(index, collisionPoint);
-          setHasCollided(true);
-          lastCollisionTime.current = time;
-        }
-      });
+      //   if (distance < collisionThreshold && !hasCollided && time - lastCollisionTime.current > 1 && !collisionsRef.current.has(index)) {
+      //     const collisionPoint = calculateCollisionPoint(
+      //       meshRef.current!.position,
+      //       currentPlanetPos,
+      //       planetSizes[index]
+      //     );
+
+      //     if (materialRef.current) {
+      //       materialRef.current.opacity = 0;
+      //       materialRef.current.transparent = true;
+      //     }
+
+      //     onCollision(index, collisionPoint);
+      //     setHasCollided(true);
+      //     lastCollisionTime.current = time;
+      //     collisionsRef.current.add(index);
+      //   }
+      // });
     });
   
     return (
@@ -126,9 +133,9 @@ interface AsteroidFieldProps {
         <icosahedronGeometry args={[size, 0]} />
         <meshStandardMaterial 
           ref={materialRef}
-          color="#8B8B8B"
-          roughness={0.8}
-          metalness={0.3}
+          color={color}
+          roughness={0.95}
+          metalness={0.2}
           transparent
           opacity={1}
         />
@@ -141,23 +148,20 @@ interface AsteroidFieldProps {
     planetSizes,
     onCollision 
   }) => {
-    const asteroidCount = 300;
-    const asteroids: AsteroidData[] = useMemo(() => 
-      Array.from({ length: asteroidCount }).map(() => {
-        const isInnerOrbit = Math.random() < 0.3;
-        const orbitRadius = isInnerOrbit ?
-          Math.random() * 5 + 3 :  // Inner orbit: 3-8 units
-          Math.random() * 12 + 8;  // Outer orbit: 8-20 units
-  
-        return {
-          id: uuidv4(),
-          size: Math.random() * 0.06 + 0.01, // Size
-          speed: Math.random() * 0.5 + 0.1, // Speed
-          orbitRadius,
-          orbitCenter: new Vector3(0, 0, 0)
-        };
-      }), [asteroidCount]
-    );
+    const asteroidCount = 400;
+    const asteroids: AsteroidData[] = useMemo(() => {
+      const asteroidColors = [ '#A88F6B', '#C4B08C', '#A9A9A9', '#D3D3D3'];
+      return Array.from({ length: asteroidCount }).map(() => ({
+        id: uuidv4(),
+        size: Math.random() * 0.07 + 0.001,
+        speed: Math.random() * 0.5 + 0.1,
+        orbitRadius: Math.random() < 0.28 ? 
+          Math.random() * 5 + 2 : 
+          Math.random() * 2.5 + 9,
+        orbitCenter: new Vector3(0, 0, 0),
+        color: asteroidColors[Math.floor(Math.random() * asteroidColors.length)]
+      }));
+    }, [asteroidCount]);
   
     return (
       <group>
@@ -171,7 +175,8 @@ interface AsteroidFieldProps {
         planetPositions={planetPositions} 
         planetSizes={planetSizes}
         onCollision={onCollision}
-        />
+        color={asteroid.color}
+    />
         ))}
       </group>
     );

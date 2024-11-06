@@ -67,7 +67,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       description: 'explore()',
       orbitRadius: 2.1,
       orbitSpeed: 1.1,
-      planetColor: '#fc8dad',
+      planetColor: '#e88d96',
       size: 0.22,
       rotationSpeed: 0.02, 
       logoTexturePath: '/textures/Fretboardx_logo.png', 
@@ -82,7 +82,10 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       orbitSpeed: 0.60,
       planetColor: '#4FB8FF',
       size: 0.325,
-      rotationSpeed: 0.01, 
+      rotationSpeed: 0.01,
+      rings: [
+        { color: '#00FFFF', innerScale: 1.3, outerScale: 1.45, inclination: -Math.PI / 3 }
+      ],
       logoTexturePath: '/textures/LinkedIn_logo.svg', 
     },
     // PLANET 3: GITHUB
@@ -95,22 +98,22 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       orbitSpeed: 0.15,
       planetColor: '#8980F5',
       rings: [
-        { color: '#FFAAEE', innerScale: 1.25, outerScale: 1.45, inclination: 0 }, 
-        { color: '#FFAAEE', innerScale: 1.5, outerScale: 1.7, inclination: Math.PI / 2 },
+        { color: '#FFAAEE', innerScale: 1.25, outerScale: 1.40, inclination: 0 }, 
+        { color: '#FFAAEE', innerScale: 1.5, outerScale: 1.825, inclination: Math.PI / 2 },
       ],
       size: 0.385,
       rotationSpeed: 0.010,
       moons: [
         { 
-          orbitRadius: 0.8,
+          orbitRadius: 0.90,
           orbitSpeed: 2.25,
-          size: 0.10,
+          size: 0.11,
           moonColor: '#E3C0D3',
           link: 'https://github.com/RidwanSharkar/Predictive-Analysis-of-MMA-Fights',
           label: 'Predictive Analysis',
         },
         { 
-          orbitRadius: 1.15,
+          orbitRadius: 1.25,
           orbitSpeed: 1.5,
           size: 0.1625,
           moonColor: '#FFAAEE',
@@ -118,7 +121,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
           label: 'Compound Classifier',
         },
         { 
-          orbitRadius: 1.50,
+          orbitRadius: 1.62,
           orbitSpeed: 2.2,
           size: 0.13,
           moonColor: '#D295BF',
@@ -140,7 +143,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       rings: [
         { color: '#7EE081', innerScale: 1.4, outerScale: 2.25, inclination: -Math.PI / 2.3 },
       ],
-      size: 0.36,
+      size: 0.35,
       rotationSpeed: 0.001,
       moons: [
         {
@@ -180,7 +183,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       ],
       logoTexturePath: '/textures/Mythos_logo.png',
     },
-  ], []); // Empty dependency array ensures planets are initialized only once
+  ], []); 
 
   // Initialize refs for each planet
   useEffect(() => {
@@ -212,20 +215,18 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
   const handleCollision = (planetIndex: number, collisionPosition: Vector3) => {
     const planetRef = planetRefs.current[planetIndex];
     if (planetRef.current) {
-      const planetWorldPosition = new Vector3();
-      planetRef.current.getWorldPosition(planetWorldPosition);
-
-      console.log(`Collision detected on Planet ${planetIndex} at position:`, collisionPosition.toArray());
-      console.log(`Planet ${planetIndex} world position:`, planetWorldPosition.toArray());
+      // Remove old explosion immediately
+      setExplosions(prev => prev.filter(exp => exp.id !== Date.now()));
 
       const newExplosion: ExplosionData = {
-        position: collisionPosition,
+        position: collisionPosition.clone(), // Clone to prevent reference issues
         color: planets[planetIndex].planetColor,
         id: Date.now(),
       };
 
       setExplosions(prev => [...prev, newExplosion]);
 
+      // Clean up explosion after animation
       setTimeout(() => {
         setExplosions(prev => prev.filter(exp => exp.id !== newExplosion.id));
       }, 1000);
@@ -251,7 +252,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
               64,
             ]}
           />
-          <meshBasicMaterial color="#ffffff" opacity={0.1} transparent side={THREE.DoubleSide}/>
+          <meshBasicMaterial color="#ffffff" opacity={0.08} transparent side={THREE.DoubleSide}/>
         </mesh>
       ))}
 
