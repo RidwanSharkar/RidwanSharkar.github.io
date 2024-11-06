@@ -1,15 +1,26 @@
 import React, { useRef, useState } from 'react';
 import styles from './SoundPlayer.module.css';
 
-interface AudioPlayerProps {
+interface Track {
+  id: number;
+  name: string;
   src: string;
 }
 
-const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
+const tracks: Track[] = [
+  { id: 1, name: "Track 1", src: "/audio/track1.mp3" },
+  { id: 2, name: "Track 2", src: "/audio/track2.mp3" },
+  { id: 3, name: "Track 3", src: "/audio/track3.mp3" },
+  { id: 4, name: "Track 4", src: "/audio/track4.mp3" },
+  { id: 5, name: "Track 5", src: "/audio/track5.mp3" },
+];
+
+const AudioPlayer: React.FC = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [volume, setVolume] = useState(0.5);
+  const [currentTrack, setCurrentTrack] = useState<Track>(tracks[0]);
 
   const togglePlayPause = () => {
     if (audioRef.current) {
@@ -21,6 +32,14 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
         });
       }
       setIsPlaying(!isPlaying);
+    }
+  };
+
+  const selectTrack = (track: Track) => {
+    setCurrentTrack(track);
+    setIsPlaying(false);
+    if (audioRef.current) {
+      audioRef.current.load();
     }
   };
 
@@ -40,23 +59,36 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
   };
 
   return (
-    <div className={styles.audioPlayer}>
-      <button onClick={togglePlayPause} className={styles.playPauseButton}>
-        {isPlaying ? '⏸️' : '▶️'}
-      </button>
-      <button onClick={toggleMute} className={styles.muteButton}>
-        {isMuted ? '🔇' : '🔊'}
-      </button>
-      <input
-        type="range"
-        min="0"
-        max="1"
-        step="0.01"
-        value={volume}
-        onChange={handleVolumeChange}
-        className={styles.volumeSlider}
-      />
-      <audio ref={audioRef} src={src} controls={false} />
+    <div className={styles.audioContainer}>
+      <div className={styles.trackButtons}>
+        {tracks.map((track) => (
+          <button
+            key={track.id}
+            onClick={() => selectTrack(track)}
+            className={`${styles.trackButton} ${currentTrack.id === track.id ? styles.activeTrack : ''}`}
+          >
+            {track.name}
+          </button>
+        ))}
+      </div>
+      <div className={styles.audioPlayer}>
+        <button onClick={togglePlayPause} className={styles.playPauseButton}>
+          {isPlaying ? '⏸️' : '▶️'}
+        </button>
+        <button onClick={toggleMute} className={styles.muteButton}>
+          {isMuted ? '🔇' : '🔊'}
+        </button>
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.01"
+          value={volume}
+          onChange={handleVolumeChange}
+          className={styles.volumeSlider}
+        />
+        <audio ref={audioRef} src={currentTrack.src} controls={false} />
+      </div>
     </div>
   );
 };

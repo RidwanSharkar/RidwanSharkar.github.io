@@ -1,13 +1,50 @@
+.audioContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.trackButtons {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 2px;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.trackButton {
+  background: rgba(0, 123, 189, 0.3);
+  border: 1px solid #007bbd;
+  color: #ffffff;
+  padding: 2px 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.5rem;
+  transition: all 0.2s;
+  flex: 1;
+  min-width: 0;
+}
+
+.trackButton:hover {
+  background: rgba(0, 123, 189, 0.5);
+}
+
+.activeTrack {
+  background: rgba(0, 123, 189, 0.8);
+}
+
 .audioPlayer {
   display: flex;
   align-items: center;
-  gap: 0px;
+  gap: 2px;
   background: linear-gradient(135deg, #00d2ff, #007bbd);
-  padding: 5px;
-  border-radius: 6.25px;
+  padding: 4px;
+  border-radius: 6px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   position: relative;
-  
+  width: 100%;
 }
 
 .playPauseButton,
@@ -15,9 +52,10 @@
   background: none;
   border: none;
   color: #ffffff;
-  font-size: 0.85rem;
+  font-size: 1rem;
   cursor: pointer;
   transition: transform 0.2s;
+  padding: 0 4px;
 }
 
 .playPauseButton:hover,
@@ -27,17 +65,16 @@
 
 /* hidden by default */
 .volumeSlider {
-  width: 100px;
+  width: 60px;
   opacity: 0;
   transition: opacity 0.3s ease;
   appearance: none;
   background: #ffffff;
   border-radius: 5px;
   cursor: pointer;
-  position: absolute; 
-  bottom: 85px; 
-  right: -35px; 
-  transform: rotate(-90deg); /* vertical */
+  position: relative;
+  margin: 0 4px;
+  flex: 1;
 }
 
 /* volume slider on hover */
