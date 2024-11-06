@@ -15,12 +15,16 @@ const tracks: Track[] = [
   { id: 5, name: "Track 5", src: "/audio/track5.mp3" },
 ];
 
-const AudioPlayer: React.FC = () => {
+interface AudioPlayerProps {
+  src: string;
+}
+
+const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [volume, setVolume] = useState(0.5);
-  const [currentTrack, setCurrentTrack] = useState<Track>(tracks[0]);
+  const [currentTrack, setCurrentTrack] = useState<Track>({ id: 0, name: "Custom Track", src });
 
   const togglePlayPause = () => {
     if (audioRef.current) {
