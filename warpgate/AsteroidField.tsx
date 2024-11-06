@@ -148,7 +148,7 @@ interface AsteroidFieldProps {
     planetSizes,
     onCollision 
   }) => {
-    const asteroidCount = 400;
+    const asteroidCount = 300;
     const asteroids: AsteroidData[] = useMemo(() => {
       const asteroidColors = [ '#A88F6B', '#C4B08C', '#A9A9A9', '#D3D3D3'];
       return Array.from({ length: asteroidCount }).map(() => ({

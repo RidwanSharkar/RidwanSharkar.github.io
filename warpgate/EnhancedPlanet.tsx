@@ -31,7 +31,8 @@ interface EnhancedPlanetProps extends PlanetData {
   index: number;
   onSelectPlanet: (index: number, planet: PlanetData) => void;
   selected: boolean;
-  collisionTriggered: boolean; 
+  collisionTriggered: boolean;
+  startAngle?: number;
 }
 
 
@@ -52,6 +53,7 @@ const EnhancedPlanet = forwardRef<Mesh, EnhancedPlanetProps>(({
   rotationSpeed = 0.01,
   moons,
   logoTexturePath,
+  startAngle = 0,
 }, ref) => {
   const atmosphereRef = useRef<Mesh>(null);
   const [hovered, setHovered] = useState(false);
@@ -89,8 +91,9 @@ const EnhancedPlanet = forwardRef<Mesh, EnhancedPlanetProps>(({
   useFrame(({ clock }) => {
     const elapsed = clock.getElapsedTime();
     if (meshRef.current) {                          // Update planet
-      meshRef.current.position.x = Math.cos(elapsed * orbitSpeed) * orbitRadius;
-      meshRef.current.position.z = Math.sin(elapsed * orbitSpeed) * orbitRadius;
+      const angle = elapsed * orbitSpeed + startAngle;
+      meshRef.current.position.x = orbitRadius * Math.cos(angle);
+      meshRef.current.position.z = orbitRadius * Math.sin(angle);
       meshRef.current.rotation.y += rotationSpeed;  // Planet rotation
       if (atmosphereRef.current) {
         atmosphereRef.current.position.copy(meshRef.current.position);

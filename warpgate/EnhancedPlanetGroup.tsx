@@ -44,6 +44,7 @@ export interface PlanetData {
   rotationSpeed?: number; 
   moons?: MoonData[];
   logoTexturePath?: string; 
+  initialAngle?: number;
 }
 
 interface ExplosionData {
@@ -67,7 +68,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       description: 'explore()',
       orbitRadius: 2.1,
       orbitSpeed: 1.1,
-      planetColor: '#e88d96',
+      planetColor: '#B7D3F2',
       size: 0.22,
       rotationSpeed: 0.02, 
       logoTexturePath: '/textures/Fretboardx_logo.png', 
@@ -96,6 +97,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       description: 'collaborate()',
       orbitRadius: 5.33,
       orbitSpeed: 0.15,
+      startAngle: 0,
       planetColor: '#8980F5',
       rings: [
         { color: '#FFAAEE', innerScale: 1.25, outerScale: 1.40, inclination: 0 }, 
@@ -108,7 +110,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
           orbitRadius: 0.90,
           orbitSpeed: 2.25,
           size: 0.11,
-          moonColor: '#E3C0D3',
+          moonColor: '#EAC4D5',
           link: 'https://github.com/RidwanSharkar/Predictive-Analysis-of-MMA-Fights',
           label: 'Predictive Analysis',
         },
@@ -129,7 +131,24 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
           label: 'MMA Arbitrager',
         },
       ],
-      logoTexturePath: '/textures/Github_logo.svg', 
+      logoTexturePath: '/textures/Github_logo.svg',
+    },
+    // PLANET 3.5: Nutrimancer
+    {
+      position: [0, 0, 0],  // Starting on the opposite side of the orbit
+      link: '',
+      label: 'Unknown',
+      description: '()',
+      orbitRadius: 5.33,
+      orbitSpeed: 0.15,
+      startAngle: Math.PI,
+      planetColor: '#84DCC6',
+      rings: [
+        { color: '#7EE081', innerScale: 1.25, outerScale: 1.50, inclination: 0 }, 
+      ],
+      size: 0.275,
+      rotationSpeed: 0.05,
+      logoTexturePath: '/textures/Github_logo.svg',
     },
     // PLANET 4: IG ART STATION
     {
@@ -139,9 +158,9 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       description: 'carveWood()', 
       orbitRadius: 8,
       orbitSpeed: 0.2,
-      planetColor: '#AFE3C0',
+      planetColor: '#F4ACB7',
       rings: [
-        { color: '#7EE081', innerScale: 1.4, outerScale: 2.25, inclination: -Math.PI / 2.3 },
+        { color: '#F694C1', innerScale: 1.4, outerScale: 2.25, inclination: -Math.PI / 2.3 },
       ],
       size: 0.35,
       rotationSpeed: 0.001,
@@ -150,7 +169,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
           orbitRadius: 1.2,
           orbitSpeed: 2,
           size: 0.125,
-          moonColor: '#91F5AD',
+          moonColor: '#E8E9ED',
           link: 'https://www.artstation.com/ridwansharkar',
           label: 'Art Station',
         },

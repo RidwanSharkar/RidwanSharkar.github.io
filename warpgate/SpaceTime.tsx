@@ -28,12 +28,12 @@ const PlanetCanvas: React.FC<PlanetCanvasProps> = ({ onSelectPlanet, selectedPla
   return (
     <Canvas camera={{ position: [0, 20, 25], fov: 60 }} className="w-full h-full">
       <ResponsiveCamera />
-      <ambientLight intensity={0.4} />
+      <ambientLight intensity={0.3} />
       <pointLight position={[0, 0, 0]} intensity={1} color="#FDB813" />
       <Stars
         radius={100}
-        depth={60}
-        count={6000}
+        depth={100}
+        count={4000}
         factor={4}
         saturation={0}
         fade
