@@ -46,16 +46,16 @@ const Exoplanet: React.FC<ExoplanetProps> = ({ onRemove }) => {
 
   // Velocity vector towards the solar system with variration
   useEffect(() => {
-    const speed = Math.random() * 0.6 + 0.04;
+    const speed = Math.random() * 0.4 + 0.04;
     const direction = targetPoint.clone().sub(initialPosition).normalize();
     
-    // Flattening to horizontal axis
-    const inclinationVariation = MathUtils.degToRad(Math.random() * 10 - 5);
+    // Reduced inclination variation from ±5° to ±3°
+    const inclinationVariation = MathUtils.degToRad(Math.random() * 6 - 3);
 
     const axis = new Vector3(
-      0.8, // x component
-      Math.random() * 0.2 - 0.1, //          y variation
-      Math.random() * 0.4 - 0.2  // medium z variation
+      0.9,                        // x component
+      Math.random() * 0.1 - 0.05, //  y variation
+      Math.random() * 0.2 - 0.1   // z variation
     ).normalize();
 
     direction.applyAxisAngle(axis, inclinationVariation);
@@ -68,15 +68,14 @@ const Exoplanet: React.FC<ExoplanetProps> = ({ onRemove }) => {
   // FADE OUT TIMER
   useEffect(() => {
     const fadeOutTimer = setTimeout(() => {
-      // Start fade-out
       setOpacity(0);
-      // Remove Exoplanet after fade-out duration (e.g., 1 second)
+      // Remove  after fade-out duration
       const removeTimer = setTimeout(() => {
         onRemove();
       }, 1000); // 1000 ms = 1 second
 
       return () => clearTimeout(removeTimer);
-    }, 20000); // 20000 ms = 20 seconds
+    }, 15000); // 20000 ms = 20 seconds
 
     return () => clearTimeout(fadeOutTimer);
   }, [onRemove]);
