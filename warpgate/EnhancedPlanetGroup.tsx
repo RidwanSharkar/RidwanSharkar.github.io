@@ -8,7 +8,8 @@ import * as THREE from 'three';
 import { extend } from '@react-three/fiber';
 import { AsteroidField } from './AsteroidField';
 import { OrbitControls, TransformControls } from 'three-stdlib';
-import { Mesh } from 'three'; // Ensure Mesh is imported
+import { Mesh } from 'three'; 
+import Exoplanet from './Exoplanet'; 
 
 extend({ OrbitControls, TransformControls });
 
@@ -58,7 +59,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
   const [explosions, setExplosions] = useState<ExplosionData[]>([]);
   const planetRefs = useRef<Array<React.RefObject<Mesh>>>([]);
 
-  // 1. Memoize the planets array
+  // 1. Memoize planets array
   const planets: PlanetData[] = useMemo(() => [
     // PLANET 1: FRETBOARDX
     {
@@ -66,11 +67,21 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       link: 'https://fretboardx.com',
       label: 'Fretboard-x', 
       description: 'explore()',
-      orbitRadius: 2.1,
-      orbitSpeed: 1.1,
+      orbitRadius: 2.25,
+      orbitSpeed: 0.7,
       planetColor: '#B7D3F2',
-      size: 0.22,
+      size: 0.225,
       rotationSpeed: 0.02, 
+      moons: [
+        { 
+        orbitRadius: 0.5,
+        orbitSpeed: 3.25,
+        size: 0.12,
+        moonColor: '#B7D3F2',
+        link: 'https://github.com/RidwanSharkar/Fretboard-2.0',
+        label: 'Fretboard-2.0',
+      },
+    ],
       logoTexturePath: '/textures/Fretboardx_logo.png', 
     },
     // PLANET 2: LINKEDIN
@@ -79,7 +90,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       link: 'https://www.linkedin.com/in/ridwansharkar',
       label: 'LinkedIn', 
       description: 'connect()',
-      orbitRadius: 3.25,
+      orbitRadius: 3.6,
       orbitSpeed: 0.60,
       planetColor: '#4FB8FF',
       size: 0.325,
@@ -95,7 +106,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       link: 'https://github.com/RidwanSharkar',
       label: 'GitHub',
       description: 'collaborate()',
-      orbitRadius: 5.33,
+      orbitRadius: 5.5,
       orbitSpeed: 0.15,
       startAngle: 0,
       planetColor: '#8980F5',
@@ -139,7 +150,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       link: '',
       label: 'Unknown',
       description: '()',
-      orbitRadius: 5.33,
+      orbitRadius: 5.5,
       orbitSpeed: 0.15,
       startAngle: Math.PI,
       planetColor: '#84DCC6',
@@ -147,7 +158,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
         { color: '#7EE081', innerScale: 1.25, outerScale: 1.50, inclination: 0 }, 
       ],
       size: 0.275,
-      rotationSpeed: 0.05,
+      rotationSpeed: 0.01,
       logoTexturePath: '/textures/Github_logo.svg',
     },
     // PLANET 4: IG ART STATION
@@ -230,15 +241,16 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
     return planets.map(planet => planet.size);
   };
 
-
+// DORMANT EXPLOSION HANDLER
   const handleCollision = (planetIndex: number, collisionPosition: Vector3) => {
     const planetRef = planetRefs.current[planetIndex];
     if (planetRef.current) {
-      // Remove old explosion immediately
       setExplosions(prev => prev.filter(exp => exp.id !== Date.now()));
 
+
+
       const newExplosion: ExplosionData = {
-        position: collisionPosition.clone(), // Clone to prevent reference issues
+        position: collisionPosition.clone(), // clone for ref issues
         color: planets[planetIndex].planetColor,
         id: Date.now(),
       };
@@ -250,6 +262,23 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
         setExplosions(prev => prev.filter(exp => exp.id !== newExplosion.id));
       }, 1000);
     }
+  };
+
+  // State to manage Exoplanets
+  const [exoplanets, setExoplanets] = useState<number[]>([]); // Using IDs for keys
+
+  // Create a new Exoplanet every 15 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setExoplanets(prev => [...prev, Date.now()]); // timestamp as unique ID
+    }, 15000); // 30000 ms = 30 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // remove handler
+  const removeExoplanet = (id: number) => {
+    setExoplanets(prev => prev.filter(exoId => exoId !== id));
   };
 
   return (
@@ -296,6 +325,10 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
         />
       ))}
 
+      {/* Render Exoplanets */}
+      {exoplanets.map(id => (
+        <Exoplanet key={id} onRemove={() => removeExoplanet(id)} />
+      ))}
 
       {/* Render active explosions */}
       {explosions.map((explosion) => (
