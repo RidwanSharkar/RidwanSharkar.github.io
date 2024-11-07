@@ -11,7 +11,7 @@ const tracks: Track[] = [
   { id: 1, name: "⌬", src: "/audio/track1.MP3" },
   { id: 2, name: "❅", src: "/audio/track2.MP3" },
   { id: 3, name: "♨", src: "/audio/track3.MP3" },
-  { id: 4, name: "᯽", src: "/audio/track4.MP3" },
+  { id: 4, name: "⚘", src: "/audio/track4.MP3" },
   { id: 5, name: "☯", src: "/audio/track5.MP3" },
 ];
 

@@ -159,7 +159,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       ],
       size: 0.275,
       rotationSpeed: 0.01,
-      logoTexturePath: '/textures/Github_logo.svg',
+      logoTexturePath: '/textures/Nutrimancer_logo.svg',
     },
     // PLANET 4: IG ART STATION
     {

@@ -221,7 +221,7 @@ const EnhancedPlanet = forwardRef<Mesh, EnhancedPlanetProps>(({
             ref={logoRef}
             position={[0, size + 0.65, 0]} 
             rotation={[0, 0, 0]}
-            scale={[0.6, 0.6, 0.6]} 
+            scale={[0.8, 0.8, 0.8]} 
           >
             <planeGeometry args={[1, 1]} />
             <meshBasicMaterial 
