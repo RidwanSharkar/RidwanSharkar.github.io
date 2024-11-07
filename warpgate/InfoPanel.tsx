@@ -9,23 +9,61 @@ interface InfoPanelProps {
   onClose: () => void;
 }
 
-// Conversion helpers
+// Converters, scaled to solar system
 const convertSize = (size: number): string => {
-  // Assuming max size is 1, convert to miles (Earth = ~8,000 miles diameter)
   const miles = Math.round(size * 12000);
   return `${miles.toLocaleString()} miles`;
 };
 
 const convertSpeed = (speed: number): string => {
-  // Convert to miles per hour (Earth = ~67,000 mph)
   const mph = Math.round(speed * 100000);
   return `${mph.toLocaleString()} mph`;
 };
 
 const convertDistance = (distance: number): string => {
-  // Convert to millions of miles (Earth = ~93 million miles from Sun)
-  const millionMiles = Math.round(distance * 100);
-  return `${millionMiles.toLocaleString()} million miles`;
+  const millionMiles = distance * 100;
+  return `${millionMiles.toExponential(2)} Mm`;
+};
+
+const calculateTemperature = (orbitRadius: number): string => {
+  const linkedInTemp = 69; // Fahrenheit 
+  const linkedInOrbit = 3.6; // LinkedIn's orbit radius
+  const fretboardOrbit = 2.25; // Fretboard's orbit radius
+  const githubOrbit = 5.5; // GitHub's orbit radius
+  
+  // approx temperature using inverse square law with dist
+  const baseTemp = linkedInTemp * Math.pow(linkedInOrbit / orbitRadius, 2);
+
+  let finalTemp;
+  if (orbitRadius <= linkedInOrbit) {
+    // Inner planets
+    const innerScaling = 420 / (linkedInTemp * Math.pow(linkedInOrbit / fretboardOrbit, 2));
+    finalTemp = baseTemp * innerScaling;
+  } else {
+    // Outer planets 
+    const outerScaling = 0 / (linkedInTemp * Math.pow(linkedInOrbit / githubOrbit, 2));
+    finalTemp = baseTemp * (outerScaling - 1) - 50; // colder outer planets
+  }
+  
+  // Bound temperatures
+  const boundedTemp = Math.max(-250, Math.min(420, finalTemp));
+  
+  return `${Math.round(boundedTemp)}°F`;
+};
+
+//LOOSEAF
+const getAtmosphereComposition = (planetColor: string): string => {
+  const atmospheres: { [key: string]: string } = {
+    '#B7D3F2': '• Nitrogen (78%)\n• Oxygen (21%)\n• Argon (1%)\n• Earth-like',
+    '#4FB8FF': '• Nitrogen (80%)\n• Methane (15%)\n• Hydrogen (5%)',
+    '#8980F5': '• Hydrogen (75%)\n• Helium (24%)\n• Methane (1%)',
+    '#84DCC6': '• Carbon Dioxide (95%)\n• Nitrogen (3%)\n• Argon (2%)',
+    '#F4ACB7': '• Sulfur Dioxide (80%)\n• Carbon Dioxide (15%)\n• Helium (5%)',
+    '#2DE1FC': '• Helium (60%)\n• Hydrogen (30%)\n• Methane (10%)'
+  };
+  return atmospheres[planetColor]?.split('\n').map(line => 
+    `<div style="margin-left: 1rem">${line}</div>`
+  ).join('') || 'Unknown composition';
 };
 
 const InfoPanel: React.FC<InfoPanelProps> = ({ planet, onClose }) => {
@@ -53,11 +91,16 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ planet, onClose }) => {
             exit={{ opacity: 0, x: -20, y: -20 }}
             transition={{ duration: 0.5 }}
           >
-            <h3>Planet {planet.label}:</h3>
-            <div className={styles.statsGrid}>
-              <div>Diameter: {convertSize(planet.size)}</div>
-              <div>Orbital Speed: {convertSpeed(planet.orbitSpeed)}</div>
-              <div>Orbital Radius: {convertDistance(planet.orbitRadius)}</div>
+            <h3 className={styles.statsTitle}>{"{ "}{planet.label}{" }"}</h3>
+            <div className={`${styles.statsGrid} text-sm`}>
+              <div><span>Diameter:</span> <span>{convertSize(planet.size)}</span></div>
+              <div><span>Orbital Speed:</span> <span>{convertSpeed(planet.orbitSpeed)}</span></div>
+              <div><span>Orbital Radius:</span> <span>{convertDistance(planet.orbitRadius)}</span></div>
+              <div><span>Mean Temperature:</span> <span>{calculateTemperature(planet.orbitRadius)}</span></div>
+              <div>
+                <span>Atmospheric Emission Spectrum:</span>
+                <div dangerouslySetInnerHTML={{ __html: getAtmosphereComposition(planet.planetColor) }}></div>
+              </div>
             </div>
           </motion.div>
 
@@ -68,9 +111,19 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ planet, onClose }) => {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.5 }}
           >
-            <div>
-              <h2>{planet.label}</h2>
-              <p>{planet.description || 'No description available.'}</p>
+            <div className={styles.infoPanelContent}>
+              <div className={styles.planetIcon}>
+                <img 
+                  src={planet.logoTexturePath || '/textures/transparent.png'} 
+                  alt={`${planet.label} icon`}
+                  width={42}
+                  height={42}
+                />
+              </div>
+              <div>
+                <h2>{planet.label}</h2>
+                <p>{planet.description || 'No description available.'}</p>
+              </div>
             </div>
             <a href={planet.link} target="_blank" rel="noopener noreferrer" className={styles.infoButton}>
               Visit

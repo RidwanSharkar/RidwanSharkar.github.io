@@ -11,8 +11,9 @@ const Exoplanet: React.FC<ExoplanetProps> = ({ onRemove }) => {
   const meshRef = useRef<Mesh>(null);
   const velocityRef = useRef<Vector3>();
 
-  const size = 0.17; // SIZE    
-  const colors = useMemo(() => ['#00ffff', '#ff00ff', '#ffff00', '#ff3366', '#66ff33'], []);
+  // Random size between 0.14 and 0.20
+  const size = 0.15 + Math.random() * (0.20 - 0.14);
+  const colors = useMemo(() => ['#00ffff', '#ff00ff', '#FF7F11', '#ff3366', '#66ff33', '#B8B3E9', '#B8B3E9', '#F87666', '6EFAFB', 'BEEE62', 'CD9FCC', '93FF96', 'B2FFA8' ], []);
   const color = useMemo(() => colors[Math.floor(Math.random() * colors.length)], [colors]);
 
   const SPAWN_RADIUS = 50; // SPAWN POINT
@@ -49,7 +50,7 @@ const Exoplanet: React.FC<ExoplanetProps> = ({ onRemove }) => {
     const speed = Math.random() * 0.4 + 0.04;
     const direction = targetPoint.clone().sub(initialPosition).normalize();
     
-    // Reduced inclination variation from ±5° to ±3°
+    // inclination variation ±5° to ±3°
     const inclinationVariation = MathUtils.degToRad(Math.random() * 6 - 3);
 
     const axis = new Vector3(
