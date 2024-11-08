@@ -61,7 +61,7 @@ const getPlanetTemperature = (planetLabel: string): string => {
 //LOOSEAF
 const getAtmosphereComposition = (planetColor: string): string => {
   const atmospheres: { [key: string]: string } = {
-    '#B7D3F2': '• Nitrogen (78%)\n• Oxygen (21%)\n• Argon (1%)\n• Earth-like',
+    '#B7D3F2': '• Nitrogen (78%)\n• Oxygen (21%)\n• Argon (1%)',
     '#4FB8FF': '• Nitrogen (80%)\n• Methane (15%)\n• Hydrogen (5%)',
     '#8980F5': '• Hydrogen (75%)\n• Helium (24%)\n• Methane (1%)',
     '#84DCC6': '• Carbon Dioxide (95%)\n• Nitrogen (3%)\n• Argon (2%)',
