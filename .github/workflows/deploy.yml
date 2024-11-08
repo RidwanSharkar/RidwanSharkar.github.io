@@ -29,6 +29,7 @@ jobs:
 
       - name: Add .nojekyll and 404.html
         run: |
+          mkdir -p out
           touch out/.nojekyll
           echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; URL=/"></head><body></body></html>' > out/404.html
 

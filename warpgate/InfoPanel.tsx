@@ -15,35 +15,40 @@ const convertSize = (size: number): string => {
   return `${miles.toLocaleString()} miles`;
 };
 
-const convertSpeed = (speed: number, planetLabel: string): string => {
-  const speeds: { [key: string]: number } = {
-    'Fretboard-x': 76775,
-    'LinkedIn': 62250,
-    'GitHub': 21500,
-    'Unknown': 21500,
-    'Instagram': 59670,
-    'Mythos.store': 89112,
-  };
-  return `${speeds[planetLabel]?.toLocaleString() || 0} mph`;
+const convertSpeed = (speed: number): string => {
+  const mph = Math.round(speed * 100000);
+  return `${mph.toLocaleString()} mph`;
 };
 
 const convertDistance = (distance: number): string => {
-  const miles = distance * 100_000_000;
-  return `${miles.toExponential(2)} miles`;
+  const millionMiles = distance * 100;
+  return `${millionMiles.toExponential(2)} Mm`;
 };
 
-// Replace the calculateTemperature function with this:
-const getPlanetTemperature = (planetLabel: string): string => {
-  const temperatures: { [key: string]: number } = {
-    'Fretboard-x': 420,
-    'LinkedIn': 69,
-    'GitHub': 11,
-    'Unknown': 262,
-    'Instagram': -41,
-    'Mythos.store': -89,
-  };
+const calculateTemperature = (orbitRadius: number): string => {
+  const linkedInTemp = 69; // Fahrenheit 
+  const linkedInOrbit = 3.6; // LinkedIn's orbit radius
+  const fretboardOrbit = 2.25; // Fretboard's orbit radius
+  const githubOrbit = 5.5; // GitHub's orbit radius
   
-  return `${temperatures[planetLabel] || 0}°F`;
+  // approx temperature using inverse square law with dist
+  const baseTemp = linkedInTemp * Math.pow(linkedInOrbit / orbitRadius, 2);
+
+  let finalTemp;
+  if (orbitRadius <= linkedInOrbit) {
+    // Inner planets
+    const innerScaling = 420 / (linkedInTemp * Math.pow(linkedInOrbit / fretboardOrbit, 2));
+    finalTemp = baseTemp * innerScaling;
+  } else {
+    // Outer planets 
+    const outerScaling = 0 / (linkedInTemp * Math.pow(linkedInOrbit / githubOrbit, 2));
+    finalTemp = baseTemp * (outerScaling - 1) - 50; // colder outer planets
+  }
+  
+  // Bound temperatures
+  const boundedTemp = Math.max(-250, Math.min(420, finalTemp));
+  
+  return `${Math.round(boundedTemp)}°F`;
 };
 
 //LOOSEAF
@@ -59,19 +64,6 @@ const getAtmosphereComposition = (planetColor: string): string => {
   return atmospheres[planetColor]?.split('\n').map(line => 
     `<div style="margin-left: 1rem">${line}</div>`
   ).join('') || 'Unknown composition';
-};
-
-const getPlanetMass = (planetLabel: string): string => {
-  const masses: { [key: string]: number } = {
-    'Fretboard-x': 1.4e24,
-    'LinkedIn': 1.7e25,
-    'GitHub': 2.2e26,
-    'Unknown': 1.5e25,
-    'Instagram': 1.3e26,
-    'Mythos.store': 9.8e24,
-  };
-  const mass = masses[planetLabel];
-  return mass ? `${mass.toExponential(2)} lbs` : 'Unknown mass';
 };
 
 const InfoPanel: React.FC<InfoPanelProps> = ({ planet, onClose }) => {
@@ -101,11 +93,10 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ planet, onClose }) => {
           >
             <h3 className={styles.statsTitle}>{"{ "}{planet.label}{" }"}</h3>
             <div className={`${styles.statsGrid} text-sm`}>
-              <div><span>Mass:</span> <span>{getPlanetMass(planet.label)}</span></div>
               <div><span>Diameter:</span> <span>{convertSize(planet.size)}</span></div>
-              <div><span>Orbital Speed:</span> <span>{convertSpeed(planet.orbitSpeed, planet.label)}</span></div>
+              <div><span>Orbital Speed:</span> <span>{convertSpeed(planet.orbitSpeed)}</span></div>
               <div><span>Orbital Radius:</span> <span>{convertDistance(planet.orbitRadius)}</span></div>
-              <div><span>Mean Temperature:</span> <span>{getPlanetTemperature(planet.label)}</span></div>
+              <div><span>Mean Temperature:</span> <span>{calculateTemperature(planet.orbitRadius)}</span></div>
               <div>
                 <span>Atmospheric Emission Spectrum:</span>
                 <div dangerouslySetInnerHTML={{ __html: getAtmosphereComposition(planet.planetColor) }}></div>

@@ -21,10 +21,11 @@
     "uuid": "^11.0.2"
   },
   "devDependencies": {
-    "@types/node": "^20",
+    "@types/node": "^20.17.6",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/uuid": "^10.0.0",
+    "@types/webxr": "^0.5.20",
     "autoprefixer": "^10.4.20",
     "eslint": "^8",
     "eslint-config-next": "14.2.15",
