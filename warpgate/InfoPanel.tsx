@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { PlanetData } from './EnhancedPlanetGroup';
 import styles from './InfoPanel.module.css'; 
 import { motion, AnimatePresence } from 'framer-motion'; 
+import Image from 'next/image';
 
 interface InfoPanelProps {
   planet: PlanetData;
@@ -22,7 +23,8 @@ const convertSpeed = (speed: number, planetLabel: string): string => {
     'GitHub': 21500,
     'Unknown': 21500,
     'Instagram': 59670,
-    'Mythos.store': 89112,
+    'Mythos.store': 89115,
+    'Spotify': 59320,
   };
   return `${speeds[planetLabel]?.toLocaleString() || 0} mph`;
 };
@@ -40,7 +42,8 @@ const getPlanetTemperature = (planetLabel: string): string => {
     'GitHub': 11,
     'Unknown': 262,
     'Instagram': -41,
-    'Mythos.store': -89,
+    'Mythos.store': -256,
+    'Spotify': -97,
   };
   
   return `${temperatures[planetLabel] || 0}°F`;
@@ -54,7 +57,8 @@ const getAtmosphereComposition = (planetColor: string): string => {
     '#8980F5': '• Hydrogen (75%)\n• Helium (24%)\n• Methane (1%)',
     '#84DCC6': '• Carbon Dioxide (95%)\n• Nitrogen (3%)\n• Argon (2%)',
     '#F4ACB7': '• Sulfur Dioxide (80%)\n• Carbon Dioxide (15%)\n• Helium (5%)',
-    '#2DE1FC': '• Helium (60%)\n• Hydrogen (30%)\n• Methane (10%)'
+    '#2DE1FC': '• Helium (60%)\n• Hydrogen (30%)\n• Methane (10%)',
+    '#F9B9F2': '• Carbon Dioxide (60%)\n• Hydrogen (25%)\n• Neon (10%)\n• Titanium Dioxide (5%)',
   };
   return atmospheres[planetColor]?.split('\n').map(line => 
     `<div style="margin-left: 1rem">${line}</div>`
@@ -69,6 +73,7 @@ const getPlanetMass = (planetLabel: string): string => {
     'Unknown': 1.5e25,
     'Instagram': 1.3e26,
     'Mythos.store': 9.8e24,
+    'Spotify': 1.2e24,
   };
   const mass = masses[planetLabel];
   return mass ? `${mass.toExponential(2)} lbs` : 'Unknown mass';
@@ -122,11 +127,12 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ planet, onClose }) => {
           >
             <div className={styles.infoPanelContent}>
               <div className={styles.planetIcon}>
-                <img 
+                <Image 
                   src={planet.logoTexturePath || '/textures/transparent.png'} 
                   alt={`${planet.label} icon`}
                   width={42}
                   height={42}
+                  className={styles.planetIconImage}
                 />
               </div>
               <div>

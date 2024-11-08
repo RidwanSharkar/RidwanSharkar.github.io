@@ -59,7 +59,6 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
   const [explosions, setExplosions] = useState<ExplosionData[]>([]);
   const planetRefs = useRef<Array<React.RefObject<Mesh>>>([]);
 
-  // 1. Memoize planets array
   const planets: PlanetData[] = useMemo(() => [
     // PLANET 1: FRETBOARDX
     {
@@ -106,7 +105,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       link: 'https://github.com/RidwanSharkar',
       label: 'GitHub',
       description: 'collaborate()',
-      orbitRadius: 5.5,
+      orbitRadius: 5.6,
       orbitSpeed: 0.15,
       startAngle: 0,
       planetColor: '#8980F5',
@@ -114,11 +113,11 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
         { color: '#FFAAEE', innerScale: 1.25, outerScale: 1.40, inclination: 0 }, 
         { color: '#FFAAEE', innerScale: 1.5, outerScale: 1.825, inclination: Math.PI / 2 },
       ],
-      size: 0.385,
+      size: 0.475,
       rotationSpeed: 0.010,
       moons: [
         { 
-          orbitRadius: 0.90,
+          orbitRadius: 1,
           orbitSpeed: 2.25,
           size: 0.11,
           moonColor: '#EAC4D5',
@@ -126,7 +125,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
           label: 'Predictive Analysis',
         },
         { 
-          orbitRadius: 1.25,
+          orbitRadius: 1.30,
           orbitSpeed: 1.5,
           size: 0.1625,
           moonColor: '#FFAAEE',
@@ -134,7 +133,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
           label: 'Compound Classifier',
         },
         { 
-          orbitRadius: 1.62,
+          orbitRadius: 1.65,
           orbitSpeed: 2.2,
           size: 0.13,
           moonColor: '#D295BF',
@@ -150,12 +149,12 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       link: '',
       label: 'Unknown',
       description: '()',
-      orbitRadius: 5.5,
+      orbitRadius: 5.6,
       orbitSpeed: 0.15,
       startAngle: Math.PI,
-      planetColor: '#84DCC6',
+      planetColor: '#84DCC6', //85FFC7
       rings: [
-        { color: '#7EE081', innerScale: 1.25, outerScale: 1.50, inclination: 0 }, 
+        { color: '#7EE081', innerScale: 1.25, outerScale: 1.6, inclination: Math.PI / 4.5 }, 
       ],
       size: 0.275,
       rotationSpeed: 0.01,
@@ -192,8 +191,8 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       position: [0, 0, 0],
       link: 'https://mythos.store',
       label: 'Mythos.store',
-      description: 'browse()',
-      orbitRadius: 10,
+      description: 'browse(), buy()',
+      orbitRadius: 10.75,
       orbitSpeed: 0.3,
       planetColor: '#2DE1FC',
       rings: [
@@ -213,6 +212,22 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       ],
       logoTexturePath: '/textures/Mythos_logo.png',
     },
+        // PLANET 6: Spotify
+        {
+          position: [0, 0, 0],
+          link: 'https://open.spotify.com/user/1268486981',
+          label: 'Spotify',
+          description: 'getPlaylists()',
+          orbitRadius: 9.5,
+          orbitSpeed: 0.199,
+          planetColor: '#F9B9F2',
+          rings: [
+            { color: 'white', innerScale: 1.2, outerScale: 1.5, inclination: Math.PI / 2 }, 
+          ],
+          size: 0.22,
+          rotationSpeed: 0.02,
+          logoTexturePath: '/textures/Spotify_logo.svg',
+        },
   ], []); 
 
   // Initialize refs for each planet
