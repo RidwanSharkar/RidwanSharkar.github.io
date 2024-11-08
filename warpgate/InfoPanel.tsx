@@ -1,5 +1,5 @@
 // warpgate/InfoPanel.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { PlanetData } from './EnhancedPlanetGroup';
 import styles from './InfoPanel.module.css'; 
 import { motion, AnimatePresence } from 'framer-motion'; 
@@ -10,9 +10,18 @@ interface InfoPanelProps {
   onClose: () => void;
 }
 
+interface MoonData {
+  orbitRadius: number;
+  orbitSpeed: number;
+  size: number;
+  moonColor: string;
+  link?: string;
+  label?: string;
+}
+
 // Converters, scaled to solar system
 const convertSize = (size: number): string => {
-  const miles = Math.round(size * 12000);
+  const miles = Math.round(size * 21100);
   return `${miles.toLocaleString()} miles`;
 };
 
@@ -42,7 +51,7 @@ const getPlanetTemperature = (planetLabel: string): string => {
     'GitHub': 11,
     'Unknown': 262,
     'Instagram': -41,
-    'Mythos.store': -256,
+    'Mythos.store': -458,
     'Spotify': -97,
   };
   
@@ -69,7 +78,7 @@ const getPlanetMass = (planetLabel: string): string => {
   const masses: { [key: string]: number } = {
     'Fretboard-x': 1.4e24,
     'LinkedIn': 1.7e25,
-    'GitHub': 2.2e26,
+    'GitHub': 2.5e26,
     'Unknown': 1.5e25,
     'Instagram': 1.3e26,
     'Mythos.store': 9.8e24,
@@ -79,11 +88,50 @@ const getPlanetMass = (planetLabel: string): string => {
   return mass ? `${mass.toExponential(2)} lbs` : 'Unknown mass';
 };
 
+const MoonStatsPanel: React.FC<{ moons: MoonData[] }> = ({ moons }) => {
+  return (
+    <motion.div
+      className={styles.moonStatsPanel}
+      initial={{ opacity: 0, x: -20, y: -20 }}
+      animate={{ opacity: 1, x: 0, y: 0 }}
+      exit={{ opacity: 0, x: -20, y: -20 }}
+      transition={{ duration: 0.5 }}
+    >
+      <h3 className={styles.statsTitle}>{"Satellites:"}</h3>
+      <div className={styles.moonGrid}>
+        {moons.map((moon, index) => (
+          <div key={index} className={styles.moonRow}>
+            <div className={styles.moonInfo}>
+              <span className={styles.moonName}>{moon.label || 'Unknown Moon'}</span>
+              <span className={styles.moonSize}>Diameter: {convertSize(moon.size)}</span>
+            </div>
+            <a 
+              href={moon.link} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className={styles.moonButton}
+            >
+              Visit
+            </a>
+          </div>
+        ))}
+      </div>
+    </motion.div>
+  );
+};
+
 const InfoPanel: React.FC<InfoPanelProps> = ({ planet, onClose }) => {
   const [visible, setVisible] = useState(false);
+  const statsPanelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setVisible(true);
+    
+    // Update CSS variable with stats panel height
+    if (statsPanelRef.current) {
+      const height = statsPanelRef.current.getBoundingClientRect().height;
+      document.documentElement.style.setProperty('--stats-panel-height', `${height}px`);
+    }
   }, []);
 
   const handleClose = () => {
@@ -97,26 +145,32 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ planet, onClose }) => {
         <>
           <div className={styles.overlay} onClick={handleClose}></div>
           
-          <motion.div
-            className={styles.statsPanel}
-            initial={{ opacity: 0, x: -20, y: -20 }}
-            animate={{ opacity: 1, x: 0, y: 0 }}
-            exit={{ opacity: 0, x: -20, y: -20 }}
-            transition={{ duration: 0.5 }}
-          >
-            <h3 className={styles.statsTitle}>{"{ "}{planet.label}{" }"}</h3>
-            <div className={`${styles.statsGrid} text-sm`}>
-              <div><span>Mass:</span> <span>{getPlanetMass(planet.label)}</span></div>
-              <div><span>Diameter:</span> <span>{convertSize(planet.size)}</span></div>
-              <div><span>Orbital Speed:</span> <span>{convertSpeed(planet.orbitSpeed, planet.label)}</span></div>
-              <div><span>Orbital Radius:</span> <span>{convertDistance(planet.orbitRadius)}</span></div>
-              <div><span>Mean Temperature:</span> <span>{getPlanetTemperature(planet.label)}</span></div>
-              <div>
-                <span>Atmospheric Emission Spectrum:</span>
-                <div dangerouslySetInnerHTML={{ __html: getAtmosphereComposition(planet.planetColor) }}></div>
+          <div className={styles.panelsContainer}>
+            <motion.div
+              className={styles.statsPanel}
+              initial={{ opacity: 0, x: -20, y: -20 }}
+              animate={{ opacity: 1, x: 0, y: 0 }}
+              exit={{ opacity: 0, x: -20, y: -20 }}
+              transition={{ duration: 0.5 }}
+            >
+              <h3 className={styles.statsTitle}>{"{ "}{planet.label}{" }"}</h3>
+              <div className={`${styles.statsGrid} text-sm`}>
+                <div><span>Mass:</span> <span>{getPlanetMass(planet.label)}</span></div>
+                <div><span>Diameter:</span> <span>{convertSize(planet.size)}</span></div>
+                <div><span>Orbital Speed:</span> <span>{convertSpeed(planet.orbitSpeed, planet.label)}</span></div>
+                <div><span>Orbital Radius:</span> <span>{convertDistance(planet.orbitRadius)}</span></div>
+                <div><span>Mean Temperature:</span> <span>{getPlanetTemperature(planet.label)}</span></div>
+                <div>
+                  <span>Atmospheric Emission Spectrum:</span>
+                  <div dangerouslySetInnerHTML={{ __html: getAtmosphereComposition(planet.planetColor) }}></div>
+                </div>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+
+            {planet.moons && planet.moons.length > 0 && (
+              <MoonStatsPanel moons={planet.moons} />
+            )}
+          </div>
 
           <motion.div
             className={styles.infoPanel}

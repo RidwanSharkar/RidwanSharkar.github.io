@@ -219,7 +219,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
           label: 'Spotify',
           description: 'getPlaylists()',
           orbitRadius: 9.5,
-          orbitSpeed: 0.199,
+          orbitSpeed: 0.195,
           planetColor: '#F9B9F2',
           rings: [
             { color: 'white', innerScale: 1.2, outerScale: 1.5, inclination: Math.PI / 2 }, 
