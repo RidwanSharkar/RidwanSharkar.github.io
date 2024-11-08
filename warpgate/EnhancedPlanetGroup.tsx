@@ -176,7 +176,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       rotationSpeed: 0.001,
       moons: [
         {
-          orbitRadius: 1.2,
+          orbitRadius: 1.1,
           orbitSpeed: 2,
           size: 0.125,
           moonColor: '#E8E9ED',

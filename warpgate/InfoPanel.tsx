@@ -46,13 +46,13 @@ const convertDistance = (distance: number): string => {
 // Replace the calculateTemperature function with this:
 const getPlanetTemperature = (planetLabel: string): string => {
   const temperatures: { [key: string]: number } = {
-    'Fretboard-x': 420,
-    'LinkedIn': 69,
-    'GitHub': 11,
-    'Unknown': 262,
-    'Instagram': -41,
-    'Mythos.store': -458,
-    'Spotify': -97,
+    'Fretboard-x': 420.0,
+    'LinkedIn': 69.0,
+    'GitHub': 11.8,
+    'Unknown': 262.4,
+    'Instagram': -41.7,
+    'Mythos.store': -458.1,
+    'Spotify': -97.3,
   };
   
   return `${temperatures[planetLabel] || 0}°F`;
@@ -61,10 +61,10 @@ const getPlanetTemperature = (planetLabel: string): string => {
 //LOOSEAF
 const getAtmosphereComposition = (planetColor: string): string => {
   const atmospheres: { [key: string]: string } = {
-    '#B7D3F2': '• Nitrogen (78%)\n• Oxygen (21%)\n• Argon (1%)',
+    '#B7D3F2': '• Nitrogen (74%)\n• Oxygen (25%)\n• Argon (1%)',
     '#4FB8FF': '• Nitrogen (80%)\n• Methane (15%)\n• Hydrogen (5%)',
-    '#8980F5': '• Hydrogen (75%)\n• Helium (24%)\n• Methane (1%)',
-    '#84DCC6': '• Carbon Dioxide (95%)\n• Nitrogen (3%)\n• Argon (2%)',
+    '#8980F5': '• Hydrogen (68%)\n• Helium (3%)\n• Methane (1%)',
+    '#84DCC6': '• Carbon Dioxide (88%)\n• Nitrogen (10%)\n• Argon (2%)',
     '#F4ACB7': '• Sulfur Dioxide (80%)\n• Carbon Dioxide (15%)\n• Helium (5%)',
     '#2DE1FC': '• Helium (60%)\n• Hydrogen (30%)\n• Methane (10%)',
     '#F9B9F2': '• Carbon Dioxide (60%)\n• Hydrogen (25%)\n• Neon (10%)\n• Titanium Dioxide (5%)',
@@ -78,9 +78,9 @@ const getPlanetMass = (planetLabel: string): string => {
   const masses: { [key: string]: number } = {
     'Fretboard-x': 1.4e24,
     'LinkedIn': 1.7e25,
-    'GitHub': 2.5e26,
+    'GitHub': 5.7e26,
     'Unknown': 1.5e25,
-    'Instagram': 1.3e26,
+    'Instagram': 2.3e26,
     'Mythos.store': 9.8e24,
     'Spotify': 1.2e24,
   };

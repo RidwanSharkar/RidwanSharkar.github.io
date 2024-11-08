@@ -321,6 +321,6 @@
   left: 20px;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
   z-index: 1000;
 }
