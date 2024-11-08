@@ -17,10 +17,10 @@ const convertSize = (size: number): string => {
 
 const convertSpeed = (speed: number, planetLabel: string): string => {
   const speeds: { [key: string]: number } = {
-    'Fretboard-x': 76000,
+    'Fretboard-x': 76775,
     'LinkedIn': 62250,
-    'GitHub': 17500,
-    'Unknown': 17500,
+    'GitHub': 21500,
+    'Unknown': 21500,
     'Instagram': 59670,
     'Mythos.store': 89112,
   };
@@ -28,8 +28,8 @@ const convertSpeed = (speed: number, planetLabel: string): string => {
 };
 
 const convertDistance = (distance: number): string => {
-  const millionMiles = distance * 100;
-  return `${millionMiles.toExponential(2)} Mm`;
+  const miles = distance * 100_000_000;
+  return `${miles.toExponential(2)} miles`;
 };
 
 // Replace the calculateTemperature function with this:
@@ -61,6 +61,19 @@ const getAtmosphereComposition = (planetColor: string): string => {
   ).join('') || 'Unknown composition';
 };
 
+const getPlanetMass = (planetLabel: string): string => {
+  const masses: { [key: string]: number } = {
+    'Fretboard-x': 1.4e24,
+    'LinkedIn': 1.7e25,
+    'GitHub': 2.2e26,
+    'Unknown': 1.5e25,
+    'Instagram': 1.3e26,
+    'Mythos.store': 9.8e24,
+  };
+  const mass = masses[planetLabel];
+  return mass ? `${mass.toExponential(2)} lbs` : 'Unknown mass';
+};
+
 const InfoPanel: React.FC<InfoPanelProps> = ({ planet, onClose }) => {
   const [visible, setVisible] = useState(false);
 
@@ -88,6 +101,7 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ planet, onClose }) => {
           >
             <h3 className={styles.statsTitle}>{"{ "}{planet.label}{" }"}</h3>
             <div className={`${styles.statsGrid} text-sm`}>
+              <div><span>Mass:</span> <span>{getPlanetMass(planet.label)}</span></div>
               <div><span>Diameter:</span> <span>{convertSize(planet.size)}</span></div>
               <div><span>Orbital Speed:</span> <span>{convertSpeed(planet.orbitSpeed, planet.label)}</span></div>
               <div><span>Orbital Radius:</span> <span>{convertDistance(planet.orbitRadius)}</span></div>
