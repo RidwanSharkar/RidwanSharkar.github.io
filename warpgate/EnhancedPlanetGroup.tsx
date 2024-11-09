@@ -69,7 +69,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       orbitRadius: 2.25,
       orbitSpeed: 0.775,
       planetColor: '#B7D3F2',
-      size: 0.225,
+      size: 0.24,
       rotationSpeed: 0.02, 
       moons: [
         { 
@@ -92,7 +92,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       orbitRadius: 3.6,
       orbitSpeed: 0.4,
       planetColor: '#4FB8FF',
-      size: 0.325,
+      size: 0.37,
       rotationSpeed: 0.01,
       rings: [
         { color: '#00FFFF', innerScale: 1.3, outerScale: 1.45, inclination: -Math.PI / 3 }
@@ -105,7 +105,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       link: 'https://github.com/RidwanSharkar',
       label: 'GitHub',
       description: 'collaborate()',
-      orbitRadius: 5.6,
+      orbitRadius: 6.3,
       orbitSpeed: 0.125,
       startAngle: 0,
       planetColor: '#8980F5',
@@ -113,7 +113,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
         { color: '#FFAAEE', innerScale: 1.25, outerScale: 1.40, inclination: 0 }, 
         { color: '#FFAAEE', innerScale: 1.5, outerScale: 1.825, inclination: Math.PI / 2 },
       ],
-      size: 0.475,
+      size: 0.5,
       rotationSpeed: 0.010,
       moons: [
         { 
@@ -149,14 +149,14 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       link: '',
       label: 'Unknown',
       description: '()',
-      orbitRadius: 5.6,
+      orbitRadius: 6.3,
       orbitSpeed: 0.125,
       startAngle: Math.PI,
       planetColor: '#84DCC6', //85FFC7
       rings: [
         { color: '#7EE081', innerScale: 1.25, outerScale: 1.6, inclination: Math.PI / 4.5 }, 
       ],
-      size: 0.275,
+      size: 0.29,
       rotationSpeed: 0.01,
       logoTexturePath: '/textures/Nutrimancer_logo.svg',
     },
@@ -166,13 +166,13 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       link: 'https://instagram.com/ridwansharkar/?hl=en',
       label: 'Instagram',
       description: 'carveWood()', 
-      orbitRadius: 8,
+      orbitRadius: 8.3,
       orbitSpeed: 0.2,
       planetColor: '#F4ACB7',
       rings: [
         { color: '#F694C1', innerScale: 1.4, outerScale: 2.25, inclination: -Math.PI / 2.3 },
       ],
-      size: 0.35,
+      size: 0.40,
       rotationSpeed: 0.001,
       moons: [
         {
@@ -192,13 +192,13 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       link: 'https://mythos.store',
       label: 'Mythos.store',
       description: 'browse(), buy()',
-      orbitRadius: 10.75,
-      orbitSpeed: 0.275,
+      orbitRadius: 10,
+      orbitSpeed: 0.3,
       planetColor: '#2DE1FC',
       rings: [
         { color: '#2DE1FC', innerScale: 1.3, outerScale: 1.75, inclination: -Math.PI }, 
       ],
-      size: 0.28,
+      size: 0.325,
       rotationSpeed: 0.01,
       moons: [
         {
@@ -218,13 +218,13 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
           link: 'https://open.spotify.com/user/1268486981',
           label: 'Spotify',
           description: 'getPlaylists()',
-          orbitRadius: 9.5,
-          orbitSpeed: 0.475,
+          orbitRadius: 4.7,
+          orbitSpeed: 0.47,
           planetColor: '#F9B9F2',
           rings: [
             { color: 'white', innerScale: 1.2, outerScale: 1.5, inclination: Math.PI / 2 }, 
           ],
-          size: 0.22,
+          size: 0.25,
           rotationSpeed: 0.02,
           logoTexturePath: '/textures/Spotify_logo.svg',
         },
