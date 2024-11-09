@@ -67,7 +67,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       label: 'Fretboard-x', 
       description: 'explore()',
       orbitRadius: 2.25,
-      orbitSpeed: 0.7,
+      orbitSpeed: 0.775,
       planetColor: '#B7D3F2',
       size: 0.225,
       rotationSpeed: 0.02, 
@@ -90,7 +90,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       label: 'LinkedIn', 
       description: 'connect()',
       orbitRadius: 3.6,
-      orbitSpeed: 0.60,
+      orbitSpeed: 0.4,
       planetColor: '#4FB8FF',
       size: 0.325,
       rotationSpeed: 0.01,
@@ -106,7 +106,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       label: 'GitHub',
       description: 'collaborate()',
       orbitRadius: 5.6,
-      orbitSpeed: 0.15,
+      orbitSpeed: 0.125,
       startAngle: 0,
       planetColor: '#8980F5',
       rings: [
@@ -150,7 +150,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       label: 'Unknown',
       description: '()',
       orbitRadius: 5.6,
-      orbitSpeed: 0.15,
+      orbitSpeed: 0.125,
       startAngle: Math.PI,
       planetColor: '#84DCC6', //85FFC7
       rings: [
@@ -193,7 +193,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       label: 'Mythos.store',
       description: 'browse(), buy()',
       orbitRadius: 10.75,
-      orbitSpeed: 0.3,
+      orbitSpeed: 0.275,
       planetColor: '#2DE1FC',
       rings: [
         { color: '#2DE1FC', innerScale: 1.3, outerScale: 1.75, inclination: -Math.PI }, 
@@ -219,7 +219,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
           label: 'Spotify',
           description: 'getPlaylists()',
           orbitRadius: 9.5,
-          orbitSpeed: 0.195,
+          orbitSpeed: 0.475,
           planetColor: '#F9B9F2',
           rings: [
             { color: 'white', innerScale: 1.2, outerScale: 1.5, inclination: Math.PI / 2 }, 

@@ -27,13 +27,13 @@ const convertSize = (size: number): string => {
 
 const convertSpeed = (speed: number, planetLabel: string): string => {
   const speeds: { [key: string]: number } = {
-    'Fretboard-x': 76775,
-    'LinkedIn': 62250,
-    'GitHub': 21500,
-    'Unknown': 21500,
-    'Instagram': 59670,
-    'Mythos.store': 89115,
-    'Spotify': 59320,
+    'Fretboard-x': 66775,
+    'LinkedIn': 49250,
+    'GitHub': 21510,
+    'Unknown': 21510,
+    'Instagram': 49670,
+    'Mythos.store': 117225,
+    'Spotify': 183670,
   };
   return `${speeds[planetLabel]?.toLocaleString() || 0} mph`;
 };
