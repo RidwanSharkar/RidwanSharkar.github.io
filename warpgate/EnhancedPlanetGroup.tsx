@@ -66,14 +66,14 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       link: 'https://fretboardx.com',
       label: 'Fretboard-x', 
       description: 'explore()',
-      orbitRadius: 2.25,
+      orbitRadius: 2.33,
       orbitSpeed: 0.775,
       planetColor: '#B7D3F2',
-      size: 0.24,
+      size: 0.29,
       rotationSpeed: 0.02, 
       moons: [
         { 
-        orbitRadius: 0.5,
+        orbitRadius: 0.55,
         orbitSpeed: 3.25,
         size: 0.12,
         moonColor: '#B7D3F2',
@@ -113,11 +113,11 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
         { color: '#FFAAEE', innerScale: 1.25, outerScale: 1.40, inclination: 0 }, 
         { color: '#FFAAEE', innerScale: 1.5, outerScale: 1.825, inclination: Math.PI / 2 },
       ],
-      size: 0.5,
+      size: 0.525,
       rotationSpeed: 0.010,
       moons: [
         { 
-          orbitRadius: 1,
+          orbitRadius: 1.05,
           orbitSpeed: 2.25,
           size: 0.11,
           moonColor: '#EAC4D5',
@@ -125,7 +125,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
           label: 'Predictive Analysis',
         },
         { 
-          orbitRadius: 1.30,
+          orbitRadius: 1.35,
           orbitSpeed: 1.5,
           size: 0.1625,
           moonColor: '#FFAAEE',
@@ -133,7 +133,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
           label: 'Compound Classifier',
         },
         { 
-          orbitRadius: 1.65,
+          orbitRadius: 1.67,
           orbitSpeed: 2.2,
           size: 0.13,
           moonColor: '#D295BF',
@@ -146,7 +146,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
     // PLANET 3.5: Nutrimancer
     {
       position: [0, 0, 0],  // Starting on the opposite side of the orbit
-      link: '',
+      link: 'https://github.com/RidwanSharkar/The-Nutrimancers-Codex',
       label: 'Unknown',
       description: '()',
       orbitRadius: 6.3,
@@ -156,7 +156,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       rings: [
         { color: '#7EE081', innerScale: 1.25, outerScale: 1.6, inclination: Math.PI / 4.5 }, 
       ],
-      size: 0.29,
+      size: 0.325,
       rotationSpeed: 0.01,
       logoTexturePath: '/textures/Nutrimancer_logo.svg',
     },
@@ -177,8 +177,8 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       moons: [
         {
           orbitRadius: 1.1,
-          orbitSpeed: 2,
-          size: 0.125,
+          orbitSpeed: 1.8,
+          size: 0.175,
           moonColor: '#E8E9ED',
           link: 'https://www.artstation.com/ridwansharkar',
           label: 'Art Station',
@@ -202,7 +202,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       rotationSpeed: 0.01,
       moons: [
         {
-          orbitRadius: 0.9,
+          orbitRadius: 0.8,
           orbitSpeed: 4,
           size: 0.10,
           moonColor: '#a6b5b7',  
@@ -224,7 +224,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
           rings: [
             { color: 'white', innerScale: 1.2, outerScale: 1.5, inclination: Math.PI / 2 }, 
           ],
-          size: 0.25,
+          size: 0.225,
           rotationSpeed: 0.02,
           logoTexturePath: '/textures/Spotify_logo.svg',
         },
