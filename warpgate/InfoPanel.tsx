@@ -31,9 +31,9 @@ const convertSpeed = (speed: number, planetLabel: string): string => {
     'LinkedIn': 49250,
     'GitHub': 21510,
     'Unknown': 21510,
-    'Instagram': 49670,
+    'Instagram': 48990,
     'Mythos.store': 117225,
-    'Spotify': 183670,
+    'Spotify': 62670,
   };
   return `${speeds[planetLabel]?.toLocaleString() || 0} mph`;
 };
@@ -49,10 +49,10 @@ const getPlanetTemperature = (planetLabel: string): string => {
     'Fretboard-x': 420.0,
     'LinkedIn': 69.0,
     'GitHub': 11.8,
-    'Unknown': 262.4,
+    'Unknown': 378.4,
     'Instagram': -41.7,
-    'Mythos.store': -458.1,
-    'Spotify': -97.3,
+    'Mythos.store': -359.7,
+    'Spotify': 42.9,
   };
   
   return `${temperatures[planetLabel] || 0}°F`;
@@ -76,13 +76,13 @@ const getAtmosphereComposition = (planetColor: string): string => {
 
 const getPlanetMass = (planetLabel: string): string => {
   const masses: { [key: string]: number } = {
-    'Fretboard-x': 1.4e24,
-    'LinkedIn': 1.7e25,
-    'GitHub': 5.7e26,
-    'Unknown': 1.5e25,
-    'Instagram': 2.3e26,
-    'Mythos.store': 9.8e24,
-    'Spotify': 1.2e24,
+    'Fretboard-x': 1.4e24,          // 2  
+    'LinkedIn': 1.7e25,            // 4
+    'GitHub': 5.7e26,               // 7
+    'Unknown': 1.5e25,              // 3
+    'Instagram': 2.3e26,            // 6
+    'Mythos.store': 9.8e25,         // 5 
+    'Spotify': 1.2e24,             // 1   
   };
   const mass = masses[planetLabel];
   return mass ? `${mass.toExponential(2)} lbs` : 'Unknown mass';
