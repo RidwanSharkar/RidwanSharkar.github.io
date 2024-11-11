@@ -5,6 +5,7 @@ import styles from './InfoPanel.module.css';
 import { motion, AnimatePresence } from 'framer-motion'; 
 import Image from 'next/image';
 
+
 interface InfoPanelProps {
   planet: PlanetData;
   onClose: () => void;
@@ -43,7 +44,6 @@ const convertDistance = (distance: number): string => {
   return `${miles.toExponential(2)} miles`;
 };
 
-// Replace the calculateTemperature function with this:
 const getPlanetTemperature = (planetLabel: string): string => {
   const temperatures: { [key: string]: number } = {
     'Fretboard-x': 420.0,
@@ -74,6 +74,7 @@ const getAtmosphereComposition = (planetColor: string): string => {
   ).join('') || 'Unknown composition';
 };
 
+// merge*
 const getPlanetMass = (planetLabel: string): string => {
   const masses: { [key: string]: number } = {
     'Fretboard-x': 1.4e24,          // 2  
@@ -120,6 +121,38 @@ const MoonStatsPanel: React.FC<{ moons: MoonData[] }> = ({ moons }) => {
   );
 };
 
+// NEWTON SHIT
+const G = 6.67430e-11;  // gravitational constant in m³/kg/s²
+const LBS_TO_KG = 0.45359237;  // conversion factor for pounds to kilograms
+const MILES_TO_METERS = 1609.344;  // miles to meters
+
+const calculateGravity = (planetLabel: string, size: number): string => {
+  const masses: Record<string, number> = {
+    'Fretboard-x': 1.4e24,
+    'LinkedIn': 1.7e25,
+    'GitHub': 5.7e26,
+    'Unknown': 1.5e25,
+    'Instagram': 2.3e26,
+    'Mythos.store': 1.8e25,
+    'Spotify': 1.2e24,
+  };
+
+  const mass = masses[planetLabel];
+  if (!mass) return 'Unknown';
+
+  // Convert mass from lbs to kg
+  const massInKg = mass * LBS_TO_KG;
+  
+  // Get radius in meters
+  const radiusInMiles = (size * 21100) / 2;  
+  const radiusInMeters = radiusInMiles * MILES_TO_METERS;
+
+  // Calculate gravity (m/s²)
+  const gravity = (G * massInKg) / (radiusInMeters * radiusInMeters);
+  
+  return `${gravity.toFixed(2)} m/s²`;
+};
+
 const InfoPanel: React.FC<InfoPanelProps> = ({ planet, onClose }) => {
   const [visible, setVisible] = useState(false);
   const statsPanelRef = useRef<HTMLDivElement>(null);
@@ -160,6 +193,7 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ planet, onClose }) => {
                 <div><span>Orbital Speed:</span> <span>{convertSpeed(planet.orbitSpeed, planet.label)}</span></div>
                 <div><span>Orbital Radius:</span> <span>{convertDistance(planet.orbitRadius)}</span></div>
                 <div><span>Mean Temperature:</span> <span>{getPlanetTemperature(planet.label)}</span></div>
+                <div><span>Gravitational Acceleration:</span> <span>{calculateGravity(planet.label, planet.size)}</span></div>
                 <div>
                   <span>Atmospheric Emission Spectrum:</span>
                   <div dangerouslySetInnerHTML={{ __html: getAtmosphereComposition(planet.planetColor) }}></div>
