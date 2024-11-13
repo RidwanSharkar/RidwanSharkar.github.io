@@ -130,7 +130,7 @@
   color: #ffffff;
   padding: 17px;
   border-radius: 10px;
-  width: 285px;
+  width: 260px;
   backdrop-filter: blur(10px);
   z-index: 1000;
   border: 2px solid transparent;
@@ -164,7 +164,7 @@
   white-space: nowrap;
 }
 
-/* Special styling for the atmosphere section */
+/* atmosphere section */
 .statsGrid > div:last-child {
   flex-direction: column;
   margin-top: 0.5rem;
@@ -245,7 +245,7 @@
   color: #ffffff;
   padding: 15px;
   border-radius: 10px;
-  width: 250px;
+  width: 260px;
   backdrop-filter: blur(10px);
   z-index: 1000;
   border: 2px solid transparent;
@@ -323,4 +323,11 @@
   flex-direction: column;
   gap: 1.5rem;
   z-index: 1000;
+}
+
+.statsTitle.nutrimancerTitle {
+  font-size: 0.83rem;
+}
+.infoPanel h2.nutrimancerTitle {
+  font-size: 1.05rem; 
 }

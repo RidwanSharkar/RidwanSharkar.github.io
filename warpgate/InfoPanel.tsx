@@ -31,7 +31,7 @@ const convertSpeed = (speed: number, planetLabel: string): string => {
     'Fretboard-x': 66775,
     'LinkedIn': 49250,
     'GitHub': 21510,
-    'Unknown': 21510,
+    'The Nutrimancer\'s Codex - Vol. II': 21510,
     'Instagram': 48990,
     'Mythos.store': 117225,
     'Spotify': 62670,
@@ -49,7 +49,7 @@ const getPlanetTemperature = (planetLabel: string): string => {
     'Fretboard-x': 420.0,
     'LinkedIn': 69.0,
     'GitHub': 11.8,
-    'Unknown': 378.4,
+    'The Nutrimancer\'s Codex - Vol. II': 378.4,
     'Instagram': -41.7,
     'Mythos.store': -359.7,
     'Spotify': 42.9,
@@ -58,16 +58,16 @@ const getPlanetTemperature = (planetLabel: string): string => {
   return `${temperatures[planetLabel] || 0}°F`;
 };
 
-//LOOSEAF
+// Updated getAtmosphereComposition function with chemical formulas and subscripts
 const getAtmosphereComposition = (planetColor: string): string => {
   const atmospheres: { [key: string]: string } = {
-    '#B7D3F2': '• Nitrogen (74%)\n• Oxygen (25%)\n• Argon (1%)',
-    '#4FB8FF': '• Nitrogen (80%)\n• Methane (15%)\n• Hydrogen (5%)',
-    '#8980F5': '• Hydrogen (68%)\n• Helium (3%)\n• Methane (1%)',
-    '#84DCC6': '• Carbon Dioxide (88%)\n• Nitrogen (10%)\n• Argon (2%)',
-    '#F4ACB7': '• Sulfur Dioxide (80%)\n• Carbon Dioxide (15%)\n• Helium (5%)',
-    '#2DE1FC': '• Helium (60%)\n• Hydrogen (30%)\n• Methane (10%)',
-    '#F9B9F2': '• Carbon Dioxide (60%)\n• Hydrogen (25%)\n• Neon (10%)\n• Titanium Dioxide (5%)',
+    '#B7D3F2': '• [N<sub>2</sub>] Nitrogen (74%)\n• [O<sub>2</sub>] Oxygen (25%)\n• [Ar] Argon (1%)',
+    '#4FB8FF': '• [N<sub>2</sub>] Nitrogen (80%)\n• [CH<sub>4</sub>] Methane (15%)\n• [H<sub>2</sub>] Hydrogen (5%)',
+    '#8980F5': '• [H<sub>2</sub>] Hydrogen (68%)\n• [He] Helium (3%)\n• [CH<sub>4</sub>] Methane (1%)',
+    '#84DCC6': '• [CO<sub>2</sub>] Carbon Dioxide (88%)\n• [N<sub>2</sub>] Nitrogen (10%)\n• [Ar] Argon (2%)',
+    '#F4ACB7': '• [SO<sub>2</sub>] Sulfur Dioxide (80%)\n• [CO<sub>2</sub>] Carbon Dioxide (15%)\n• [He] Helium (5%)',
+    '#2DE1FC': '• [He] Helium (60%)\n• [H<sub>2</sub>] Hydrogen (30%)\n• [CH<sub>4</sub>] Methane (10%)',
+    '#F9B9F2': '• [CO<sub>2</sub>] Carbon Dioxide (60%)\n• [H<sub>2</sub>] Hydrogen (25%)\n• [Ne] Neon (10%)\n• [TiO<sub>2</sub>] Titanium Dioxide (5%)',
   };
   return atmospheres[planetColor]?.split('\n').map(line => 
     `<div style="margin-left: 1rem">${line}</div>`
@@ -77,13 +77,13 @@ const getAtmosphereComposition = (planetColor: string): string => {
 // merge*
 const getPlanetMass = (planetLabel: string): string => {
   const masses: { [key: string]: number } = {
-    'Fretboard-x': 1.4e24,          // 2  
-    'LinkedIn': 1.7e25,            // 4
-    'GitHub': 5.7e26,               // 7
-    'Unknown': 1.5e25,              // 3
-    'Instagram': 2.3e26,            // 6
-    'Mythos.store': 9.8e25,         // 5 
-    'Spotify': 1.2e24,             // 1   
+    'Fretboard-x': 1.4e24,
+    'LinkedIn': 1.7e25,
+    'GitHub': 5.7e26,
+    'The Nutrimancer\'s Codex - Vol. II': 1.5e25,
+    'Instagram': 2.3e26,
+    'Mythos.store': 9.8e25,
+    'Spotify': 1.2e24,
   };
   const mass = masses[planetLabel];
   return mass ? `${mass.toExponential(2)} lbs` : 'Unknown mass';
@@ -98,7 +98,13 @@ const MoonStatsPanel: React.FC<{ moons: MoonData[] }> = ({ moons }) => {
       exit={{ opacity: 0, x: -20, y: -20 }}
       transition={{ duration: 0.5 }}
     >
-      <h3 className={styles.statsTitle}>{"Satellites:"}</h3>
+      <h3 
+        className={`${styles.statsTitle} ${
+          moons.some(moon => moon.label === "The Nutrimancer's Codex - Vol. II") ? styles.nutrimancerTitle : ''
+        }`}
+      >
+        {"Satellites:"}
+      </h3>
       <div className={styles.moonGrid}>
         {moons.map((moon, index) => (
           <div key={index} className={styles.moonRow}>
@@ -131,7 +137,7 @@ const calculateGravity = (planetLabel: string, size: number): string => {
     'Fretboard-x': 1.4e24,
     'LinkedIn': 1.7e25,
     'GitHub': 5.7e26,
-    'Unknown': 1.5e25,
+    'The Nutrimancer\'s Codex - Vol. II': 1.5e25,
     'Instagram': 2.3e26,
     'Mythos.store': 1.8e25,
     'Spotify': 1.2e24,
@@ -185,19 +191,29 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ planet, onClose }) => {
               animate={{ opacity: 1, x: 0, y: 0 }}
               exit={{ opacity: 0, x: -20, y: -20 }}
               transition={{ duration: 0.5 }}
+              ref={statsPanelRef}
             >
-              <h3 className={styles.statsTitle}>{"{ "}{planet.label}{" }"}</h3>
+              <h3 
+                className={`${styles.statsTitle} ${
+                  planet.label === "The Nutrimancer's Codex - Vol. II" ? styles.nutrimancerTitle : ''
+                }`}
+              >
+                {"{ "}{planet.label}{" }"}
+              </h3>
               <div className={`${styles.statsGrid} text-sm`}>
+                
                 <div><span>Mass:</span> <span>{getPlanetMass(planet.label)}</span></div>
                 <div><span>Diameter:</span> <span>{convertSize(planet.size)}</span></div>
                 <div><span>Orbital Speed:</span> <span>{convertSpeed(planet.orbitSpeed, planet.label)}</span></div>
                 <div><span>Orbital Radius:</span> <span>{convertDistance(planet.orbitRadius)}</span></div>
+                <div><span>Surface Gravity:</span> <span>{calculateGravity(planet.label, planet.size)}</span></div>
                 <div><span>Mean Temperature:</span> <span>{getPlanetTemperature(planet.label)}</span></div>
-                <div><span>Gravitational Acceleration:</span> <span>{calculateGravity(planet.label, planet.size)}</span></div>
+                
                 <div>
-                  <span>Atmospheric Emission Spectrum:</span>
+                  <span>Emission Spectrum:</span>
                   <div dangerouslySetInnerHTML={{ __html: getAtmosphereComposition(planet.planetColor) }}></div>
                 </div>
+
               </div>
             </motion.div>
 
@@ -224,7 +240,15 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ planet, onClose }) => {
                 />
               </div>
               <div>
-                <h2>{planet.label}</h2>
+                <h2 
+                  className={
+                    planet.label === "The Nutrimancer's Codex - Vol. II" 
+                      ? styles.nutrimancerTitle 
+                      : ''
+                  }
+                >
+                  {planet.label}
+                </h2>
                 <p>{planet.description || 'No description available.'}</p>
               </div>
             </div>

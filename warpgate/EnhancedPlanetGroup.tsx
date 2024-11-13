@@ -120,7 +120,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
           orbitRadius: 1.05,
           orbitSpeed: 2.25,
           size: 0.11,
-          moonColor: '#EAC4D5',
+          moonColor: '#F9B9F2',
           link: 'https://github.com/RidwanSharkar/Predictive-Analysis-of-MMA-Fights',
           label: 'Predictive Analysis',
         },
@@ -147,8 +147,8 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
     {
       position: [0, 0, 0],  // Starting on the opposite side of the orbit
       link: 'https://github.com/RidwanSharkar/The-Nutrimancers-Codex',
-      label: 'Unknown',
-      description: '()',
+      label: "The Nutrimancer's Codex - Vol. II",
+      description: 'unknown()',
       orbitRadius: 6.3,
       orbitSpeed: 0.125,
       startAngle: Math.PI,
@@ -193,17 +193,17 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       label: 'Mythos.store',
       description: 'browse(), buy()',
       orbitRadius: 10,
-      orbitSpeed: 0.3,
+      orbitSpeed: 0.285,
       planetColor: '#2DE1FC',
       rings: [
         { color: '#2DE1FC', innerScale: 1.3, outerScale: 1.75, inclination: -Math.PI }, 
       ],
-      size: 0.325,
+      size: 0.333,
       rotationSpeed: 0.01,
       moons: [
         {
           orbitRadius: 0.8,
-          orbitSpeed: 4,
+          orbitSpeed: 3,
           size: 0.10,
           moonColor: '#a6b5b7',  
           link: 'https://www.facebook.com/mythoscarver/',
