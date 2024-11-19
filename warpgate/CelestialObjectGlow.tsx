@@ -16,7 +16,7 @@ interface GlowProps {
 export const CelestialObjectGlow: React.FC<GlowProps> = ({ 
   color, 
   size, 
-  intensity = 0.3,
+  intensity = 0.4,
   isSelected = false,
 }) => {
   const glowRef = useRef<ShaderMaterial>(null);

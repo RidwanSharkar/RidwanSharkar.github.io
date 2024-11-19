@@ -46,6 +46,9 @@ export interface PlanetData {
   moons?: MoonData[];
   logoTexturePath?: string; 
   initialAngle?: number;
+  isBinary?: boolean;
+  binaryOffset?: number;
+  binarySpeed?: number;
 }
 
 interface ExplosionData {
@@ -68,7 +71,8 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       description: 'explore()',
       orbitRadius: 2.33,
       orbitSpeed: 0.775,
-      planetColor: '#B7D3F2',
+      startAngle: 0,
+      planetColor: '#C3F6EE',
       size: 0.29,
       rotationSpeed: 0.02, 
       moons: [
@@ -83,14 +87,31 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
     ],
       logoTexturePath: '/textures/Fretboardx_logo.png', 
     },
+    // PLANET 1.5: Spotify
+    {
+      position: [0, 0, 0],
+      link: 'https://open.spotify.com/user/1268486981',
+      label: 'Spotify',
+      description: 'getPlaylists()',
+      orbitRadius: 2.33,
+      orbitSpeed: 0.775,
+      startAngle: (Math.PI),
+      planetColor: '#F9B9F2',
+      rings: [
+        { color: 'white', innerScale: 1.2, outerScale: 1.5, inclination: Math.PI / 2 }, 
+      ],
+      size: 0.225,
+      rotationSpeed: 0.02,
+      logoTexturePath: '/textures/Spotify_logo.svg',
+    },
     // PLANET 2: LINKEDIN
     {
       position: [0, 0, 0],
       link: 'https://www.linkedin.com/in/ridwansharkar',
       label: 'LinkedIn', 
       description: 'connect()',
-      orbitRadius: 3.6,
-      orbitSpeed: 0.4,
+      orbitRadius: 3.9,
+      orbitSpeed: 0.45,
       planetColor: '#4FB8FF',
       size: 0.37,
       rotationSpeed: 0.01,
@@ -99,13 +120,53 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       ],
       logoTexturePath: '/textures/LinkedIn_logo.svg', 
     },
+    // PLANET 3,25: BORROWED ORDER BINARY SYSTEM
+    {
+      position: [0, 0, 0],
+      link: 'https://ridwansharkar.github.io/Borrowed-Order/',
+      label: 'Borrowed Order', 
+      description: 'visualize()',
+      orbitRadius: 6,
+      orbitSpeed: 0.125,
+      startAngle: (Math.PI),
+      planetColor: '#C89FD9',
+      size: 0.27,
+      rotationSpeed: 0.05,
+      rings: [
+        { color: '#00FFFF', innerScale: 1.3, outerScale: 1.45, inclination: -Math.PI / 3 }
+      ],
+      logoTexturePath: '/textures/BorrowedOrder_logo.svg', 
+      isBinary: true,
+      binaryOffset: 0.5,
+      binarySpeed: 2.0,
+    },
+    // PLANET 3.5: Nutrimancer BINARY 
+    {
+      position: [0, 0, 0],
+      link: 'https://github.com/RidwanSharkar/The-Nutrimancers-Codex',
+      label: "The Nutrimancer's Codex - Vol. II",
+      description: 'unknown()',
+      orbitRadius: 6,
+      orbitSpeed: 0.125,
+      startAngle: (Math.PI),
+      planetColor: '#84DCC6',
+      rings: [
+        { color: '#7EE081', innerScale: 1.25, outerScale: 1.6, inclination: Math.PI / 4.5 }, 
+      ],
+      size: 0.3,
+      rotationSpeed: 0.01,
+      logoTexturePath: '/textures/Nutrimancer_logo.svg',
+      isBinary: true,
+      binaryOffset: -0.5,
+      binarySpeed: 2.0,
+    },
     // PLANET 3: GITHUB
     {
       position: [0, 0, 0],
       link: 'https://github.com/RidwanSharkar',
       label: 'GitHub',
       description: 'collaborate()',
-      orbitRadius: 6.3,
+      orbitRadius: 6,
       orbitSpeed: 0.125,
       startAngle: 0,
       planetColor: '#8980F5',
@@ -117,49 +178,33 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       rotationSpeed: 0.010,
       moons: [
         { 
-          orbitRadius: 1.05,
+          orbitRadius: 1.12,
           orbitSpeed: 2.25,
           size: 0.11,
-          moonColor: '#F9B9F2',
+          moonColor: '#D9C6E8',
           link: 'https://github.com/RidwanSharkar/Predictive-Analysis-of-MMA-Fights',
           label: 'Predictive Analysis',
         },
         { 
-          orbitRadius: 1.35,
+          orbitRadius: 1.43,
           orbitSpeed: 1.5,
           size: 0.1625,
-          moonColor: '#FFAAEE',
+          moonColor: '#F9B9F2',
           link: 'https://github.com/RidwanSharkar/Pharmacological-Compound-Classifier',
           label: 'Compound Classifier',
         },
         { 
-          orbitRadius: 1.67,
+          orbitRadius: 1.76,
           orbitSpeed: 2.2,
-          size: 0.13,
-          moonColor: '#D295BF',
+          size: 0.12,
+          moonColor: '#4FB8FF',
           link: 'https://github.com/RidwanSharkar/Arbitrage-Better',
           label: 'MMA Arbitrager',
         },
       ],
       logoTexturePath: '/textures/Github_logo.svg',
     },
-    // PLANET 3.5: Nutrimancer
-    {
-      position: [0, 0, 0],  // Starting on the opposite side of the orbit
-      link: 'https://github.com/RidwanSharkar/The-Nutrimancers-Codex',
-      label: "The Nutrimancer's Codex - Vol. II",
-      description: 'unknown()',
-      orbitRadius: 6.3,
-      orbitSpeed: 0.125,
-      startAngle: Math.PI,
-      planetColor: '#84DCC6', //85FFC7
-      rings: [
-        { color: '#7EE081', innerScale: 1.25, outerScale: 1.6, inclination: Math.PI / 4.5 }, 
-      ],
-      size: 0.325,
-      rotationSpeed: 0.01,
-      logoTexturePath: '/textures/Nutrimancer_logo.svg',
-    },
+
     // PLANET 4: IG ART STATION
     {
       position: [0, 0, 0],
@@ -212,22 +257,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       ],
       logoTexturePath: '/textures/Mythos_logo.png',
     },
-        // PLANET 6: Spotify
-        {
-          position: [0, 0, 0],
-          link: 'https://open.spotify.com/user/1268486981',
-          label: 'Spotify',
-          description: 'getPlaylists()',
-          orbitRadius: 4.7,
-          orbitSpeed: 0.47,
-          planetColor: '#F9B9F2',
-          rings: [
-            { color: 'white', innerScale: 1.2, outerScale: 1.5, inclination: Math.PI / 2 }, 
-          ],
-          size: 0.225,
-          rotationSpeed: 0.02,
-          logoTexturePath: '/textures/Spotify_logo.svg',
-        },
+
   ], []); 
 
   // Initialize refs for each planet
@@ -286,7 +316,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
   useEffect(() => {
     const interval = setInterval(() => {
       setExoplanets(prev => [...prev, Date.now()]); // timestamp as unique ID
-    }, 15000); // 30000 ms = 30 seconds
+    }, 7500); 
 
     return () => clearInterval(interval);
   }, []);
@@ -295,6 +325,11 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
   const removeExoplanet = (id: number) => {
     setExoplanets(prev => prev.filter(exoId => exoId !== id));
   };
+
+  const uniqueOrbitRadii = useMemo(() => {
+    const radii = planets.map(planet => planet.orbitRadius);
+    return Array.from(new Set(radii));
+  }, [planets]);
 
   return (
     <Suspense fallback={null}> 
@@ -305,17 +340,23 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
         planetSizes={getPlanetSizes()}
         onCollision={handleCollision} 
       />
-      {/* Render orbit paths */}
-      {planets.map((planet, index) => (
+      
+      {/* Render unique orbit paths */}
+      {uniqueOrbitRadii.map((orbitRadius, index) => (
         <mesh key={`orbit-${index}`} rotation-x={Math.PI / 2}>
           <ringGeometry
             args={[
-              planet.orbitRadius,
-              planet.orbitRadius + 0.05,
+              orbitRadius,
+              orbitRadius + 0.05,
               64,
             ]}
           />
-          <meshBasicMaterial color="#ffffff" opacity={0.08} transparent side={THREE.DoubleSide}/>
+          <meshBasicMaterial 
+            color="#ffffff" 
+            opacity={0.08} 
+            transparent 
+            side={THREE.DoubleSide}
+          />
         </mesh>
       ))}
 

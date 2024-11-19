@@ -33,6 +33,9 @@ interface EnhancedPlanetProps extends PlanetData {
   selected: boolean;
   collisionTriggered: boolean;
   startAngle?: number;
+  isBinary?: boolean;
+  binaryOffset?: number;
+  binarySpeed?: number;
 }
 
 
@@ -54,6 +57,9 @@ const EnhancedPlanet = forwardRef<Mesh, EnhancedPlanetProps>(({
   moons,
   logoTexturePath,
   startAngle = 0,
+  isBinary,
+  binaryOffset,
+  binarySpeed,
 }, ref) => {
   const atmosphereRef = useRef<Mesh>(null);
   const [hovered, setHovered] = useState(false);
@@ -90,17 +96,37 @@ const EnhancedPlanet = forwardRef<Mesh, EnhancedPlanetProps>(({
 
   useFrame(({ clock }) => {
     const elapsed = clock.getElapsedTime();
-    if (meshRef.current) {                          // Update planet
-      const angle = elapsed * orbitSpeed + startAngle;
-      meshRef.current.position.x = orbitRadius * Math.cos(angle);
-      meshRef.current.position.z = orbitRadius * Math.sin(angle);
-      meshRef.current.rotation.y += rotationSpeed;  // Planet rotation
+    if (meshRef.current) {
+      if (isBinary && binaryOffset !== undefined && binarySpeed !== undefined) {
+        // Calculate the binary orbit position
+        const binaryAngle = elapsed * binarySpeed;
+        const binaryX = Math.cos(binaryAngle) * binaryOffset;
+        const binaryZ = Math.sin(binaryAngle) * binaryOffset;
+
+        // Calculate the main orbit position
+        const orbitAngle = elapsed * orbitSpeed + startAngle;
+        const orbitX = orbitRadius * Math.cos(orbitAngle);
+        const orbitZ = orbitRadius * Math.sin(orbitAngle);
+
+        // Combine the positions
+        meshRef.current.position.x = orbitX + binaryX;
+        meshRef.current.position.z = orbitZ + binaryZ;
+      } else {
+        // Original single planet behavior
+        const angle = elapsed * orbitSpeed + startAngle;
+        meshRef.current.position.x = orbitRadius * Math.cos(angle);
+        meshRef.current.position.z = orbitRadius * Math.sin(angle);
+      }
+
+      meshRef.current.rotation.y += rotationSpeed;
+
+      // Update atmosphere and logo positions
       if (atmosphereRef.current) {
         atmosphereRef.current.position.copy(meshRef.current.position);
         atmosphereRef.current.rotation.copy(meshRef.current.rotation);
       }
       if (logoRef.current) {
-        logoRef.current.rotation.y += 0.01;         // Logo rotation speed
+        logoRef.current.rotation.y += 0.01;
       }
     }
   });
@@ -158,7 +184,7 @@ const EnhancedPlanet = forwardRef<Mesh, EnhancedPlanetProps>(({
       {/* Atmosphere layer */}
       <mesh
         ref={atmosphereRef}
-        scale={[1.18, 1.18, 1.18]}
+        scale={[1.225, 1.225, 1.225]}
       >
         <sphereGeometry args={[size, 64, 64]} />
         <primitive object={atmosphereMaterial} attach="material" />

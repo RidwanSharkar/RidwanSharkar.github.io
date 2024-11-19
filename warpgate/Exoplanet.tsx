@@ -12,20 +12,20 @@ const Exoplanet: React.FC<ExoplanetProps> = ({ onRemove }) => {
   const meshRef = useRef<Mesh>(null);
   const velocityRef = useRef<Vector3>();
 
-  // Random size between 0.14 and 0.20
-  const size = 0.15 + Math.random() * (0.20 - 0.14);
+  // SIZE RANGE
+  const size = 0.15 + Math.random() * (0.20 - 0.16);
   const colors = useMemo(() => ['#00ffff', '#ff00ff', '#FF7F11', '#ff3366', '#66ff33', '#B8B3E9', '#B8B3E9', '#F87666', '6EFAFB', 'BEEE62', 'CD9FCC', '93FF96', 'B2FFA8' ], []);
   const color = useMemo(() => colors[Math.floor(Math.random() * colors.length)], [colors]);
 
-  // Constants for simulation
+  // SIMULATION CONSTANTS
   const SPAWN_RADIUS = 50;
-  const HYPERBOLIC_THRESHOLD = 40; // GRAVITY INFLUENCE
-  const MIN_DISTANCE = 2;
-  const BASE_GRAVITY_STRENGTH = 0.15; // GRAVITY STRENGTH
-  const CLOSE_APPROACH_THRESHOLD = 8; // APPROACH THRESHOLD
+  const HYPERBOLIC_THRESHOLD = 35; // GRAVITY INFLUENCE RADIUS
+  const MIN_DISTANCE = 1.8; // ACTUAL COLLSION SIZE
+  const BASE_GRAVITY_STRENGTH = 0.25; // GRAVITY STRENGTH
+  const CLOSE_APPROACH_THRESHOLD = 2.3; // APPROACH THRESHOLD
 
   const targetPoint = useMemo(() => {
-    const radius = Math.random() * 8; // COLLISION ZONE
+    const radius = Math.random() * 17; // COLLISION PLANE 
     const theta = Math.random() * 2 * Math.PI;
     const phi = Math.acos(2 * Math.random() - 1);
     return new Vector3(
@@ -53,7 +53,7 @@ const Exoplanet: React.FC<ExoplanetProps> = ({ onRemove }) => {
 
   // Velocity vector towards the solar system with variation
   useEffect(() => {
-    const speed = Math.random() * 0.4 + 0.04;
+    const speed = Math.random() * 0.4 + 0.03;
     const direction = targetPoint.clone().sub(initialPosition).normalize();
     
     // Inclination variation ±5° to ±3°
@@ -73,6 +73,7 @@ const Exoplanet: React.FC<ExoplanetProps> = ({ onRemove }) => {
   const [opacity, setOpacity] = useState(1);
   const [showExplosion, setShowExplosion] = useState(false);
   const [collisionPoint, setCollisionPoint] = useState<Vector3 | null>(null);
+  const [isVisible, setIsVisible] = useState(true);
 
   // FADE OUT TIMER
   useEffect(() => {
@@ -84,7 +85,7 @@ const Exoplanet: React.FC<ExoplanetProps> = ({ onRemove }) => {
       }, 1000); // 1000 ms = 1 second
 
       return () => clearTimeout(removeTimer);
-    }, 15000); // 15000 ms = 15 seconds
+    }, 10000); // 15000 ms = 15 seconds
 
     return () => clearTimeout(fadeOutTimer);
   }, [onRemove]);
@@ -96,29 +97,44 @@ const Exoplanet: React.FC<ExoplanetProps> = ({ onRemove }) => {
       // Proximity detection to the Sun 
       const distanceToSun = meshRef.current.position.length();
       
-      // Check for collision with sun
-      if (distanceToSun < MIN_DISTANCE) {
+      // Check for collision with sun FIRST, before any gravity calculations
+      if (distanceToSun < MIN_DISTANCE && isVisible) {
         setCollisionPoint(meshRef.current.position.clone());
         setShowExplosion(true);
+        setIsVisible(false);
+        // Immediately stop all motion
+        velocityRef.current.set(0, 0, 0);
         setTimeout(() => {
           onRemove();
-        }, 1500); // 1.5 seconds matching explosion duration
+        }, 3000);
         return;
       }
 
       // Apply continuous gravitational force when within threshold
       if (distanceToSun < HYPERBOLIC_THRESHOLD) {
-        // Enhanced gravity when very close to sun
+        // Add a minimum distance clamp to prevent extreme gravity values
+        const clampedDistance = Math.max(distanceToSun, CLOSE_APPROACH_THRESHOLD * 0.5);
+        
         let gravityStrength = BASE_GRAVITY_STRENGTH;
         if (distanceToSun < CLOSE_APPROACH_THRESHOLD) {
-          // Exponentially increase gravity strength for close approaches
-          gravityStrength *= (CLOSE_APPROACH_THRESHOLD / distanceToSun) ** 1.5;
+          // Limit the maximum gravity multiplier
+          const gravityMultiplier = Math.min(
+            (CLOSE_APPROACH_THRESHOLD / clampedDistance) ** 1.5,
+            4.0 // Maximum multiplier cap
+          );
+          gravityStrength *= gravityMultiplier;
         }
 
-        const gravityMultiplier = gravityStrength / (distanceToSun * distanceToSun);
+        const gravityMultiplier = gravityStrength / (clampedDistance * clampedDistance);
         const gravity = meshRef.current.position.clone()
           .normalize()
           .multiplyScalar(-gravityMultiplier);
+        
+        // Limit the maximum gravity force
+        const maxGravityMagnitude = 0.5;
+        if (gravity.length() > maxGravityMagnitude) {
+          gravity.normalize().multiplyScalar(maxGravityMagnitude);
+        }
         
         velocityRef.current.add(gravity);
       }
@@ -127,7 +143,7 @@ const Exoplanet: React.FC<ExoplanetProps> = ({ onRemove }) => {
 
   return (
     <group>
-      <mesh ref={meshRef}>
+      <mesh ref={meshRef} visible={isVisible}>
         <sphereGeometry args={[size, 32, 32]} />
         <meshStandardMaterial color={new Color(color)} transparent opacity={opacity} />
       </mesh>
@@ -145,9 +161,9 @@ const Exoplanet: React.FC<ExoplanetProps> = ({ onRemove }) => {
         <Explosion
           position={collisionPoint}
           color={color}
-          size={size * 2}
-          duration={1.5}
-          particleCount={30}
+          size={size * 4}
+          duration={2}
+          particleCount={120}
         />
       )}
     </group>
