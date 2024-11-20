@@ -35,6 +35,7 @@ const convertSpeed = (speed: number, planetLabel: string): string => {
     'Instagram': 48990,
     'Mythos.store': 117225,
     'Spotify': 62670,
+    'Borrowed Order': 21510,
   };
   return `${speeds[planetLabel]?.toLocaleString() || 0} mph`;
 };
@@ -53,6 +54,7 @@ const getPlanetTemperature = (planetLabel: string): string => {
     'Instagram': -41.7,
     'Mythos.store': -359.7,
     'Spotify': 42.9,
+    'Borrowed Order': 112.3,
   };
   
   return `${temperatures[planetLabel] || 0}°F`;
@@ -68,6 +70,7 @@ const getAtmosphereComposition = (planetColor: string): string => {
     '#F4ACB7': '• [SO<sub>2</sub>] Sulfur Dioxide (80%)\n• [CO<sub>2</sub>] Carbon Dioxide (15%)\n• [He] Helium (5%)',
     '#2DE1FC': '• [He] Helium (60%)\n• [H<sub>2</sub>] Hydrogen (30%)\n• [CH<sub>4</sub>] Methane (10%)',
     '#F9B9F2': '• [CO<sub>2</sub>] Carbon Dioxide (60%)\n• [H<sub>2</sub>] Hydrogen (25%)\n• [Ne] Neon (10%)\n• [TiO<sub>2</sub>] Titanium Dioxide (5%)',
+    '#C89FD9': '• [CO<sub>2</sub>] Carbon Dioxide (60%)\n• [H<sub>2</sub>] Hydrogen (25%)\n• [Ne] Neon (10%)\n• [TiO<sub>2</sub>] Titanium Dioxide (5%)',
   };
   return atmospheres[planetColor]?.split('\n').map(line => 
     `<div style="margin-left: 1rem">${line}</div>`
@@ -84,6 +87,7 @@ const getPlanetMass = (planetLabel: string): string => {
     'Instagram': 2.3e26,
     'Mythos.store': 9.8e25,
     'Spotify': 1.2e24,
+    'Borrowed Order': 1.4e25,
   };
   const mass = masses[planetLabel];
   return mass ? `${mass.toExponential(2)} lbs` : 'Unknown mass';
@@ -141,6 +145,7 @@ const calculateGravity = (planetLabel: string, size: number): string => {
     'Instagram': 2.3e26,
     'Mythos.store': 1.8e25,
     'Spotify': 1.2e24,
+    'Borrowed Order': 1.4e25,
   };
 
   const mass = masses[planetLabel];

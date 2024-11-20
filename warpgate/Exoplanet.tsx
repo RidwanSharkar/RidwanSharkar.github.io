@@ -19,13 +19,13 @@ const Exoplanet: React.FC<ExoplanetProps> = ({ onRemove }) => {
 
   // SIMULATION CONSTANTS
   const SPAWN_RADIUS = 50;
-  const HYPERBOLIC_THRESHOLD = 35; // GRAVITY INFLUENCE RADIUS
+  const HYPERBOLIC_THRESHOLD = 19; // GRAVITY INFLUENCE RADIUS
   const MIN_DISTANCE = 1.8; // ACTUAL COLLSION SIZE
   const BASE_GRAVITY_STRENGTH = 0.25; // GRAVITY STRENGTH
   const CLOSE_APPROACH_THRESHOLD = 2.3; // APPROACH THRESHOLD
 
   const targetPoint = useMemo(() => {
-    const radius = Math.random() * 17; // COLLISION PLANE 
+    const radius = Math.random() * 22; // COLLISION PLANE 
     const theta = Math.random() * 2 * Math.PI;
     const phi = Math.acos(2 * Math.random() - 1);
     return new Vector3(
@@ -85,7 +85,7 @@ const Exoplanet: React.FC<ExoplanetProps> = ({ onRemove }) => {
       }, 1000); // 1000 ms = 1 second
 
       return () => clearTimeout(removeTimer);
-    }, 10000); // 15000 ms = 15 seconds
+    }, 15000); // 15000 ms = 15 seconds
 
     return () => clearTimeout(fadeOutTimer);
   }, [onRemove]);
@@ -119,8 +119,8 @@ const Exoplanet: React.FC<ExoplanetProps> = ({ onRemove }) => {
         if (distanceToSun < CLOSE_APPROACH_THRESHOLD) {
           // Limit the maximum gravity multiplier
           const gravityMultiplier = Math.min(
-            (CLOSE_APPROACH_THRESHOLD / clampedDistance) ** 1.5,
-            4.0 // Maximum multiplier cap
+            (CLOSE_APPROACH_THRESHOLD / clampedDistance) ** 1.6,
+            3.0 // Maximum multiplier cap
           );
           gravityStrength *= gravityMultiplier;
         }
@@ -161,7 +161,7 @@ const Exoplanet: React.FC<ExoplanetProps> = ({ onRemove }) => {
         <Explosion
           position={collisionPoint}
           color={color}
-          size={size * 4}
+          size={size * 3.5}
           duration={2}
           particleCount={120}
         />
