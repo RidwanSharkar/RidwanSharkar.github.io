@@ -13,19 +13,19 @@ const Exoplanet: React.FC<ExoplanetProps> = ({ onRemove }) => {
   const velocityRef = useRef<Vector3>();
 
   // SIZE RANGE
-  const size = 0.15 + Math.random() * (0.20 - 0.16);
+  const size = 0.14 + Math.random() * (0.20 - 0.14);
   const colors = useMemo(() => ['#00ffff', '#ff00ff', '#FF7F11', '#ff3366', '#66ff33', '#B8B3E9', '#B8B3E9', '#F87666', '6EFAFB', 'BEEE62', 'CD9FCC', '93FF96', 'B2FFA8' ], []);
   const color = useMemo(() => colors[Math.floor(Math.random() * colors.length)], [colors]);
 
   // SIMULATION CONSTANTS
   const SPAWN_RADIUS = 50;
-  const HYPERBOLIC_THRESHOLD = 19; // GRAVITY INFLUENCE RADIUS
-  const MIN_DISTANCE = 1.8; // ACTUAL COLLSION SIZE
+  const HYPERBOLIC_THRESHOLD = 17; // GRAVITY INFLUENCE RADIUS
+  const MIN_DISTANCE = 1.6; // ACTUAL COLLSION SIZE
   const BASE_GRAVITY_STRENGTH = 0.25; // GRAVITY STRENGTH
-  const CLOSE_APPROACH_THRESHOLD = 2.3; // APPROACH THRESHOLD
+  const CLOSE_APPROACH_THRESHOLD = 2.35; // APPROACH THRESHOLD
 
   const targetPoint = useMemo(() => {
-    const radius = Math.random() * 22; // COLLISION PLANE 
+    const radius = Math.random() * 21; // COLLISION PLANE 
     const theta = Math.random() * 2 * Math.PI;
     const phi = Math.acos(2 * Math.random() - 1);
     return new Vector3(
@@ -53,7 +53,7 @@ const Exoplanet: React.FC<ExoplanetProps> = ({ onRemove }) => {
 
   // Velocity vector towards the solar system with variation
   useEffect(() => {
-    const speed = Math.random() * 0.4 + 0.03;
+    const speed = Math.random() * 0.375 + 0.15;
     const direction = targetPoint.clone().sub(initialPosition).normalize();
     
     // Inclination variation ±5° to ±3°
@@ -69,11 +69,12 @@ const Exoplanet: React.FC<ExoplanetProps> = ({ onRemove }) => {
     velocityRef.current = direction.multiplyScalar(speed);
   }, [initialPosition, targetPoint]);
 
-  // OPACITY
+  // OPACITY and Collision States
   const [opacity, setOpacity] = useState(1);
   const [showExplosion, setShowExplosion] = useState(false);
   const [collisionPoint, setCollisionPoint] = useState<Vector3 | null>(null);
   const [isVisible, setIsVisible] = useState(true);
+  const [hasCollided, setHasCollided] = useState(false);
 
   // FADE OUT TIMER
   useEffect(() => {
@@ -82,7 +83,7 @@ const Exoplanet: React.FC<ExoplanetProps> = ({ onRemove }) => {
       // Remove after fade-out duration
       const removeTimer = setTimeout(() => {
         onRemove();
-      }, 1000); // 1000 ms = 1 second
+      }, 3000); // 1000 ms = 1 second
 
       return () => clearTimeout(removeTimer);
     }, 15000); // 15000 ms = 15 seconds
@@ -91,6 +92,8 @@ const Exoplanet: React.FC<ExoplanetProps> = ({ onRemove }) => {
   }, [onRemove]);
 
   useFrame(() => {
+    if (hasCollided) return;
+
     if (meshRef.current && velocityRef.current) {
       meshRef.current.position.add(velocityRef.current);
       
@@ -102,11 +105,12 @@ const Exoplanet: React.FC<ExoplanetProps> = ({ onRemove }) => {
         setCollisionPoint(meshRef.current.position.clone());
         setShowExplosion(true);
         setIsVisible(false);
+        setHasCollided(true);
         // Immediately stop all motion
         velocityRef.current.set(0, 0, 0);
         setTimeout(() => {
           onRemove();
-        }, 3000);
+        }, 1000);
         return;
       }
 
@@ -161,9 +165,9 @@ const Exoplanet: React.FC<ExoplanetProps> = ({ onRemove }) => {
         <Explosion
           position={collisionPoint}
           color={color}
-          size={size * 3.5}
+          size={size * 4.5}
           duration={2}
-          particleCount={120}
+          particleCount={125}
         />
       )}
     </group>

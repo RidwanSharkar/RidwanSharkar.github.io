@@ -109,7 +109,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       position: [0, 0, 0],
       link: 'https://www.linkedin.com/in/ridwansharkar',
       label: 'LinkedIn', 
-      description: 'connect()',
+      description: 'connect() - Noga?',
       orbitRadius: 3.9,
       orbitSpeed: 0.45,
       planetColor: '#4FB8FF',
