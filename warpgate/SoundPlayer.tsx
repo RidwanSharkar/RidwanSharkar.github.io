@@ -13,6 +13,9 @@ const tracks: Track[] = [
   { id: 3, name: "♨", src: "/audio/track3.MP3" },
   { id: 4, name: "⚘", src: "/audio/track4.MP3" },
   { id: 5, name: "☯", src: "/audio/track5.MP3" },
+  { id: 6, name: "☮", src: "/audio/track6.MP3" },
+  { id: 7, name: "✧", src: "/audio/track7.MP3" },
+  { id: 8, name: "☸", src: "/audio/track8.MP3" },
 ];
 
 interface AudioPlayerProps {
@@ -64,16 +67,29 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
 
   return (
     <div className={styles.audioContainer}>
-      <div className={styles.trackButtons}>
-        {tracks.map((track) => (
-          <button
-            key={track.id}
-            onClick={() => selectTrack(track)}
-            className={`${styles.trackButton} ${currentTrack.id === track.id ? styles.activeTrack : ''}`}
-          >
-            {track.name}
-          </button>
-        ))}
+      <div className={styles.trackButtonsContainer}>
+        <div className={styles.trackButtons}>
+          {tracks.slice(0, 5).map((track) => (
+            <button
+              key={track.id}
+              onClick={() => selectTrack(track)}
+              className={`${styles.trackButton} ${currentTrack.id === track.id ? styles.activeTrack : ''}`}
+            >
+              {track.name}
+            </button>
+          ))}
+        </div>
+        <div className={styles.trackButtons}>
+          {tracks.slice(5).map((track) => (
+            <button
+              key={track.id}
+              onClick={() => selectTrack(track)}
+              className={`${styles.trackButton} ${currentTrack.id === track.id ? styles.activeTrack : ''}`}
+            >
+              {track.name}
+            </button>
+          ))}
+        </div>
       </div>
       <div className={styles.audioPlayer}>
         <button onClick={togglePlayPause} className={styles.playPauseButton}>

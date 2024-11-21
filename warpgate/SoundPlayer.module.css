@@ -6,10 +6,16 @@
   max-width: 300px;
 }
 
+.trackButtonsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+}
+
 .trackButtons {
   display: flex;
   gap: 2px;
-  margin-bottom: 2px;
   width: 100%;
   justify-content: space-between;
 }
