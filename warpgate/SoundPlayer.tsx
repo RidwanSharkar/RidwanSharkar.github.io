@@ -10,12 +10,12 @@ interface Track {
 const tracks: Track[] = [
   { id: 1, name: "⌬", src: "/audio/track1.MP3" },
   { id: 2, name: "❅", src: "/audio/track2.MP3" },
-  { id: 3, name: "♨", src: "/audio/track3.MP3" },
-  { id: 4, name: "⚘", src: "/audio/track4.MP3" },
-  { id: 5, name: "☯", src: "/audio/track5.MP3" },
-  { id: 6, name: "☮", src: "/audio/track6.MP3" },
-  { id: 7, name: "✧", src: "/audio/track7.MP3" },
-  { id: 8, name: "☸", src: "/audio/track8.MP3" },
+  { id: 3, name: "☸", src: "/audio/track3.MP3" },
+  { id: 4, name: "⚘", src: "/audio/track4.MP3" }, // ❃
+  { id: 5, name: "✾", src: "/audio/track5.MP3" },
+  { id: 6, name: "⤛ ", src: "/audio/track6.MP3" },
+  { id: 7, name: "𖤍", src: "/audio/track7.MP3" }, //  ✧ ☮ ☸ ♨ ☯ ❃ ✾ ♝ ♗ ⚜ ☼ ⚜ 𖡨
+  { id: 8, name: "⤜", src: "/audio/track8.MP3" }, // ꗈ 𖣨 
 ];
 
 interface AudioPlayerProps {
