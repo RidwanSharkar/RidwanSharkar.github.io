@@ -70,7 +70,7 @@ const getAtmosphereComposition = (planetColor: string): string => {
     '#F4ACB7': '• [SO<sub>2</sub>] Sulfur Dioxide (80%)\n• [CO<sub>2</sub>] Carbon Dioxide (15%)\n• [He] Helium (5%)',
     '#2DE1FC': '• [He] Helium (60%)\n• [H<sub>2</sub>] Hydrogen (30%)\n• [CH<sub>4</sub>] Methane (10%)',
     '#F9B9F2': '• [CO<sub>2</sub>] Carbon Dioxide (60%)\n• [H<sub>2</sub>] Hydrogen (25%)\n• [Ne] Neon (10%)\n• [TiO<sub>2</sub>] Titanium Dioxide (5%)',
-    '#C89FD9': '• [CO<sub>2</sub>] Carbon Dioxide (60%)\n• [H<sub>2</sub>] Hydrogen (25%)\n• [Ne] Neon (10%)\n• [TiO<sub>2</sub>] Titanium Dioxide (5%)',
+    '#809BCE': '• [CO<sub>2</sub>] Carbon Dioxide (60%)\n• [H<sub>2</sub>] Hydrogen (25%)\n• [Ne] Neon (10%)\n• [TiO<sub>2</sub>] Titanium Dioxide (5%)',
   };
   return atmospheres[planetColor]?.split('\n').map(line => 
     `<div style="margin-left: 1rem">${line}</div>`

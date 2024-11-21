@@ -109,7 +109,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       position: [0, 0, 0],
       link: 'https://www.linkedin.com/in/ridwansharkar',
       label: 'LinkedIn', 
-      description: 'connect() - Noga?',
+      description: 'connect()',
       orbitRadius: 3.9,
       orbitSpeed: 0.45,
       planetColor: '#4FB8FF',
@@ -129,7 +129,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       orbitRadius: 6,
       orbitSpeed: 0.125,
       startAngle: (Math.PI),
-      planetColor: '#C89FD9',
+      planetColor: '#809BCE',
       size: 0.27,
       rotationSpeed: 0.05,
       rings: [
@@ -137,7 +137,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       ],
       logoTexturePath: '/textures/BorrowedOrder_logo.svg', 
       isBinary: true,
-      binaryOffset: 0.5,
+      binaryOffset: 0.6,
       binarySpeed: 2.0,
     },
     // PLANET 3.5: Nutrimancer BINARY 
@@ -157,7 +157,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       rotationSpeed: 0.01,
       logoTexturePath: '/textures/Nutrimancer_logo.svg',
       isBinary: true,
-      binaryOffset: -0.5,
+      binaryOffset: -0.6,
       binarySpeed: 2.0,
     },
     // PLANET 3: GITHUB
