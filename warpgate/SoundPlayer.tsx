@@ -13,9 +13,9 @@ const tracks: Track[] = [
   { id: 3, name: "☸", src: "/audio/track3.MP3" },
   { id: 4, name: "⚘", src: "/audio/track4.MP3" }, // ❃
   { id: 5, name: "✾", src: "/audio/track5.MP3" },
-  { id: 6, name: "⤛ ", src: "/audio/track6.MP3" },
-  { id: 7, name: "𖤍", src: "/audio/track7.MP3" }, //  ✧ ☮ ☸ ♨ ☯ ❃ ✾ ♝ ♗ ⚜ ☼ ⚜ 𖡨
-  { id: 8, name: "⤜", src: "/audio/track8.MP3" }, // ꗈ 𖣨 
+  { id: 6, name: "⤛ ", src: "/audio/Track6.MP3" },
+  { id: 7, name: "𖤍", src: "/audio/Track7.MP3" }, //  ✧ ☮ ☸ ♨ ☯ ❃ ✾ ♝ ♗ ⚜ ☼ ⚜ 𖡨
+  { id: 8, name: "⤜", src: "/audio/Track8.MP3" }, // ꗈ 𖣨 
 ];
 
 interface AudioPlayerProps {
