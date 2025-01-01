@@ -33,7 +33,7 @@ const convertSpeed = (speed: number, planetLabel: string): string => {
     'GitHub': 21510,
     'The Nutrimancer\'s Codex - Vol. II': 21510,
     'Instagram': 48990,
-    'Mythos.store': 117225,
+    'Mythos.store': 48250,
     'Spotify': 62670,
     'Borrowed Order': 21510,
     'Eidolon': 168760,
@@ -95,7 +95,11 @@ const getAtmosphereComposition = (planetColor: string): string => {
     '#F4ACB7': '• [SO₂] Sulfur Dioxide (80%)\n• [CO₂] Carbon Dioxide (18%)\n• [H₂O] Water Vapor (2%)',
     
     // Eidolon: Mint (#84DCC6)
-    '#84DCC6': '• [CO₂] Carbon Dioxide (95%)\n• [N₂] Nitrogen (4%)\n• [Ar] Argon (1%)'
+    '#84DCC6': '• [CO₂] Carbon Dioxide (95%)\n• [N₂] Nitrogen (4%)\n• [Ar] Argon (1%)',
+    
+    // New/Changed colors that need to be added
+    '#FFCAE2': '• [CO₂] Carbon Dioxide (96%)\n• [SO₂] Sulfur Dioxide (3%)\n• [Ar] Argon (1%)', // New Spotify color
+    '#8C8CD1': '• [N₂] Nitrogen (75%)\n• [O₂] Oxygen (23%)\n• [Ar] Argon (2%)', // New Threads color
   };
   return atmospheres[planetColor]?.split('\n').map(line => 
     `<div style="margin-left: 1rem">${line}</div>`
