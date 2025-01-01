@@ -1,0 +1,100 @@
+.audioContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.trackButtonsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+}
+
+.trackButtons {
+  display: flex;
+  gap: 2px;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.trackButton {
+  background: rgba(0, 123, 189, 0.3);
+  border: 1px solid #007bbd;
+  color: #ffffff;
+  padding: 2px 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1.15rem;
+  transition: all 0.2s;
+  flex: 1;
+  min-width: 0;
+}
+
+.trackButton:hover {
+  background: rgba(0, 123, 189, 0.5);
+}
+
+.activeTrack {
+  background: rgba(0, 123, 189, 0.8);
+}
+
+.audioPlayer {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: linear-gradient(135deg, #00d2ff, #007bbd);
+  padding: 4px;
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  position: relative;
+  width: 100%;
+}
+
+.playPauseButton,
+.muteButton {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+  padding: 0 4px;
+}
+
+.playPauseButton:hover,
+.muteButton:hover {
+  transform: scale(1.1);
+}
+
+/* hidden by default */
+.volumeSlider {
+  width: 60px;
+  opacity: 0.35;
+  appearance: none;
+  background: #ffffff;
+  border-radius: 5px;
+  cursor: pointer;
+  position: relative;
+  margin: 0 4px;
+  flex: 1;
+}
+
+.volumeSlider::-webkit-slider-thumb {
+  appearance: none;
+  width: 10px;
+  height: 10px;
+  background: #007bbd;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.volumeSlider::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  background: #007bbd;
+  border-radius: 50%;
+  cursor: pointer;
+}
