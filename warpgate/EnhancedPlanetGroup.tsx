@@ -331,11 +331,48 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
 
   // Create a new Exoplanet every 15 seconds
   useEffect(() => {
-    const interval = setInterval(() => {
-      setExoplanets(prev => [...prev, Date.now()]); // timestamp as unique ID
-    }, 7500); 
+    let interval: NodeJS.Timeout;
 
-    return () => clearInterval(interval);
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        clearInterval(interval);
+        setExoplanets([]);
+      }
+    };
+
+    const handleWindowBlur = () => {
+      clearInterval(interval);
+      setExoplanets([]);
+    };
+
+    const handleWindowFocus = () => {
+      // Clear any existing interval
+      clearInterval(interval);
+      // Reset exoplanets
+      setExoplanets([]);
+      // Start new interval
+      interval = setInterval(() => {
+        setExoplanets(prev => [...prev, Date.now()]);
+      }, 7500);
+    };
+
+    // Initial interval setup
+    interval = setInterval(() => {
+      setExoplanets(prev => [...prev, Date.now()]);
+    }, 7500);
+
+    // Add all event listeners
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('blur', handleWindowBlur);
+    window.addEventListener('focus', handleWindowFocus);
+
+    // Cleanup
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('blur', handleWindowBlur);
+      window.removeEventListener('focus', handleWindowFocus);
+    };
   }, []);
 
   // remove handler
