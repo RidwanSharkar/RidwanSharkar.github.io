@@ -49,7 +49,7 @@ const PlanetCanvas: React.FC<PlanetCanvasProps> = ({ onSelectPlanet, selectedPla
       <OrbitControls
         enableZoom={true}
         minDistance={10}
-        maxDistance={28}
+        maxDistance={30}
         enablePan={true}
         zoomSpeed={0.75}
         enableDamping={true}

@@ -165,8 +165,8 @@ const Exoplanet: React.FC<ExoplanetProps> = ({ onRemove }) => {
         <Explosion
           position={collisionPoint}
           color={color}
-          size={size * 4.5}
-          duration={2}
+          size={size * 1.8}
+          duration={1.9}
           particleCount={125}
         />
       )}

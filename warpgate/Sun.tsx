@@ -52,7 +52,7 @@ interface SunProps {
 }
 
 const Sun = forwardRef<Mesh, SunProps>(({
-  size = 1.10,
+  size = 1.15,
   color = "#FDB813",
   glowIntensity = 0.2,
   rotationSpeed = 0.001,
@@ -98,7 +98,7 @@ const Sun = forwardRef<Mesh, SunProps>(({
 
       {/* Atmosphere layer */}
       <mesh
-        scale={[1.08, 1.08, 1.08]}
+        scale={[1.18, 1.18, 1.18]}
       >
         <sphereGeometry args={[size, 64, 64]} />
         <primitive object={atmosphereMaterial} attach="material" />
@@ -106,7 +106,7 @@ const Sun = forwardRef<Mesh, SunProps>(({
 
       {/* Sun sphere */}
       <mesh ref={ref}>
-        <sphereGeometry args={[size, 64, 64]} />
+        <sphereGeometry args={[size*1.09, 64, 64]} />
         <meshStandardMaterial
           color={color}
           emissive={color}
@@ -117,7 +117,7 @@ const Sun = forwardRef<Mesh, SunProps>(({
       </mesh>
 
       {/* Glow effect */}
-      <mesh ref={glowRef} scale={size * 1.07}> 
+      <mesh ref={glowRef} scale={size * 1.08}> 
         <sphereGeometry args={[size, 32, 32]} />
         <shaderMaterial
           transparent

@@ -28,16 +28,16 @@ const convertSize = (size: number): string => {
 
 const convertSpeed = (speed: number, planetLabel: string): string => {
   const speeds: { [key: string]: number } = {
-    'Fretboard-x': 66775,
-    'LinkedIn': 49250,
+    'Fretboard-x': 62670,
+    'LinkedIn': 41250,
     'GitHub': 21510,
     'The Nutrimancer\'s Codex - Vol. II': 21510,
-    'Instagram': 48990,
-    'Mythos.store': 48250,
+    'Instagram': 58375,
+    'Mythos.store': 31250,
     'Spotify': 62670,
     'Borrowed Order': 21510,
-    'Eidolon': 168760,
-    'Threads': 103490,
+    'Eidolon': 117225,
+    'Threads': 58375,
   };
   return `${speeds[planetLabel]?.toLocaleString() || 0} mph`;
 };

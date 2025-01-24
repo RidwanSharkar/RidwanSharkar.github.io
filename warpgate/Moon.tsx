@@ -11,6 +11,7 @@ interface MoonProps {
   moonColor: string;
   link?: string;
   label?: string;
+  startAngle?: number;
 }
 
 const Moon: React.FC<MoonProps> = ({
@@ -20,6 +21,7 @@ const Moon: React.FC<MoonProps> = ({
   moonColor,
   link,
   label,
+  startAngle,
 }) => {
   const meshRef = useRef<Mesh>(null);
   const [hovered, setHovered] = useState(false);
@@ -27,8 +29,9 @@ const Moon: React.FC<MoonProps> = ({
   useFrame(({ clock }) => {
     const elapsed = clock.getElapsedTime();
     if (meshRef.current) {
-      meshRef.current.position.x = Math.cos(elapsed * orbitSpeed) * orbitRadius;
-      meshRef.current.position.z = Math.sin(elapsed * orbitSpeed) * orbitRadius;
+      const angle = (elapsed * orbitSpeed) + (startAngle || 0);
+      meshRef.current.position.x = Math.cos(angle) * orbitRadius;
+      meshRef.current.position.z = Math.sin(angle) * orbitRadius;
     }
   });
 
