@@ -205,10 +205,10 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       logoTexturePath: '/textures/Github_logo.svg',
     },
 
-    // PLANET 5:  MYTHOS STORE
+    // PLANET 5:  NEW SITE WIP
     {
       position: [0, 0, 0],
-      link: 'https://mythos.store',
+      link: 'https://ridwansharkar.com',
       label: 'Mythos.store',
       description: 'browse(), buy()',
       orbitRadius: 7.5,
