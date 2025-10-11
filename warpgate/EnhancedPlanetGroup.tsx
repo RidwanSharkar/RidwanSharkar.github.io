@@ -122,7 +122,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       orbitRadius: 5.75,
       orbitSpeed: 0.125,
       startAngle: (Math.PI),
-      planetColor: '#FF8E9F', //FF8E9F
+      planetColor: '#BAB9FF', //FF8E9F
       size: 0.275,
       rotationSpeed: 0.01,
       logoTexturePath: '/textures/Nutrimancer_logo.svg',
