@@ -33,11 +33,12 @@ const convertSpeed = (speed: number, planetLabel: string): string => {
     'GitHub': 21510,
     'The Nutrimancer\'s Codex - Vol. II': 21510,
     'Instagram': 58375,
-    'Mythos.store': 31250,
+    'Mythos': 31250,
     'Spotify': 62670,
     'Borrowed Order': 21510,
-    'Eidolon': 117225,
+    'Eidolon': 21510,
     'Threads': 58375,
+    'Avernus': 21510,
   };
   return `${speeds[planetLabel]?.toLocaleString() || 0} mph`;
 };
@@ -54,11 +55,12 @@ const getPlanetTemperature = (planetLabel: string): string => {
     'GitHub': 11.8,
     'The Nutrimancer\'s Codex - Vol. II': 108.4,
     'Instagram': -41.7,
-    'Mythos.store': -59.7,
-    'Spotify': 42.9,
+    'Mythos': -59.7,
+    'Spotify': 420,
     'Borrowed Order': -112.3,
     'Eidolon': -359.7,
     'Threads': -157.3,
+    'Avernus': 431.3,
   };
   
   return `${temperatures[planetLabel] || 0}°F`;
@@ -114,11 +116,12 @@ const getPlanetMass = (planetLabel: string): string => {
     'GitHub': 5.7e26,
     'The Nutrimancer\'s Codex - Vol. II': 1.5e25,
     'Instagram': 2.3e26,
-    'Mythos.store': 9.8e25,
+    'Mythos': 9.8e25,
     'Spotify': 1.2e24,
     'Borrowed Order': 1.4e25,
     'Eidolon': 3.1e26,
     'Threads': 9.6e24,
+    'Avernus': 4.2e26,
   };
   const mass = masses[planetLabel];
   return mass ? `${mass.toExponential(2)} lbs` : 'Unknown mass';
@@ -174,11 +177,12 @@ const calculateGravity = (planetLabel: string, size: number): string => {
     'GitHub': 5.7e26,
     'The Nutrimancer\'s Codex - Vol. II': 1.5e25,
     'Instagram': 2.3e26,
-    'Mythos.store': 1.8e25,
+    'Mythos': 1.8e25,
     'Spotify': 1.2e24,
     'Borrowed Order': 1.4e25,
     'Eidolon': 3.1e26,
     'Threads': 9.6e24,
+    'Avernus': 1.5e25,
   };
 
   const mass = masses[planetLabel];

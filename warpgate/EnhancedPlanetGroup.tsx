@@ -63,44 +63,17 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
   const planetRefs = useRef<Array<React.RefObject<Mesh>>>([]);
 
   const planets: PlanetData[] = useMemo(() => [
-    // PLANET 1: FRETBOARDX
-    {
-      position: [0, 0, 0],
-      link: 'https://fretboardx.com',
-      label: 'Fretboard-x', 
-      description: 'explore()',
-      orbitRadius: 2.33,
-      orbitSpeed: 0.775,
-      startAngle: 0,
-      planetColor: '#C3F6EE', //C3F6EE
-      size: 0.215,
-      rotationSpeed: 0.005, 
-      moons: [
-        { 
-        orbitRadius: 0.5,
-        orbitSpeed: 2.5,
-        size: 0.10,
-        moonColor: '#B7D3F2',
-        link: 'https://github.com/RidwanSharkar/Fretboard-2.0',
-        label: 'Fretboard-2.0',
-      },
-    ],
-      logoTexturePath: '/textures/Fretboardx_logo.png', 
-    },
-    // PLANET 1.5: Spotify
+    // PLANET 1: SPOTIFY
     {
       position: [0, 0, 0],
       link: 'https://open.spotify.com/user/1268486981',
       label: 'Spotify',
       description: 'getPlaylists()',
-      orbitRadius: 2.33,
-      orbitSpeed: 0.775,
+      orbitRadius: 2.25,
+      orbitSpeed: 0.7,
       startAngle: (Math.PI),
       planetColor: '#FFCAE2',
-      rings: [
-        { color: 'white', innerScale: 1.2, outerScale: 1.5, inclination: Math.PI / 2 }, 
-      ],
-      size: 0.26,
+      size: 0.225,
       rotationSpeed: 0.005,
       logoTexturePath: '/textures/Spotify_logo.svg',
     },
@@ -110,50 +83,47 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       link: 'https://www.linkedin.com/in/ridwansharkar',
       label: 'LinkedIn', 
       description: 'connect()',
-      orbitRadius: 3.8,
-      orbitSpeed: 0.4,
+      orbitRadius: 3.5,
+      orbitSpeed: 0.375,
       planetColor: '#4FB8FF',
-      size: 0.37,
+      size: 0.375,
       rotationSpeed: 0.01,
       rings: [
         { color: '#00FFFF', innerScale: 1.3, outerScale: 1.45, inclination: -Math.PI / 3 }
       ],
       logoTexturePath: '/textures/LinkedIn_logo.svg', 
     },
-    // PLANET 3,25: BORROWED ORDER BINARY SYSTEM
+    // AVERNUS AND EIDOLON
     {
       position: [0, 0, 0],
-      link: 'https://ridwansharkar.github.io/Borrowed-Order/',
-      label: 'Borrowed Order', 
-      description: 'visualize()',
+      link: 'https://eidolon-flame.vercel.app/',
+      label: 'Eidolon', 
+      description: 'play()',
       orbitRadius: 5.75,
       orbitSpeed: 0.125,
       startAngle: (Math.PI),
-      planetColor: '#809BCE', // 809BCE FFA1CB
-      size: 0.26,
+      planetColor: '#2DE1FC', // 809BCE FFA1CB
+      size: 0.25,
       rotationSpeed: 0.01,
       rings: [
-        { color: '#2DE1FC', innerScale: 1.3, outerScale: 1.45, inclination: -Math.PI / 3 }
+        { color: '#2DE1FC', innerScale: 1.25, outerScale: 1.6, inclination: Math.PI  }, 
       ],
-      logoTexturePath: '/textures/BorrowedOrder_logo.svg', 
+      logoTexturePath: '/textures/Eidolon_logo.svg', 
       isBinary: true,
       binaryOffset: 0.55,
       binarySpeed: 2.15,
     },
-    // PLANET 3.5: Nutrimancer BINARY 
+    // avernus 
     {
       position: [0, 0, 0],
-      link: 'https://github.com/RidwanSharkar/The-Nutrimancers-Codex',
-      label: "The Nutrimancer's Codex - Vol. II",
-      description: 'unknown()',
+      link: 'https://avernus.vercel.app/',
+      label: "Avernus",
+      description: 'play()',
       orbitRadius: 5.75,
       orbitSpeed: 0.125,
       startAngle: (Math.PI),
-      planetColor: '#2DE1FC', //2DE1FC 84DCC6
-      rings: [
-        { color: '#2DE1FC', innerScale: 1.25, outerScale: 1.6, inclination: Math.PI  }, 
-      ],
-      size: 0.27,
+      planetColor: '#FF8E9F', //FF8E9F
+      size: 0.275,
       rotationSpeed: 0.01,
       logoTexturePath: '/textures/Nutrimancer_logo.svg',
       isBinary: true,
@@ -182,16 +152,16 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
           orbitSpeed: 3,
           size: 0.10,
           moonColor: '#D9C6E8',
-          link: 'https://github.com/RidwanSharkar/Predictive-Analysis-of-MMA-Fights',
-          label: 'Predictive Analysis',
+          link: 'https://fretboardx.com',
+          label: 'Fretboard Explorer',
         },
         { 
           orbitRadius: 1.3,
           orbitSpeed: 2.25,
           size: 0.14,
           moonColor: '#A0C4E2',
-          link: 'https://github.com/RidwanSharkar/Pharmacological-Compound-Classifier',
-          label: 'Compound Classifier',
+          link: 'https://github.com/RidwanSharkar/The-Nutrimancers-Codex',
+          label: 'The Nutrimancer\'s Codex - Vol. II',
         },
         { 
           orbitRadius: 1.59,
@@ -206,26 +176,29 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
           orbitSpeed: 2.25,
           size: 0.11,
           moonColor: '#B8B3E9',
-          link: 'https://github.com/RidwanSharkar/Nimbus',
-          label: 'Weather App',
+          link: 'https://ridwansharkar.github.io/Borrowed-Order/',
+          label: 'Algorithm Visualizer',
           startAngle: Math.PI
         },
       ],
       logoTexturePath: '/textures/Github_logo.svg',
     },
 
-    // PLANET 5:  NEW SITE WIP
+    // PLANET 5:  MYTHOS
     {
       position: [0, 0, 0],
       link: 'https://ridwansharkar.com',
-      label: 'Mythos.store',
+      label: 'Mythos',
       description: 'browse(), buy()',
       orbitRadius: 7.5,
-      orbitSpeed: 0.195,
-      planetColor: '#F0C59D',
-      size: 0.25,
+      orbitSpeed: 0.2,
+      planetColor: '#84DCC6', // 2DE1FC B8E0D2
+      rings: [
+        { color: '#2DE1FC', innerScale: 1.3, outerScale: 1.75, inclination: -Math.PI }, 
+      ],
+      size: 0.27,
       rotationSpeed: 0.01,
-      logoTexturePath: '/textures/mythosicon.png',
+      logoTexturePath: '/textures/Eidolon_logo.svg',
     },
     
     // PLANET 4: IG ART STATION
@@ -263,26 +236,10 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       orbitRadius: 9, 
       orbitSpeed: 0.23, 
       startAngle: Math.PI, 
-      planetColor: '#8C8CD1',
+      planetColor: '#809BCE',
       size: 0.28,
       rotationSpeed: 0.01,
       logoTexturePath: '/textures/Threads_logo.svg',
-    },
-    // PLANET 6: Eidolon
-    {
-      position: [0, 0, 0],
-      link: 'https://ridwansharkar.github.io/Eidolon/',
-      label: 'Eidolon',
-      description: 'play()',
-      orbitRadius: 10.5,
-      orbitSpeed: 0.315,
-      planetColor: '#84DCC6', // 2DE1FC B8E0D2
-      rings: [
-        { color: '#2DE1FC', innerScale: 1.3, outerScale: 1.75, inclination: -Math.PI }, 
-      ],
-      size: 0.333,
-      rotationSpeed: 0.01,
-      logoTexturePath: '/textures/Eidolon_logo.svg',
     },
 
   ], []); 
