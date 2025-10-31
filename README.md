@@ -17,7 +17,7 @@
 
 ---
 
-## Technical Overview
+## 📜 Overview
 
 **Planetfolio** is an interactive 3D portfolio experience built as a procedurally animated solar system. Each planet represents a project, social profile, or creative work, orbiting in real-time with physics-inspired motion and custom simplified gravitational mechanics.
 
@@ -93,5 +93,5 @@ Planets are defined as JSON-like objects with properties for:
 - Orbital parameters (radius, speed, initial angle)
 - Visual attributes (color, size, rings, textures)
 - Interactive metadata (links, labels, descriptions)
-- Hierarchical relationships (moons, binary companions) <br>
+- Hierarchical relationships (moons, binary companions)
 This allows easy content updates without touching render logic.
