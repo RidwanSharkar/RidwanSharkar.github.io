@@ -152,7 +152,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
           orbitSpeed: 3,
           size: 0.10,
           moonColor: '#D9C6E8',
-          link: 'https://fretboardx.com',
+          link: 'https://ridwansharkar.github.io/Fretboard-Explorer/',
           label: 'Fretboard Explorer',
         },
         { 
