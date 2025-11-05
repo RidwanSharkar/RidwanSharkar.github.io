@@ -135,7 +135,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       position: [0, 0, 0],
       link: 'https://github.com/RidwanSharkar',
       label: 'GitHub',
-      description: 'pull(), collaborate()',
+      description: 'viewProjects(), collaborate()',
       orbitRadius: 5.75,
       orbitSpeed: 0.125,
       startAngle: 0,
@@ -198,7 +198,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       ],
       size: 0.27,
       rotationSpeed: 0.01,
-      logoTexturePath: '/textures/Eidolon_logo.svg',
+      logoTexturePath: '/textures/mythos.png',
     },
     
     // PLANET 4: IG ART STATION

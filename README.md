@@ -93,5 +93,4 @@ Planets are defined as JSON-like objects with properties for:
 - Orbital parameters (radius, speed, initial angle)
 - Visual attributes (color, size, rings, textures)
 - Interactive metadata (links, labels, descriptions)
-- Hierarchical relationships (moons, binary companions)
-This allows easy content updates without touching render logic.
+- Hierarchical relationships (moons, binary companions) to allow easy content updates without touching render logic.
