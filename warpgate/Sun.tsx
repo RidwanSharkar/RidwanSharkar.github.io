@@ -202,7 +202,7 @@ const solarFlareVertexShader = `
   }
 `;
 
-// Solar flare fragment shader - yellow/white hot plasma
+// Solar flare fragment shader - orange/yellow hot plasma
 const solarFlareFragmentShader = `
   varying float vAlpha;
   varying float vHeat;
@@ -212,16 +212,17 @@ const solarFlareFragmentShader = `
     float dist = length(center);
     float alpha = 1.0 - smoothstep(0.0, 0.5, dist);
     
-    // Color gradient from white-hot core to yellow to orange
-    vec3 hotWhite = vec3(1.0, 1.0, 0.95);
-    vec3 yellow = vec3(1.0, 0.9, 0.2);
-    vec3 orange = vec3(1.0, 0.5, 0.1);
+    // Color gradient - more orange, less yellow
+    vec3 hotCore = vec3(1.0, 0.95, 0.7);      // Warm white-yellow core
+    vec3 brightOrange = vec3(1.0, 0.6, 0.15); // Bright orange
+    vec3 deepOrange = vec3(1.0, 0.35, 0.05);  // Deep orange/red
     
-    vec3 color = mix(orange, yellow, vHeat);
+    // Blend from deep orange to bright orange based on heat
+    vec3 color = mix(deepOrange, brightOrange, vHeat);
     
-    // Hot white core
-    float core = 1.0 - smoothstep(0.0, 0.2, dist);
-    color = mix(color, hotWhite, core * vHeat);
+    // Hot core at center of particle
+    float core = 1.0 - smoothstep(0.0, 0.25, dist);
+    color = mix(color, hotCore, core * vHeat * 0.7);
     
     gl_FragColor = vec4(color, alpha * vAlpha);
   }
