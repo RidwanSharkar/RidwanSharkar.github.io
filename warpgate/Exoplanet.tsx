@@ -159,6 +159,7 @@ const Exoplanet: React.FC<ExoplanetProps> = ({ onRemove }) => {
         orbitRadius={10} 
         orbitSpeed={0.025} 
         opacity={opacity}
+        particlesCount={20}
       />
 
       {showExplosion && collisionPoint && (

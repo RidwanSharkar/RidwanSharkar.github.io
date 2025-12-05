@@ -9,6 +9,7 @@ interface PlanetTrailProps {
   orbitRadius: number;
   orbitSpeed: number;
   opacity: number;
+  particlesCount?: number;
 }
 
 const PlanetTrail: React.FC<PlanetTrailProps> = ({
@@ -16,8 +17,8 @@ const PlanetTrail: React.FC<PlanetTrailProps> = ({
   size,
   meshRef,
   opacity,
+  particlesCount = 5,
 }) => {
-  const particlesCount = 5;
   const particlesRef = useRef<Points>(null);
   const positionsRef = useRef<Float32Array>(new Float32Array(particlesCount * 3));
   const opacitiesRef = useRef<Float32Array>(new Float32Array(particlesCount));
