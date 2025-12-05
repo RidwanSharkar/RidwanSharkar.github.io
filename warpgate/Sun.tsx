@@ -1,6 +1,6 @@
-import React, { forwardRef, useRef, useMemo } from 'react';
+import React, { forwardRef, useRef, useMemo, useState, useCallback } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Mesh, ShaderMaterial, Color, AdditiveBlending, Points, BufferGeometry, Float32BufferAttribute } from 'three';
+import { Mesh, ShaderMaterial, Color, AdditiveBlending, Points, BufferGeometry, Float32BufferAttribute, Vector3 } from 'three';
 
 
 // Solar storm particle vertex shader
@@ -129,6 +129,166 @@ const solarParticleFragmentShader = `
   }
 `;
 
+// Solar flare vertex shader - for dramatic eruptions
+const solarFlareVertexShader = `
+  uniform float uTime;
+  uniform float uSize;
+  uniform float uFlareTime;
+  uniform float uDuration;
+  uniform vec3 uFlareOrigin;
+  uniform vec3 uFlareDirection;
+  // Variation uniforms
+  uniform float uScale;
+  uniform float uSpread;
+  uniform float uDistance;
+  uniform float uSpeed;
+  
+  attribute float aRandom;
+  attribute float aParticleIndex;
+  
+  varying float vAlpha;
+  varying float vHeat;
+  
+  void main() {
+    // Flare lifetime based on duration
+    float flareProgress = clamp(uFlareTime / uDuration, 0.0, 1.0);
+    
+    // Each particle has slightly different timing based on index
+    float particleDelay = aParticleIndex * 0.03 * (2.0 - uSpeed);
+    float particleProgress = clamp((uFlareTime - particleDelay) / (uDuration * 0.8), 0.0, 1.0);
+    
+    // Ejection speed varies per particle, scaled by flare speed
+    float speed = (0.6 + aRandom * 0.8) * uSpeed;
+    
+    // Calculate arc trajectory - height varies with distance
+    float arcHeight = sin(particleProgress * 3.14159) * (0.3 + aRandom * 0.5) * uDistance;
+    float outwardDist = particleProgress * speed * uDistance;
+    
+    // Spread particles in a cone - spread angle varies per flare
+    float spreadAngle = aRandom * uSpread;
+    float spreadRotation = aParticleIndex * 2.39996 + aRandom * 1.5; // Golden angle + randomness
+    
+    vec3 perpendicular1 = normalize(cross(uFlareDirection, vec3(0.0, 1.0, 0.0)));
+    if (length(perpendicular1) < 0.1) perpendicular1 = normalize(cross(uFlareDirection, vec3(1.0, 0.0, 0.0)));
+    vec3 perpendicular2 = normalize(cross(uFlareDirection, perpendicular1));
+    
+    // Wider spread for larger flares
+    vec3 spreadOffset = (perpendicular1 * cos(spreadRotation) + perpendicular2 * sin(spreadRotation)) 
+                       * spreadAngle * outwardDist * (0.5 + uScale * 0.5);
+    
+    // Final position: origin + outward movement + arc + spread
+    vec3 flarePos = uFlareOrigin 
+                  + uFlareDirection * outwardDist 
+                  + uFlareDirection * arcHeight * 0.25
+                  + spreadOffset;
+    
+    // Alpha: fade in quickly, sustain, fade out
+    float fadeIn = smoothstep(0.0, 0.15, particleProgress);
+    float fadeOut = 1.0 - smoothstep(0.5, 1.0, particleProgress);
+    vAlpha = fadeIn * fadeOut * (0.6 + aRandom * 0.4) * min(uScale, 1.5);
+    
+    // Heat: hotter at beginning, cooler as it travels
+    vHeat = 1.0 - particleProgress * 0.5;
+    
+    // Hide particles before their time
+    if (particleProgress <= 0.0) {
+      vAlpha = 0.0;
+    }
+    
+    vec4 mvPosition = modelViewMatrix * vec4(flarePos, 1.0);
+    // Size varies with scale and arc height
+    gl_PointSize = uSize * uScale * (1.0 + arcHeight * 1.5) * (300.0 / -mvPosition.z) * (1.0 - particleProgress * 0.4);
+    gl_Position = projectionMatrix * mvPosition;
+  }
+`;
+
+// Solar flare fragment shader - yellow/white hot plasma
+const solarFlareFragmentShader = `
+  varying float vAlpha;
+  varying float vHeat;
+  
+  void main() {
+    vec2 center = gl_PointCoord - vec2(0.5);
+    float dist = length(center);
+    float alpha = 1.0 - smoothstep(0.0, 0.5, dist);
+    
+    // Color gradient from white-hot core to yellow to orange
+    vec3 hotWhite = vec3(1.0, 1.0, 0.95);
+    vec3 yellow = vec3(1.0, 0.9, 0.2);
+    vec3 orange = vec3(1.0, 0.5, 0.1);
+    
+    vec3 color = mix(orange, yellow, vHeat);
+    
+    // Hot white core
+    float core = 1.0 - smoothstep(0.0, 0.2, dist);
+    color = mix(color, hotWhite, core * vHeat);
+    
+    gl_FragColor = vec4(color, alpha * vAlpha);
+  }
+`;
+
+// Interface for tracking active flares
+interface SolarFlare {
+  id: number;
+  origin: Vector3;
+  direction: Vector3;
+  startTime: number;
+  duration: number;
+  // Variation parameters
+  scale: number;        // Overall size multiplier (0.3 - 2.0)
+  spread: number;       // Cone spread angle (0.1 - 0.8)
+  distance: number;     // Travel distance multiplier (0.5 - 2.5)
+  speed: number;        // Ejection speed multiplier (0.5 - 1.5)
+}
+
+// Solar Flare Particles Component
+interface SolarFlareParticlesProps {
+  flare: SolarFlare;
+  geometry: BufferGeometry;
+  currentTime: number;
+}
+
+const SolarFlareParticles: React.FC<SolarFlareParticlesProps> = ({ flare, geometry }) => {
+  const materialRef = useRef<ShaderMaterial>(null!);
+  
+  const material = useMemo(() => {
+    return new ShaderMaterial({
+      uniforms: {
+        uTime: { value: 0 },
+        uSize: { value: 1.5 },
+        uFlareTime: { value: 0 },
+        uDuration: { value: flare.duration },
+        uFlareOrigin: { value: flare.origin },
+        uFlareDirection: { value: flare.direction },
+        // Variation uniforms
+        uScale: { value: flare.scale },
+        uSpread: { value: flare.spread },
+        uDistance: { value: flare.distance },
+        uSpeed: { value: flare.speed },
+      },
+      vertexShader: solarFlareVertexShader,
+      fragmentShader: solarFlareFragmentShader,
+      transparent: true,
+      blending: AdditiveBlending,
+      depthWrite: false,
+    });
+  }, [flare.origin, flare.direction, flare.duration, flare.scale, flare.spread, flare.distance, flare.speed]);
+  
+  useFrame(({ clock }) => {
+    const t = clock.getElapsedTime();
+    if (materialRef.current) {
+      materialRef.current.uniforms.uTime.value = t;
+      materialRef.current.uniforms.uFlareTime.value = t - flare.startTime;
+    }
+  });
+  
+  return (
+    <points geometry={geometry}>
+      <primitive object={material} attach="material" ref={materialRef} />
+    </points>
+  );
+};
+
 interface SunProps {
   size?: number;
   color?: string | Color;
@@ -145,6 +305,92 @@ const Sun = forwardRef<Mesh, SunProps>(({
   const glowRef = useRef<Mesh>(null!);
   const particlesRef = useRef<Points>(null!);
   const particleMaterialRef = useRef<ShaderMaterial>(null!);
+  const lastFlareTimeRef = useRef<number>(0);
+  const flareIdCounterRef = useRef<number>(0);
+  
+  // Track active solar flares
+  const [activeFlares, setActiveFlares] = useState<SolarFlare[]>([]);
+  
+  // Spawn a new solar flare at a random position
+  const spawnFlare = useCallback((currentTime: number) => {
+    const sunRadius = size * 0.25;
+    
+    // Random position on sun surface
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos(2 * Math.random() - 1);
+    
+    const origin = new Vector3(
+      sunRadius * Math.sin(phi) * Math.cos(theta),
+      sunRadius * Math.sin(phi) * Math.sin(theta),
+      sunRadius * Math.cos(phi)
+    );
+    
+    // Direction is outward from center with some randomness
+    const direction = origin.clone().normalize();
+    // Add slight random deviation
+    direction.x += (Math.random() - 0.5) * 0.4;
+    direction.y += (Math.random() - 0.5) * 0.4;
+    direction.z += (Math.random() - 0.5) * 0.4;
+    direction.normalize();
+    
+    // Generate random variation parameters
+    // Use weighted randomness for more interesting distribution
+    const sizeRoll = Math.random();
+    let scale: number;
+    if (sizeRoll < 0.5) {
+      // 50% small flares
+      scale = 0.3 + Math.random() * 0.5; // 0.3 - 0.8
+    } else if (sizeRoll < 0.85) {
+      // 35% medium flares
+      scale = 0.8 + Math.random() * 0.7; // 0.8 - 1.5
+    } else {
+      // 15% large dramatic flares
+      scale = 1.5 + Math.random() * 1.0; // 1.5 - 2.5
+    }
+    
+    // Spread varies - some tight jets, some wide sprays
+    const spreadRoll = Math.random();
+    let spread: number;
+    if (spreadRoll < 0.4) {
+      spread = 0.1 + Math.random() * 0.15; // Tight jets
+    } else if (spreadRoll < 0.8) {
+      spread = 0.25 + Math.random() * 0.25; // Medium spread
+    } else {
+      spread = 0.5 + Math.random() * 0.4; // Wide sprays
+    }
+    
+    // Distance varies significantly
+    const distanceRoll = Math.random();
+    let distance: number;
+    if (distanceRoll < 0.3) {
+      distance = 0.3 + Math.random() * 0.4; // Short bursts
+    } else if (distanceRoll < 0.7) {
+      distance = 0.7 + Math.random() * 0.6; // Medium reach
+    } else {
+      distance = 1.3 + Math.random() * 1.2; // Long eruptions
+    }
+    
+    // Speed affects how quickly the flare travels
+    const speed = 0.5 + Math.random() * 1.0; // 0.5 - 1.5
+    
+    // Duration correlates with distance and scale
+    const baseDuration = 1.5 + Math.random() * 1.0;
+    const duration = baseDuration * (0.7 + distance * 0.3) * (0.8 + scale * 0.2);
+    
+    const newFlare: SolarFlare = {
+      id: flareIdCounterRef.current++,
+      origin,
+      direction,
+      startTime: currentTime,
+      duration,
+      scale,
+      spread,
+      distance,
+      speed,
+    };
+    
+    setActiveFlares(prev => [...prev, newFlare]);
+  }, [size]);
 
   // Create solar particle geometry
   const { particleGeometry, particleMaterial } = useMemo(() => {
@@ -198,6 +444,30 @@ const Sun = forwardRef<Mesh, SunProps>(({
     return { particleGeometry: geometry, particleMaterial: material };
   }, [size]);
 
+  // Create flare particle geometry (shared between all flares)
+  const flareGeometry = useMemo(() => {
+    const particleCount = 50; // Particles per flare - enough for large flares
+    const positions = new Float32Array(particleCount * 3);
+    const randoms = new Float32Array(particleCount);
+    const particleIndices = new Float32Array(particleCount);
+    
+    for (let i = 0; i < particleCount; i++) {
+      // Initial positions don't matter - shader will compute them
+      positions[i * 3] = 0;
+      positions[i * 3 + 1] = 0;
+      positions[i * 3 + 2] = 0;
+      
+      randoms[i] = Math.random();
+      particleIndices[i] = i / particleCount;
+    }
+    
+    const geometry = new BufferGeometry();
+    geometry.setAttribute('position', new Float32BufferAttribute(positions, 3));
+    geometry.setAttribute('aRandom', new Float32BufferAttribute(randoms, 1));
+    geometry.setAttribute('aParticleIndex', new Float32BufferAttribute(particleIndices, 1));
+    
+    return geometry;
+  }, []);
 
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
@@ -221,6 +491,24 @@ const Sun = forwardRef<Mesh, SunProps>(({
       particlesRef.current.rotation.y += 0.0003;
       particlesRef.current.rotation.x += 0.0001;
     }
+    
+    // Spawn new solar flares every 4-6 seconds (randomized)
+    const timeSinceLastFlare = t - lastFlareTimeRef.current;
+    const nextFlareInterval = 4 + Math.random() * 2; // 4-6 seconds
+    
+    if (timeSinceLastFlare > nextFlareInterval || lastFlareTimeRef.current === 0) {
+      // Spawn 1-3 flares at once for more dramatic effect
+      const flareCount = 1 + Math.floor(Math.random() * 2);
+      for (let i = 0; i < flareCount; i++) {
+        setTimeout(() => spawnFlare(t + i * 0.3), i * 300);
+      }
+      lastFlareTimeRef.current = t;
+    }
+    
+    // Clean up expired flares
+    setActiveFlares(prev => 
+      prev.filter(flare => (t - flare.startTime) < flare.duration + 0.5)
+    );
   });
 
   return (
@@ -238,18 +526,25 @@ const Sun = forwardRef<Mesh, SunProps>(({
         <primitive object={particleMaterial} attach="material" ref={particleMaterialRef} />
       </points>
 
-
-
+      {/* Solar Flares */}
+      {activeFlares.map(flare => (
+        <SolarFlareParticles
+          key={flare.id}
+          flare={flare}
+          geometry={flareGeometry}
+          currentTime={lastFlareTimeRef.current}
+        />
+      ))}
 
       {/* Atmosphere layer */}
       <mesh
-        scale={[0.85, 0.85, 0.85]}
+        scale={[0.8, 0.8, 0.8]}
       >
         <sphereGeometry args={[size, 64, 64]} />
         <meshStandardMaterial
           color={color}
           emissive={color}
-          emissiveIntensity={0.3}
+          emissiveIntensity={0.1}
           roughness={0.76}  
           metalness={0.3}
         />
