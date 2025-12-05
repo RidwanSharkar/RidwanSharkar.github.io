@@ -139,8 +139,8 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       startAngle: 0,
       planetColor: '#A55BFF',
       rings: [
-        { color: '#FFAAEE', innerScale: 1.25, outerScale: 1.40, inclination: 0 }, 
-        { color: '#FFAAEE', innerScale: 1.5, outerScale: 1.65, inclination: Math.PI / 2 },
+        { color: '#CCA2FF', innerScale: 1.25, outerScale: 1.40, inclination: 0 }, 
+        { color: '#CCA2FF', innerScale: 1.5, outerScale: 1.85, inclination: Math.PI / 2 },
       ],
       size: 0.525,
       rotationSpeed: 0.010,

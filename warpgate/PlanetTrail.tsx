@@ -49,7 +49,7 @@ const PlanetTrail: React.FC<PlanetTrailProps> = ({
     positionsRef.current[1] = y;
     positionsRef.current[2] = z;
     opacitiesRef.current[0] = 0.4 * opacity;
-    scalesRef.current[0] = size * 0.75;
+    scalesRef.current[0] = size * 1;
 
     if (particlesRef.current) {
       const geometry = particlesRef.current.geometry;

@@ -228,6 +228,106 @@ const solarFlareFragmentShader = `
   }
 `;
 
+// Pulsar beam vertex shader - bi-directional pole beams
+const pulsarBeamVertexShader = `
+  uniform float uTime;
+  uniform float uSize;
+  uniform float uBeamTime;
+  uniform float uDuration;
+  uniform float uBeamLength;
+  uniform float uDirection; // 1.0 for up, -1.0 for down
+  
+  attribute float aRandom;
+  attribute float aParticleIndex;
+  
+  varying float vAlpha;
+  varying float vHeat;
+  varying float vDistFromCenter;
+  
+  void main() {
+    // Beam lifetime
+    float beamProgress = clamp(uBeamTime / uDuration, 0.0, 1.0);
+    
+    // Particles stream outward along Y axis
+    float particleOffset = aParticleIndex;
+    float streamProgress = fract(beamProgress * 3.0 + particleOffset);
+    
+    // Distance along beam
+    float beamDist = streamProgress * uBeamLength;
+    
+    // Spiral motion around beam axis
+    float spiralSpeed = 8.0;
+    float spiralRadius = 0.08 * (1.0 - streamProgress * 0.5) * (1.0 + aRandom * 0.5);
+    float spiralAngle = uTime * spiralSpeed + aParticleIndex * 6.28 + aRandom * 3.14;
+    
+    // Position along beam with spiral
+    vec3 beamPos = vec3(
+      cos(spiralAngle) * spiralRadius,
+      beamDist * uDirection,
+      sin(spiralAngle) * spiralRadius
+    );
+    
+    // Intensity envelope - bright burst then fade
+    float burstPhase = beamProgress * 3.14159;
+    float intensity = sin(burstPhase) * (1.0 - beamProgress * 0.3);
+    
+    // Alpha based on position in stream and overall intensity
+    float streamFade = 1.0 - streamProgress * 0.7;
+    vAlpha = intensity * streamFade * (0.6 + aRandom * 0.4);
+    
+    // Heat - hotter near the sun
+    vHeat = 1.0 - streamProgress * 0.6;
+    vDistFromCenter = spiralRadius / 0.12;
+    
+    // Hide before beam starts
+    if (beamProgress <= 0.01) {
+      vAlpha = 0.0;
+    }
+    
+    vec4 mvPosition = modelViewMatrix * vec4(beamPos, 1.0);
+    gl_PointSize = uSize * (1.5 - streamProgress * 0.8) * intensity * (300.0 / -mvPosition.z);
+    gl_Position = projectionMatrix * mvPosition;
+  }
+`;
+
+// Pulsar beam fragment shader - intense blue-white energy
+const pulsarBeamFragmentShader = `
+  varying float vAlpha;
+  varying float vHeat;
+  varying float vDistFromCenter;
+  
+  void main() {
+    vec2 center = gl_PointCoord - vec2(0.5);
+    float dist = length(center);
+    float alpha = 1.0 - smoothstep(0.0, 0.5, dist);
+    
+    // Pulsar colors - intense cyan/blue/white
+    vec3 hotWhite = vec3(1.0, 1.0, 1.0);
+    vec3 brightCyan = vec3(0.4, 0.9, 1.0);
+    vec3 deepBlue = vec3(0.2, 0.5, 1.0);
+    
+    // Core is white-hot, edges are blue
+    vec3 color = mix(deepBlue, brightCyan, vHeat);
+    
+    // Hot white core
+    float core = 1.0 - smoothstep(0.0, 0.3, dist);
+    color = mix(color, hotWhite, core * vHeat);
+    
+    // Center of beam is brighter
+    float centerBrightness = 1.0 - vDistFromCenter * 0.3;
+    color *= centerBrightness;
+    
+    gl_FragColor = vec4(color, alpha * vAlpha);
+  }
+`;
+
+// Interface for pulsar beam event
+interface PulsarBeam {
+  id: number;
+  startTime: number;
+  duration: number;
+}
+
 // Interface for tracking active flares
 interface SolarFlare {
   id: number;
@@ -241,6 +341,50 @@ interface SolarFlare {
   distance: number;     // Travel distance multiplier (0.5 - 2.5)
   speed: number;        // Ejection speed multiplier (0.5 - 1.5)
 }
+
+// Pulsar Beam Particles Component
+interface PulsarBeamParticlesProps {
+  beam: PulsarBeam;
+  geometry: BufferGeometry;
+  direction: number; // 1 for up, -1 for down
+  beamLength: number;
+}
+
+const PulsarBeamParticles: React.FC<PulsarBeamParticlesProps> = ({ beam, geometry, direction, beamLength }) => {
+  const materialRef = useRef<ShaderMaterial>(null!);
+  
+  const material = useMemo(() => {
+    return new ShaderMaterial({
+      uniforms: {
+        uTime: { value: 0 },
+        uSize: { value: 2.0 },
+        uBeamTime: { value: 0 },
+        uDuration: { value: beam.duration },
+        uBeamLength: { value: beamLength },
+        uDirection: { value: direction },
+      },
+      vertexShader: pulsarBeamVertexShader,
+      fragmentShader: pulsarBeamFragmentShader,
+      transparent: true,
+      blending: AdditiveBlending,
+      depthWrite: false,
+    });
+  }, [beam.duration, direction, beamLength]);
+  
+  useFrame(({ clock }) => {
+    const t = clock.getElapsedTime();
+    if (materialRef.current) {
+      materialRef.current.uniforms.uTime.value = t;
+      materialRef.current.uniforms.uBeamTime.value = t - beam.startTime;
+    }
+  });
+  
+  return (
+    <points geometry={geometry}>
+      <primitive object={material} attach="material" ref={materialRef} />
+    </points>
+  );
+};
 
 // Solar Flare Particles Component
 interface SolarFlareParticlesProps {
@@ -308,9 +452,14 @@ const Sun = forwardRef<Mesh, SunProps>(({
   const particleMaterialRef = useRef<ShaderMaterial>(null!);
   const lastFlareTimeRef = useRef<number>(0);
   const flareIdCounterRef = useRef<number>(0);
+  const lastPulsarTimeRef = useRef<number>(0);
+  const pulsarIdCounterRef = useRef<number>(0);
   
   // Track active solar flares
   const [activeFlares, setActiveFlares] = useState<SolarFlare[]>([]);
+  
+  // Track active pulsar beams
+  const [activePulsarBeam, setActivePulsarBeam] = useState<PulsarBeam | null>(null);
   
   // Spawn a new solar flare at a random position
   const spawnFlare = useCallback((currentTime: number) => {
@@ -470,6 +619,30 @@ const Sun = forwardRef<Mesh, SunProps>(({
     return geometry;
   }, []);
 
+  // Create pulsar beam geometry
+  const pulsarGeometry = useMemo(() => {
+    const particleCount = 150; // More particles for dense beam
+    const positions = new Float32Array(particleCount * 3);
+    const randoms = new Float32Array(particleCount);
+    const particleIndices = new Float32Array(particleCount);
+    
+    for (let i = 0; i < particleCount; i++) {
+      positions[i * 3] = 0;
+      positions[i * 3 + 1] = 0;
+      positions[i * 3 + 2] = 0;
+      
+      randoms[i] = Math.random();
+      particleIndices[i] = i / particleCount;
+    }
+    
+    const geometry = new BufferGeometry();
+    geometry.setAttribute('position', new Float32BufferAttribute(positions, 3));
+    geometry.setAttribute('aRandom', new Float32BufferAttribute(randoms, 1));
+    geometry.setAttribute('aParticleIndex', new Float32BufferAttribute(particleIndices, 1));
+    
+    return geometry;
+  }, []);
+
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
     
@@ -510,6 +683,25 @@ const Sun = forwardRef<Mesh, SunProps>(({
     setActiveFlares(prev => 
       prev.filter(flare => (t - flare.startTime) < flare.duration + 0.5)
     );
+    
+    // Spawn pulsar beam every 20 seconds
+    const timeSinceLastPulsar = t - lastPulsarTimeRef.current;
+    const pulsarInterval = 20; // Every 20 seconds
+    
+    if (timeSinceLastPulsar > pulsarInterval || lastPulsarTimeRef.current === 0) {
+      const newBeam: PulsarBeam = {
+        id: pulsarIdCounterRef.current++,
+        startTime: t,
+        duration: 3.0 + Math.random() * 1.0, // 3-4 seconds
+      };
+      setActivePulsarBeam(newBeam);
+      lastPulsarTimeRef.current = t;
+    }
+    
+    // Clean up expired pulsar beam
+    if (activePulsarBeam && (t - activePulsarBeam.startTime) > activePulsarBeam.duration + 0.5) {
+      setActivePulsarBeam(null);
+    }
   });
 
   return (
@@ -536,6 +728,28 @@ const Sun = forwardRef<Mesh, SunProps>(({
           currentTime={lastFlareTimeRef.current}
         />
       ))}
+
+      {/* Pulsar Beams - bi-directional from poles */}
+      {activePulsarBeam && (
+        <>
+          {/* Upper beam (positive Y) */}
+          <PulsarBeamParticles
+            key={`pulsar-up-${activePulsarBeam.id}`}
+            beam={activePulsarBeam}
+            geometry={pulsarGeometry}
+            direction={1}
+            beamLength={2 + Math.random() * 12}
+          />
+          {/* Lower beam (negative Y) */}
+          <PulsarBeamParticles
+            key={`pulsar-down-${activePulsarBeam.id}`}
+            beam={activePulsarBeam}
+            geometry={pulsarGeometry}
+            direction={-1}
+            beamLength={2 + Math.random() * 12}
+          />
+        </>
+      )}
 
       {/* Atmosphere layer */}
       <mesh
