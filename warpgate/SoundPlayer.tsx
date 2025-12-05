@@ -25,9 +25,17 @@ interface AudioPlayerProps {
 const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
   const [volume, setVolume] = useState(0.5);
   const [currentTrack, setCurrentTrack] = useState<Track>({ id: 0, name: "Custom Track", src });
+
+  // Sync audio element volume when component mounts
+  React.useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume;
+      audioRef.current.muted = isMuted;
+    }
+  }, []);
 
   const togglePlayPause = () => {
     if (audioRef.current) {

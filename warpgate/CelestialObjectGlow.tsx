@@ -1,9 +1,8 @@
 // warpgate/CelestialObjectGlow.tsx
 
-import * as THREE from 'three';
 import React, { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { ShaderMaterial, Color } from 'three';
+import { ShaderMaterial, Color, AdditiveBlending, DoubleSide } from 'three';
 import { glowVertexShader, glowFragmentShader } from './Glow';
 
 interface GlowProps {
@@ -43,8 +42,8 @@ export const CelestialObjectGlow: React.FC<GlowProps> = ({
           glowColor: { value: new Color(color) },
           intensity: { value: intensity }
         }}
-        blending={THREE.AdditiveBlending}
-        side={THREE.DoubleSide}
+        blending={AdditiveBlending}
+        side={DoubleSide}
       />
     </mesh>
   );

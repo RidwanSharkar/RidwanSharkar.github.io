@@ -1,7 +1,6 @@
 import React, { forwardRef, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Mesh, ShaderMaterial, Color } from 'three';
-import * as THREE from 'three';
+import { Mesh, ShaderMaterial, Color, AdditiveBlending, BackSide, DoubleSide } from 'three';
 
 const vertexShader = `
   varying vec3 vNormal;
@@ -45,7 +44,7 @@ void main() {
 
 interface SunProps {
   size?: number;
-  color?: string | THREE.Color;
+  color?: string | Color;
   glowIntensity?: number;
   rotationSpeed?: number;
   emissiveIntensity?: number;
@@ -62,12 +61,12 @@ const Sun = forwardRef<Mesh, SunProps>(({
 
   const atmosphereMaterial = new ShaderMaterial({
     uniforms: {
-      glowColor: { value: new THREE.Color(color) }
+      glowColor: { value: new Color(color) }
     },
     vertexShader: atmosphereVertexShader,
     fragmentShader: atmosphereFragmentShader,
-    blending: THREE.AdditiveBlending,
-    side: THREE.BackSide,
+    blending: AdditiveBlending,
+    side: BackSide,
     transparent: true
   });
 
@@ -127,8 +126,8 @@ const Sun = forwardRef<Mesh, SunProps>(({
             glowColor: { value: new Color(color) },
             intensity: { value: glowIntensity }
           }}
-          blending={THREE.AdditiveBlending}
-          side={THREE.DoubleSide}
+          blending={AdditiveBlending}
+          side={DoubleSide}
         />
       </mesh>
     </group>

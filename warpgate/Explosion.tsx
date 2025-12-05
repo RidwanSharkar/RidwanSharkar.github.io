@@ -1,7 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Color, Vector3, Mesh, BufferGeometry } from 'three';
-import * as THREE from 'three';
+import { Color, Vector3, Mesh, BufferGeometry, Group, BufferAttribute, SphereGeometry, MeshStandardMaterial } from 'three';
 
 interface ExplosionProps {
   position: Vector3;
@@ -18,7 +17,7 @@ const Explosion: React.FC<ExplosionProps> = ({
   duration = 1,
   particleCount = 20
 }) => {
-  const groupRef = useRef<THREE.Group>(null);
+  const groupRef = useRef<Group>(null);
   const particles = useRef<Array<{
     mesh: Mesh;
     velocity: Vector3;
@@ -34,11 +33,11 @@ const Explosion: React.FC<ExplosionProps> = ({
     for (let i = 0; i < particleCount; i++) {
       const geometry = new BufferGeometry();
       const vertices = new Float32Array([0, 0, 0]); // Single point
-      geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+      geometry.setAttribute('position', new BufferAttribute(vertices, 3));
 
       const particle = new Mesh(
-        new THREE.SphereGeometry(0.05 * size, 8, 8),
-        new THREE.MeshStandardMaterial({
+        new SphereGeometry(0.05 * size, 8, 8),
+        new MeshStandardMaterial({
           color: new Color(color),
           emissive: new Color(color),
           emissiveIntensity: 0.5,
@@ -98,7 +97,7 @@ const Explosion: React.FC<ExplosionProps> = ({
       const opacity = 1 - particleElapsedTime / duration;
       const scale = 1 - (particleElapsedTime / duration) * 0.5;
 
-      if (particle.mesh.material instanceof THREE.MeshStandardMaterial) {
+      if (particle.mesh.material instanceof MeshStandardMaterial) {
         particle.mesh.material.opacity = opacity;
       }
       particle.mesh.scale.setScalar(scale);

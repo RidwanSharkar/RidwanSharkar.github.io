@@ -6,6 +6,7 @@ import { OrbitControls, Stars, Html } from '@react-three/drei';
 import EnhancedPlanetGroup, { PlanetData } from './EnhancedPlanetGroup';
 import { MOUSE } from 'three';
 
+
 const ResponsiveCamera: React.FC = () => {
   const { camera, size } = useThree();
 
@@ -29,16 +30,21 @@ const PlanetCanvas: React.FC<PlanetCanvasProps> = ({ onSelectPlanet, selectedPla
   return (
     <Canvas camera={{ position: [0, 20, 25], fov: 60 }} className="w-full h-full">
       <ResponsiveCamera />
-      <ambientLight intensity={0.3} />
+      <ambientLight intensity={0.525} />
       <pointLight position={[0, 0, 0]} intensity={1} color="#FDB813" />
+      
+
+      
       <Stars
         radius={100}
-        depth={100}
+        depth={200}
         count={4000}
         factor={4}
         saturation={0}
         fade
       />
+      
+
       <React.Suspense fallback={<Html center>Loading...</Html>}>
         <EnhancedPlanetGroup 
           onSelectPlanet={onSelectPlanet} 
@@ -49,7 +55,7 @@ const PlanetCanvas: React.FC<PlanetCanvasProps> = ({ onSelectPlanet, selectedPla
       <OrbitControls
         enableZoom={true}
         minDistance={10}
-        maxDistance={20}
+        maxDistance={25}
         enablePan={true}
         zoomSpeed={0.75}
         enableDamping={true}

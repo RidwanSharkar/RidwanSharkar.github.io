@@ -3,12 +3,10 @@ import React, { useState, Suspense, useRef, useEffect, useMemo } from 'react';
 import EnhancedPlanet from './EnhancedPlanet';
 import Sun from './Sun';
 import Explosion from './Explosion';
-import { Vector3 } from 'three';
-import * as THREE from 'three';
+import { Vector3, DoubleSide, Mesh } from 'three';
 import { extend } from '@react-three/fiber';
 import { AsteroidField } from './AsteroidField';
 import { OrbitControls, TransformControls } from 'three-stdlib';
-import { Mesh } from 'three'; 
 import Exoplanet from './Exoplanet'; 
 
 extend({ OrbitControls, TransformControls });
@@ -52,7 +50,7 @@ export interface PlanetData {
 }
 
 interface ExplosionData {
-  position: THREE.Vector3;
+  position: Vector3;
   color: string;
   id: number;
 }
@@ -376,7 +374,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
             color="#ffffff" 
             opacity={0.03} 
             transparent 
-            side={THREE.DoubleSide}
+            side={DoubleSide}
           />
         </mesh>
       ))}

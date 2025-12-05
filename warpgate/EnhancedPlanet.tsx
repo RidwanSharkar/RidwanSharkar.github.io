@@ -1,12 +1,12 @@
 // EnhancedPlanet.tsx
 import React, { forwardRef, useRef, useState, useEffect, useMemo } from 'react';
 import { useFrame, useLoader } from '@react-three/fiber';
-import { Mesh, Euler, TextureLoader, ShaderMaterial } from 'three';
+import { Mesh, Euler, TextureLoader, ShaderMaterial, Color, AdditiveBlending, BackSide, DoubleSide } from 'three';
 import Moon from './Moon';
-import * as THREE from 'three';
 import { CelestialObjectGlow } from './CelestialObjectGlow';
 import { PlanetData } from './EnhancedPlanetGroup';
 import { ThreeEvent } from '@react-three/fiber';
+import PlanetTrail from './PlanetTrail';
 
 /* ====================================== SHADERS(move) ====================================== */
 
@@ -24,6 +24,89 @@ uniform vec3 glowColor;
 void main() {
     float intensity = pow(0.7 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 2.0);
     gl_FragColor = vec4(glowColor, 1.0) * intensity * 0.6;
+}
+`;
+
+// Surface shader for procedural detail on planets
+const surfaceVertexShader = `
+varying vec3 vNormal;
+varying vec3 vPosition;
+varying vec2 vUv;
+
+void main() {
+    vNormal = normalize(normalMatrix * normal);
+    vPosition = position;
+    vUv = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}
+`;
+
+const surfaceFragmentShader = `
+uniform vec3 uColor;
+uniform float uTime;
+uniform float uRoughness;
+
+varying vec3 vNormal;
+varying vec3 vPosition;
+varying vec2 vUv;
+
+// Simple noise function for surface detail
+float hash(vec3 p) {
+    p = fract(p * 0.3183099 + 0.1);
+    p *= 17.0;
+    return fract(p.x * p.y * p.z * (p.x + p.y + p.z));
+}
+
+float noise(vec3 p) {
+    vec3 i = floor(p);
+    vec3 f = fract(p);
+    f = f * f * (3.0 - 2.0 * f);
+    
+    return mix(
+        mix(mix(hash(i), hash(i + vec3(1,0,0)), f.x),
+            mix(hash(i + vec3(0,1,0)), hash(i + vec3(1,1,0)), f.x), f.y),
+        mix(mix(hash(i + vec3(0,0,1)), hash(i + vec3(1,0,1)), f.x),
+            mix(hash(i + vec3(0,1,1)), hash(i + vec3(1,1,1)), f.x), f.y), f.z);
+}
+
+float fbm(vec3 p) {
+    float value = 0.0;
+    float amplitude = 0.5;
+    for(int i = 0; i < 4; i++) {
+        value += amplitude * noise(p);
+        p *= 2.0;
+        amplitude *= 0.5;
+    }
+    return value;
+}
+
+void main() {
+    // Base color
+    vec3 color = uColor;
+    
+    // Add surface detail using noise
+    float surfaceNoise = fbm(vPosition * 8.0 + uTime * 0.05);
+    
+    // Subtle color variation
+    color *= 0.85 + surfaceNoise * 0.3;
+    
+    // Simple lighting
+    vec3 lightDir = normalize(vec3(0.0) - vPosition);
+    float diff = max(dot(vNormal, lightDir), 0.0);
+    
+    // Ambient + diffuse
+    vec3 ambient = color * 0.3;
+    vec3 diffuse = color * diff * 0.7;
+    
+    // Add slight specular highlight
+    vec3 viewDir = normalize(-vPosition);
+    vec3 reflectDir = reflect(-lightDir, vNormal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 16.0);
+    vec3 specular = vec3(1.0) * spec * 0.2 * (1.0 - uRoughness);
+    
+    vec3 finalColor = ambient + diffuse + specular;
+    
+    gl_FragColor = vec4(finalColor, 1.0);
 }
 `;
 
@@ -72,13 +155,24 @@ const EnhancedPlanet = forwardRef<Mesh, EnhancedPlanetProps>(({
   // Memoize atm material
   const atmosphereMaterial = useMemo(() => new ShaderMaterial({
     uniforms: {
-      glowColor: { value: new THREE.Color(planetColor) }
+      glowColor: { value: new Color(planetColor) }
     },
     vertexShader: atmosphereVertexShader,
     fragmentShader: atmosphereFragmentShader,
-    blending: THREE.AdditiveBlending,
-    side: THREE.BackSide,
+    blending: AdditiveBlending,
+    side: BackSide,
     transparent: true
+  }), [planetColor]);
+
+  // Surface material with procedural detail
+  const surfaceMaterial = useMemo(() => new ShaderMaterial({
+    uniforms: {
+      uColor: { value: new Color(planetColor) },
+      uTime: { value: 0 },
+      uRoughness: { value: 0.7 },
+    },
+    vertexShader: surfaceVertexShader,
+    fragmentShader: surfaceFragmentShader,
   }), [planetColor]);
 
   // Local meshRef
@@ -127,6 +221,11 @@ const EnhancedPlanet = forwardRef<Mesh, EnhancedPlanetProps>(({
       }
       if (logoRef.current) {
         logoRef.current.rotation.y += 0.01;
+      }
+      
+      // Animate surface shader time for surface animation
+      if (surfaceMaterial.uniforms) {
+        surfaceMaterial.uniforms.uTime.value = elapsed;
       }
     }
   });
@@ -181,6 +280,16 @@ const EnhancedPlanet = forwardRef<Mesh, EnhancedPlanetProps>(({
 
   return (
     <group>
+      {/* Orbital Trail - comet-like effect following planet */}
+      <PlanetTrail
+        color={new Color(planetColor)}
+        size={size}
+        meshRef={meshRef}
+        orbitRadius={orbitRadius}
+        orbitSpeed={orbitSpeed}
+        opacity={0.15}
+      />
+
       {/* Atmosphere layer */}
       <mesh
         ref={atmosphereRef}
@@ -198,7 +307,7 @@ const EnhancedPlanet = forwardRef<Mesh, EnhancedPlanetProps>(({
         scale={selected ? [1.0, 1.0, 1.0] : [1, 1, 1]} // dont
       >
         <sphereGeometry args={[size, 64, 64]} />
-        <meshStandardMaterial color={planetColor} />
+        <primitive object={surfaceMaterial} attach="material" />
 
         {/* Hover + Select Glow */}
         {(selected) && (
@@ -225,10 +334,10 @@ const EnhancedPlanet = forwardRef<Mesh, EnhancedPlanetProps>(({
             />
             <meshStandardMaterial 
               color={ring.color} 
-              side={THREE.DoubleSide} 
+              side={DoubleSide} 
               transparent 
               opacity={1.0}
-              alphaMap={new THREE.TextureLoader().load('/textures/ring-alpha.jpg')}
+              alphaMap={new TextureLoader().load('/textures/ring-alpha.jpg')}
             />
           </mesh>
         ))}
@@ -253,7 +362,7 @@ const EnhancedPlanet = forwardRef<Mesh, EnhancedPlanetProps>(({
             <meshBasicMaterial 
               map={logoTexture} 
               transparent={true} 
-              side={THREE.DoubleSide} 
+              side={DoubleSide} 
             />
           </mesh>
         )}

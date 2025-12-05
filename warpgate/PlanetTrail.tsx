@@ -1,11 +1,11 @@
 import React, { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import * as THREE from 'three';
+import { Color, Mesh, Points, BufferAttribute, AdditiveBlending } from 'three';
 
 interface PlanetTrailProps {
-  color: THREE.Color;
+  color: Color;
   size: number;
-  meshRef: React.RefObject<THREE.Mesh>;
+  meshRef: React.RefObject<Mesh>;
   orbitRadius: number;
   orbitSpeed: number;
   opacity: number;
@@ -17,8 +17,8 @@ const PlanetTrail: React.FC<PlanetTrailProps> = ({
   meshRef,
   opacity,
 }) => {
-  const particlesCount = 25;
-  const particlesRef = useRef<THREE.Points>(null);
+  const particlesCount = 5;
+  const particlesRef = useRef<Points>(null);
   const positionsRef = useRef<Float32Array>(new Float32Array(particlesCount * 3));
   const opacitiesRef = useRef<Float32Array>(new Float32Array(particlesCount));
   const scalesRef = useRef<Float32Array>(new Float32Array(particlesCount));
@@ -48,23 +48,23 @@ const PlanetTrail: React.FC<PlanetTrailProps> = ({
     positionsRef.current[1] = y;
     positionsRef.current[2] = z;
     opacitiesRef.current[0] = 0.4 * opacity;
-    scalesRef.current[0] = size * 1.1;
+    scalesRef.current[0] = size * 1.0;
 
     if (particlesRef.current) {
       const geometry = particlesRef.current.geometry;
 
-      (geometry.attributes.position as THREE.BufferAttribute).array =
+      (geometry.attributes.position as BufferAttribute).array =
         positionsRef.current;
       geometry.attributes.position.needsUpdate = true;
 
       if (geometry.attributes.opacity) {
-        (geometry.attributes.opacity as THREE.BufferAttribute).array =
+        (geometry.attributes.opacity as BufferAttribute).array =
           opacitiesRef.current;
         geometry.attributes.opacity.needsUpdate = true;
       }
 
       if (geometry.attributes.scale) {
-        (geometry.attributes.scale as THREE.BufferAttribute).array =
+        (geometry.attributes.scale as BufferAttribute).array =
           scalesRef.current;
         geometry.attributes.scale.needsUpdate = true;
       }
@@ -96,7 +96,7 @@ const PlanetTrail: React.FC<PlanetTrailProps> = ({
       <shaderMaterial
         transparent
         depthWrite={false}
-        blending={THREE.AdditiveBlending}
+        blending={AdditiveBlending}
         vertexShader={`
           attribute float opacity;
           attribute float scale;
