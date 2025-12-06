@@ -4,6 +4,7 @@ import React from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
 import { OrbitControls, Stars, Html } from '@react-three/drei';
 import EnhancedPlanetGroup, { PlanetData } from './EnhancedPlanetGroup';
+import Nebula from './Nebula';
 import { MOUSE } from 'three';
 
 
@@ -43,7 +44,9 @@ const PlanetCanvas: React.FC<PlanetCanvasProps> = ({ onSelectPlanet, selectedPla
         saturation={0}
         fade
       />
-      
+
+      {/* Distant nebula clouds */}
+      <Nebula />
 
       <React.Suspense fallback={<Html center>Loading...</Html>}>
         <EnhancedPlanetGroup 
