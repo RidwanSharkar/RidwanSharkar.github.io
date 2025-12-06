@@ -30,7 +30,7 @@ const PlanetCanvas: React.FC<PlanetCanvasProps> = ({ onSelectPlanet, selectedPla
   return (
     <Canvas camera={{ position: [0, 20, 25], fov: 60 }} className="w-full h-full">
       <ResponsiveCamera />
-      <ambientLight intensity={0.525} />
+      <ambientLight intensity={0.45} />
       <pointLight position={[0, 0, 0]} intensity={1} color="#FDB813" />
       
 

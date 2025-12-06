@@ -686,13 +686,13 @@ const Sun = forwardRef<Mesh, SunProps>(({
     
     // Spawn pulsar beam every 20 seconds
     const timeSinceLastPulsar = t - lastPulsarTimeRef.current;
-    const pulsarInterval = 20; // Every 20 seconds
+    const pulsarInterval = 20 + Math.random() * 10; // Every 20-30 seconds
     
     if (timeSinceLastPulsar > pulsarInterval || lastPulsarTimeRef.current === 0) {
       const newBeam: PulsarBeam = {
         id: pulsarIdCounterRef.current++,
         startTime: t,
-        duration: 3.0 + Math.random() * 1.0, // 3-4 seconds
+        duration: 2.0 + Math.random() * 4.0, // 2-6 seconds
       };
       setActivePulsarBeam(newBeam);
       lastPulsarTimeRef.current = t;
@@ -753,13 +753,13 @@ const Sun = forwardRef<Mesh, SunProps>(({
 
       {/* Atmosphere layer */}
       <mesh
-        scale={[0.8, 0.8, 0.8]}
+        scale={[0.75, 0.75, 0.75]}
       >
         <sphereGeometry args={[size, 64, 64]} />
         <meshStandardMaterial
           color={color}
           emissive={color}
-          emissiveIntensity={0.1}
+          emissiveIntensity={0.05}
           roughness={0.76}  
           metalness={0.3}
         />
