@@ -1025,7 +1025,7 @@ const Nebula: React.FC = () => {
       color1: palette.c1,
       color2: palette.c2,
       color3: palette.c3,
-      scale: 15 + Math.random() * 40,
+      scale: 10 + Math.random() * 40,
       opacity: 0.25 + Math.random() * 0.1,
       rotationSpeed: 0.0006 + Math.random() * 0.0004,
       seed: Math.random() * 10,
@@ -1055,8 +1055,8 @@ const Nebula: React.FC = () => {
       color3: palette.c3,
       scaleX: 15 + Math.random() * 30,
       scaleY: 30 + Math.random() * 50, // Taller than wide
-      opacity: 0.3 + Math.random() * 0.1,
-      rotationSpeed: (Math.random() - 0.5) * 0.0004,
+      opacity: 0.25 + Math.random() * 0.1,
+      rotationSpeed: (Math.random() - 0.5) * 0.00004,
       seed: Math.random() * 10,
       dustColor: palette.dust
     };
