@@ -899,7 +899,7 @@ const NebulaDust: React.FC<{
         color={color}
         size={0.3}
         transparent
-        opacity={0.4}
+        opacity={0.1}
         sizeAttenuation
         depthWrite={false}
         blending={AdditiveBlending}
@@ -951,7 +951,7 @@ const spiralColorPalettes = [
   { c1: '#1a0a2a', c2: '#A55BFF', c3: '#CCA2FF', dust: '#B8B3E9' },  // Purple (GitHub)
   { c1: '#0a1a2a', c2: '#4FB8FF', c3: '#A0C4E2', dust: '#2DE1FC' },  // Blue (LinkedIn)
   { c1: '#0a2020', c2: '#2DE1FC', c3: '#84DCC6', dust: '#00FFFF' },  // Cyan/Teal (Eidolon/Mythos)
-  { c1: '#2a1a2a', c2: '#F4ACB7', c3: '#FFCAE2', dust: '#FFA1CB' },  // Pink (Instagram/Spotify)
+  { c1: '#1a0a2a', c2: '#A55BFF', c3: '#CCA2FF', dust: '#B8B3E9' },  // Pink (Instagram/Spotify)
   { c1: '#1a1a2a', c2: '#BAB9FF', c3: '#D9C6E8', dust: '#809BCE' },  // Lavender (Avernus)
 ];
 
@@ -985,7 +985,7 @@ const wispyColorPalettes = [
 const Nebula: React.FC = () => {
   // Generate truly random nebulae - SPHERICALLY distributed with CLUSTERING
   const nebulae: NebulaConfig[] = useMemo(() => {
-    const count = 6 + Math.floor(Math.random() * 12); // 10-17 nebulae
+    const count = 6 + Math.floor(Math.random() * 14); // 10-17 nebulae
     const generated: NebulaConfig[] = [];
     
     // Generate 2-4 cluster centers for nebulae to group around
@@ -1033,7 +1033,7 @@ const Nebula: React.FC = () => {
       
       // Random scale and properties
       const scale = 10 + Math.random() * 50; // 10-60
-      const opacity = 0.175 + Math.random() * 0.2; // 0.175-0.375
+      const opacity = 0.125 + Math.random() * 0.2; // 0.175-0.375
       const rotationSpeed = (Math.random() - 0.5) * 0.001;
       const dustCount = 100 + Math.floor(Math.random() * 150);
       
@@ -1110,9 +1110,9 @@ const Nebula: React.FC = () => {
       color1: palette.c1,
       color2: palette.c2,
       color3: palette.c3,
-      scaleX: 30 + Math.random() * 40, // More balanced size
-      scaleY: 30 + Math.random() * 40, // Similar to width for cloud shape
-      opacity: 0.3 + Math.random() * 0.15,
+      scaleX: 15 + Math.random() * 40, // More balanced size
+      scaleY: 15 + Math.random() * 40, // Similar to width for cloud shape
+      opacity: 0.225 + Math.random() * 0.15,
       rotationSpeed: (Math.random() - 0.5) * 0.0003,
       seed: Math.random() * 10,
       dustColor: palette.dust
@@ -1138,7 +1138,7 @@ const Nebula: React.FC = () => {
       color3: palette.c3,
       scaleX: 60 + Math.random() * 40, // Wider than tall
       scaleY: 30 + Math.random() * 30,
-      opacity: 0.275 + Math.random() * 0.1,
+      opacity: 0.25 + Math.random() * 0.1,
       rotationSpeed: (Math.random() - 0.5) * 0.0001,
       seed: Math.random() * 10,
       dustColor: palette.dust
