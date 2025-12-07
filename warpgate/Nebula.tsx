@@ -666,6 +666,7 @@ interface SpiralNebulaProps {
   opacity: number;
   rotationSpeed?: number;
   seed: number;
+  initialRotation?: [number, number, number];
 }
 
 const SpiralNebula: React.FC<SpiralNebulaProps> = ({
@@ -676,10 +677,12 @@ const SpiralNebula: React.FC<SpiralNebulaProps> = ({
   scale,
   opacity,
   rotationSpeed = 0.0025,
-  seed
+  seed,
+  initialRotation = [0, 0, 0]
 }) => {
   const meshRef = useRef<THREE.Mesh>(null);
   const materialRef = useRef<THREE.ShaderMaterial>(null);
+  const baseRotation = useRef(initialRotation);
 
   const uniforms = useMemo(() => ({
     color1: { value: new THREE.Color(color1) },
@@ -690,12 +693,22 @@ const SpiralNebula: React.FC<SpiralNebulaProps> = ({
     seed: { value: seed }
   }), [color1, color2, color3, opacity, seed]);
 
+  // Set initial rotation on mount
+  React.useEffect(() => {
+    if (meshRef.current) {
+      meshRef.current.rotation.x = initialRotation[0];
+      meshRef.current.rotation.y = initialRotation[1];
+      meshRef.current.rotation.z = initialRotation[2];
+    }
+  }, [initialRotation]);
+
   useFrame(({ clock }) => {
     if (materialRef.current) {
       materialRef.current.uniforms.time.value = clock.getElapsedTime();
     }
     if (meshRef.current) {
-      meshRef.current.rotation.z += rotationSpeed;
+      // Spin around the spiral's local Z axis while maintaining tilt
+      meshRef.current.rotation.z = baseRotation.current[2] + clock.getElapsedTime() * rotationSpeed * 10;
     }
   });
 
@@ -927,6 +940,7 @@ interface SpiralConfig {
   rotationSpeed: number;
   seed: number;
   dustColor: string;
+  rotation: [number, number, number];
 }
 
 // Color palettes for nebulae - matching planet/moon colors
@@ -940,7 +954,6 @@ const nebulaColorPalettes = [
   { dark: '#2a1a1a', bright: '#F4ACB7', dust: '#F694C1' },   // Rose Pink (Instagram)
   { dark: '#1a1a2a', bright: '#809BCE', dust: '#D9C6E8' },   // Blue/Purple (Threads)
   { dark: '#2a0a1a', bright: '#ff00ff', dust: '#FFA1CB' },   // Magenta (Exoplanet)
-  { dark: '#1a2a1a', bright: '#66ff33', dust: '#84DCC6' },   // Green (Exoplanet)
 ];
 
 // Spiral color palettes - 3 colors each (matching planets)
@@ -955,17 +968,26 @@ const spiralColorPalettes = [
 // Pillar color palettes - cosmic dust pillar colors (matching planets)
 const pillarColorPalettes = [
   { c1: '#1a0a2a', c2: '#A55BFF', c3: '#BAB9FF', dust: '#CCA2FF' },  // Purple/Lavender
-  { c1: '#0a1a2a', c2: '#4FB8FF', c3: '#2DE1FC', dust: '#A0C4E2' },  // Blue/Cyan
-  { c1: '#0a2020', c2: '#84DCC6', c3: '#2DE1FC', dust: '#00FFFF' },  // Teal/Cyan
   { c1: '#2a1a2a', c2: '#809BCE', c3: '#B8B3E9', dust: '#D9C6E8' },  // Blue-Purple
+  { c1: '#2a0a0a', c2: '#ff3366', c3: '#F87666', dust: '#FF7F11' },  // Crimson/Coral
+  { c1: '#2a0a1a', c2: '#F87666', c3: '#ff3366', dust: '#FFA1CB' },  // Coral/Red
+  { c1: '#2a1010', c2: '#ff0044', c3: '#ff3366', dust: '#F4ACB7' },  // Bright Red
+  { c1: '#1a0a2a', c2: '#A55BFF', c3: '#CCA2FF', dust: '#B8B3E9' },   // Purple
 ];
 
-// Wispy color palettes - ethereal flowing colors (matching planets)
+// Wispy color palettes - ethereal flowing colors (matching planets + extra green/blue/red)
 const wispyColorPalettes = [
-  { c1: '#2a1a2a', c2: '#FFCAE2', c3: '#F4ACB7', dust: '#FFA1CB' },  // Pink (Spotify/Instagram)
-  { c1: '#1a1a2a', c2: '#BAB9FF', c3: '#D9C6E8', dust: '#B8B3E9' },  // Lavender (Avernus)
   { c1: '#0a2020', c2: '#84DCC6', c3: '#2DE1FC', dust: '#00FFFF' },  // Mint/Cyan (Mythos)
-  { c1: '#2a0a1a', c2: '#F87666', c3: '#FF7F11', dust: '#ff3366' },  // Coral/Orange (Exoplanet)
+  { c1: '#0a1a2a', c2: '#2DE1FC', c3: '#00FFFF', dust: '#4FB8FF' },  // Bright Cyan (Eidolon)
+  { c1: '#0a2a1a', c2: '#66ff33', c3: '#84DCC6', dust: '#2DE1FC' },  // Electric Green
+  { c1: '#0a1a2a', c2: '#4FB8FF', c3: '#2DE1FC', dust: '#A0C4E2' },  // Blue/Cyan (LinkedIn)
+  { c1: '#0a2020', c2: '#00FFFF', c3: '#66ff33', dust: '#84DCC6' },  // Cyan/Green
+  { c1: '#0a1a1a', c2: '#2DE1FC', c3: '#84DCC6', dust: '#00FFFF' },  // Teal/Cyan
+  { c1: '#2a0a0a', c2: '#ff3366', c3: '#F87666', dust: '#FF7F11' },  // Crimson/Coral
+  { c1: '#2a0a1a', c2: '#F87666', c3: '#ff3366', dust: '#FFA1CB' },  // Coral/Red
+  { c1: '#2a1010', c2: '#ff0044', c3: '#ff3366', dust: '#F4ACB7' },  // Bright Red
+  { c1: '#1a1a2a', c2: '#BAB9FF', c3: '#D9C6E8', dust: '#B8B3E9' },  // Lavender (Avernus)
+  { c1: '#2a1a2a', c2: '#FFCAE2', c3: '#F4ACB7', dust: '#FFA1CB' },  // Pink (Spotify/Instagram)
 ];
 
 const Nebula: React.FC = () => {
@@ -1020,6 +1042,11 @@ const Nebula: React.FC = () => {
     const paletteIndex = Math.floor(Math.random() * spiralColorPalettes.length);
     const palette = spiralColorPalettes[paletteIndex];
     
+    // Random rotation angles for variety
+    const rotX = (Math.random() - 0.5) * Math.PI * 0.5; // -45 to 45 degrees
+    const rotY = (Math.random() - 0.5) * Math.PI * 0.5; // -45 to 45 degrees  
+    const rotZ = Math.random() * Math.PI * 2; // Full 360 degrees
+    
     return {
       position: [x, y, z] as [number, number, number],
       color1: palette.c1,
@@ -1029,7 +1056,8 @@ const Nebula: React.FC = () => {
       opacity: 0.25 + Math.random() * 0.1,
       rotationSpeed: 0.0006 + Math.random() * 0.0004,
       seed: Math.random() * 10,
-      dustColor: palette.dust
+      dustColor: palette.dust,
+      rotation: [rotX, rotY, rotZ] as [number, number, number]
     };
   }, []);
 
@@ -1055,7 +1083,7 @@ const Nebula: React.FC = () => {
       color3: palette.c3,
       scaleX: 15 + Math.random() * 30,
       scaleY: 30 + Math.random() * 50, // Taller than wide
-      opacity: 0.25 + Math.random() * 0.1,
+      opacity: 0.05 + Math.random() * 0.1,
       rotationSpeed: (Math.random() - 0.5) * 0.00004,
       seed: Math.random() * 10,
       dustColor: palette.dust
@@ -1068,7 +1096,7 @@ const Nebula: React.FC = () => {
     const x = swapPositions 
       ? -60 + Math.random() * 40 - 100  // Left side (swapped)
       : 80 + Math.random() * 60; // Right side (default)
-    const y = -10 + Math.random() * 140; // Middle area
+    const y = -10 + Math.random() * 40; // Middle area
     const z = 90 + Math.random() * 70; // POSITIVE Z - behind camera
     
     const paletteIndex = Math.floor(Math.random() * wispyColorPalettes.length);
@@ -1081,7 +1109,7 @@ const Nebula: React.FC = () => {
       color3: palette.c3,
       scaleX: 80 + Math.random() * 40, // Wider than tall
       scaleY: 40 + Math.random() * 30,
-      opacity: 0.32 + Math.random() * 0.1,
+      opacity: 0.275 + Math.random() * 0.1,
       rotationSpeed: (Math.random() - 0.5) * 0.0006,
       seed: Math.random() * 10,
       dustColor: palette.dust
@@ -1110,7 +1138,7 @@ const Nebula: React.FC = () => {
         </group>
       ))}
 
-      {/* Special spiral nebula */}
+      {/* Special spiral nebula with random viewing angle */}
       <SpiralNebula
         position={spiralNebula.position}
         color1={spiralNebula.color1}
@@ -1120,6 +1148,7 @@ const Nebula: React.FC = () => {
         opacity={spiralNebula.opacity}
         rotationSpeed={spiralNebula.rotationSpeed}
         seed={spiralNebula.seed}
+        initialRotation={spiralNebula.rotation}
       />
       <NebulaDust
         position={spiralNebula.position}
