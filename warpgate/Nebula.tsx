@@ -1053,8 +1053,8 @@ const Nebula: React.FC = () => {
       color2: palette.c2,
       color3: palette.c3,
       scale: 10 + Math.random() * 40,
-      opacity: 0.25 + Math.random() * 0.1,
-      rotationSpeed: 0.0006 + Math.random() * 0.0004,
+      opacity: 0.225 + Math.random() * 0.1,
+      rotationSpeed: 0.0006 + Math.random() * 0.01,
       seed: Math.random() * 10,
       dustColor: palette.dust,
       rotation: [rotX, rotY, rotZ] as [number, number, number]
