@@ -309,7 +309,7 @@ const spiralFragmentShader = `
   }
 `;
 
-// Pillar nebula shader - Pillars of Creation style
+// Vivid emission nebula shader - bright glowing gas clouds
 const pillarFragmentShader = `
   uniform vec3 color1;
   uniform vec3 color2;
@@ -381,33 +381,11 @@ const pillarFragmentShader = `
     return value;
   }
   
-  float ridgedNoise(vec3 p) {
-    float n = snoise(p);
-    n = 1.0 - abs(n);
-    return n * n;
-  }
-  
-  float ridgedFbm(vec3 p) {
-    float value = 0.0;
-    float amplitude = 0.5;
-    float frequency = 1.0;
-    float prev = 1.0;
-    for (int i = 0; i < 5; i++) {
-      float n = ridgedNoise(p * frequency);
-      n *= prev;
-      value += n * amplitude;
-      prev = n;
-      amplitude *= 0.5;
-      frequency *= 2.2;
-    }
-    return value;
-  }
-  
   float turbulence(vec3 p) {
     float value = 0.0;
     float amplitude = 1.0;
     float frequency = 1.0;
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 5; i++) {
       value += amplitude * abs(snoise(p * frequency));
       amplitude *= 0.5;
       frequency *= 2.0;
@@ -417,48 +395,59 @@ const pillarFragmentShader = `
   
   void main() {
     vec2 uv = vUv;
+    vec2 center = uv - 0.5;
+    float dist = length(center);
     
-    // Vertical elongation
-    vec2 pillarUv = vec2(uv.x, uv.y * 0.4);
-    vec3 pillarCoord = vec3(pillarUv * 3.0 + seed, time * 0.01);
+    // Create billowing cloud structure
+    vec3 cloudCoord = vec3(uv * 2.5 + seed, time * 0.015);
     
-    // Multiple pillar-like structures
-    float pillar1 = ridgedFbm(pillarCoord + vec3(0.0, 0.0, seed));
-    float pillar2 = ridgedFbm(pillarCoord * 1.5 + vec3(seed * 2.0, 0.0, 0.0));
+    // Multiple layers of noise for rich detail
+    float cloud1 = fbm(cloudCoord, 5);
+    float cloud2 = fbm(cloudCoord * 1.8 + vec3(seed * 3.0), 4);
+    float cloud3 = turbulence(cloudCoord * 0.8);
     
-    // Create vertical streaks
-    float verticalStreak = sin(uv.x * 8.0 + seed * 10.0) * 0.5 + 0.5;
-    verticalStreak *= sin(uv.x * 3.0 + seed * 5.0) * 0.5 + 0.5;
+    // Create bright glowing cores
+    float coreNoise = fbm(vec3(uv * 3.0, seed * 2.0), 4);
+    float core1 = 1.0 - smoothstep(0.0, 0.3, length(center - vec2(0.1 + coreNoise * 0.1, 0.0)));
+    float core2 = 1.0 - smoothstep(0.0, 0.25, length(center - vec2(-0.15, 0.1 + coreNoise * 0.05)));
+    float cores = max(core1, core2) * 0.6;
     
-    float noise = pillar1 * 0.6 + pillar2 * 0.4;
-    noise *= verticalStreak;
+    // Combine clouds
+    float cloudMix = (cloud1 + 1.0) * 0.5;
+    float detailMix = (cloud2 + 1.0) * 0.5;
+    float turbMix = cloud3 * 0.5;
     
-    // Jagged top edge, solid bottom
-    float topEdge = smoothstep(0.7, 0.9, uv.y + fbm(vec3(uv.x * 5.0, 0.0, seed), 4) * 0.3);
-    float bottomEdge = smoothstep(0.0, 0.15, uv.y);
-    float sideEdge = smoothstep(0.0, 0.2, uv.x) * smoothstep(1.0, 0.8, uv.x);
+    float combinedCloud = cloudMix * 0.5 + detailMix * 0.3 + turbMix * 0.2;
+    combinedCloud = pow(combinedCloud, 0.8); // Boost brightness
     
-    // Add irregular edges using noise
-    sideEdge *= 1.0 - turbulence(vec3(uv * 4.0, seed)) * 0.3;
+    // Soft organic falloff
+    float edgeNoise = fbm(vec3(center * 5.0, seed), 3) * 0.2;
+    float falloff = 1.0 - smoothstep(0.2, 0.5 + edgeNoise, dist);
+    falloff = pow(falloff, 0.7);
     
-    float falloff = (1.0 - topEdge) * bottomEdge * sideEdge;
-    float colorMix = pillar1;
+    // Color regions based on different noise layers
+    float colorRegion1 = smoothstep(0.3, 0.7, cloudMix + coreNoise * 0.3);
+    float colorRegion2 = smoothstep(0.4, 0.8, detailMix);
     
-    // Mix three colors
-    vec3 finalColor;
-    if (colorMix < 0.5) {
-      finalColor = mix(color1, color2, colorMix * 2.0);
-    } else {
-      finalColor = mix(color2, color3, (colorMix - 0.5) * 2.0);
-    }
+    // Mix colors - create vivid transitions
+    vec3 finalColor = color1;
+    finalColor = mix(finalColor, color2, colorRegion1);
+    finalColor = mix(finalColor, color3, colorRegion2 * 0.7);
     
-    finalColor *= 0.7 + noise * 0.5;
+    // Add bright core glow
+    finalColor += color3 * cores * 1.5;
+    finalColor += color2 * cores * 0.8;
     
-    float edgeGlow = falloff * (1.0 - falloff) * 4.0;
-    finalColor += color2 * edgeGlow * 0.3;
+    // Enhance saturation and brightness
+    finalColor *= 1.2 + combinedCloud * 0.6;
     
-    float alpha = falloff * opacity;
-    alpha *= 0.8 + noise * 0.4;
+    // Add rim lighting effect
+    float rim = smoothstep(0.3, 0.5, dist) * (1.0 - smoothstep(0.5, 0.55, dist));
+    finalColor += color2 * rim * 0.4;
+    
+    // Apply falloff
+    float alpha = falloff * combinedCloud * opacity;
+    alpha += cores * opacity * 0.5; // Cores stay bright
     alpha = clamp(alpha, 0.0, 1.0);
     
     gl_FragColor = vec4(finalColor, alpha);
@@ -965,14 +954,16 @@ const spiralColorPalettes = [
   { c1: '#1a1a2a', c2: '#BAB9FF', c3: '#D9C6E8', dust: '#809BCE' },  // Lavender (Avernus)
 ];
 
-// Pillar color palettes - cosmic dust pillar colors (matching planets)
+// Vivid emission nebula color palettes - dramatic contrasting colors
 const pillarColorPalettes = [
-  { c1: '#1a0a2a', c2: '#A55BFF', c3: '#BAB9FF', dust: '#CCA2FF' },  // Purple/Lavender
-  { c1: '#2a1a2a', c2: '#809BCE', c3: '#B8B3E9', dust: '#D9C6E8' },  // Blue-Purple
-  { c1: '#2a0a0a', c2: '#ff3366', c3: '#F87666', dust: '#FF7F11' },  // Crimson/Coral
-  { c1: '#2a0a1a', c2: '#F87666', c3: '#ff3366', dust: '#FFA1CB' },  // Coral/Red
-  { c1: '#2a1010', c2: '#ff0044', c3: '#ff3366', dust: '#F4ACB7' },  // Bright Red
-  { c1: '#1a0a2a', c2: '#A55BFF', c3: '#CCA2FF', dust: '#B8B3E9' },   // Purple
+  { c1: '#1a0a1a', c2: '#ff3366', c3: '#00ffff', dust: '#ff6699' },  // Magenta/Cyan (dramatic contrast)
+  { c1: '#0a1a2a', c2: '#ff6633', c3: '#2DE1FC', dust: '#ffaa00' },  // Orange/Teal (fire & ice)
+  { c1: '#1a0a0a', c2: '#ff0044', c3: '#ff9900', dust: '#ff6666' },  // Red/Orange (hot emission)
+  { c1: '#0a0a2a', c2: '#ff00ff', c3: '#00ffff', dust: '#ff66ff' },  // Magenta/Cyan (neon)
+  { c1: '#1a1a0a', c2: '#ffcc00', c3: '#ff3366', dust: '#ffaa33' },  // Gold/Pink (warm glow)
+  { c1: '#0a1a1a', c2: '#2DE1FC', c3: '#ff6699', dust: '#66ffff' },  // Cyan/Pink (pastel vivid)
+  { c1: '#1a0a2a', c2: '#A55BFF', c3: '#ff6633', dust: '#cc66ff' },  // Purple/Orange
+  { c1: '#0a2a1a', c2: '#66ff66', c3: '#ff3366', dust: '#99ff99' },  // Green/Magenta
 ];
 
 // Wispy color palettes - ethereal flowing colors (matching planets + extra green/blue/red)
@@ -1081,10 +1072,10 @@ const Nebula: React.FC = () => {
       color1: palette.c1,
       color2: palette.c2,
       color3: palette.c3,
-      scaleX: 15 + Math.random() * 30,
-      scaleY: 30 + Math.random() * 50, // Taller than wide
-      opacity: 0.05 + Math.random() * 0.1,
-      rotationSpeed: (Math.random() - 0.5) * 0.00004,
+      scaleX: 50 + Math.random() * 40, // More balanced size
+      scaleY: 50 + Math.random() * 40, // Similar to width for cloud shape
+      opacity: 0.3 + Math.random() * 0.15,
+      rotationSpeed: (Math.random() - 0.5) * 0.0003,
       seed: Math.random() * 10,
       dustColor: palette.dust
     };
@@ -1110,7 +1101,7 @@ const Nebula: React.FC = () => {
       scaleX: 80 + Math.random() * 40, // Wider than tall
       scaleY: 40 + Math.random() * 30,
       opacity: 0.275 + Math.random() * 0.1,
-      rotationSpeed: (Math.random() - 0.5) * 0.0006,
+      rotationSpeed: (Math.random() - 0.5) * 0.0001,
       seed: Math.random() * 10,
       dustColor: palette.dust
     };

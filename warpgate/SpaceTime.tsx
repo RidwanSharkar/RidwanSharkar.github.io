@@ -44,7 +44,7 @@ const PlanetCanvas: React.FC<PlanetCanvasProps> = ({ onSelectPlanet, selectedPla
         saturation={0}
         fade
       />
-
+      
       {/* Distant nebula clouds */}
       <Nebula />
 
