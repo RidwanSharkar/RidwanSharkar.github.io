@@ -753,7 +753,7 @@ const Sun = forwardRef<Mesh, SunProps>(({
 
       {/* Atmosphere layer */}
       <mesh
-        scale={[0.75, 0.75, 0.75]}
+        scale={[0.725, 0.725, 0.725]}
       >
         <sphereGeometry args={[size, 64, 64]} />
         <meshStandardMaterial

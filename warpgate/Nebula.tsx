@@ -2,7 +2,7 @@
 
 import React, { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
-import * as THREE from 'three';
+import { Mesh, ShaderMaterial, Color, DoubleSide, AdditiveBlending, Points } from 'three';
 
 interface NebulaCloudProps {
   position: [number, number, number];
@@ -609,12 +609,12 @@ const NebulaCloud: React.FC<NebulaCloudProps> = ({
   opacity,
   rotationSpeed = 0.001
 }) => {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const materialRef = useRef<THREE.ShaderMaterial>(null);
+  const meshRef = useRef<Mesh>(null);
+  const materialRef = useRef<ShaderMaterial>(null);
 
   const uniforms = useMemo(() => ({
-    color1: { value: new THREE.Color(color1) },
-    color2: { value: new THREE.Color(color2) },
+    color1: { value: new Color(color1) },
+    color2: { value: new Color(color2) },
     opacity: { value: opacity },
     time: { value: 0 }
   }), [color1, color2, opacity]);
@@ -638,8 +638,8 @@ const NebulaCloud: React.FC<NebulaCloudProps> = ({
         uniforms={uniforms}
         transparent
         depthWrite={false}
-        side={THREE.DoubleSide}
-        blending={THREE.AdditiveBlending}
+        side={DoubleSide}
+        blending={AdditiveBlending}
       />
     </mesh>
   );
@@ -669,14 +669,14 @@ const SpiralNebula: React.FC<SpiralNebulaProps> = ({
   seed,
   initialRotation = [0, 0, 0]
 }) => {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const materialRef = useRef<THREE.ShaderMaterial>(null);
+  const meshRef = useRef<Mesh>(null);
+  const materialRef = useRef<ShaderMaterial>(null);
   const baseRotation = useRef(initialRotation);
 
   const uniforms = useMemo(() => ({
-    color1: { value: new THREE.Color(color1) },
-    color2: { value: new THREE.Color(color2) },
-    color3: { value: new THREE.Color(color3) },
+    color1: { value: new Color(color1) },
+    color2: { value: new Color(color2) },
+    color3: { value: new Color(color3) },
     opacity: { value: opacity },
     time: { value: 0 },
     seed: { value: seed }
@@ -711,8 +711,8 @@ const SpiralNebula: React.FC<SpiralNebulaProps> = ({
         uniforms={uniforms}
         transparent
         depthWrite={false}
-        side={THREE.DoubleSide}
-        blending={THREE.AdditiveBlending}
+        side={DoubleSide}
+        blending={AdditiveBlending}
       />
     </mesh>
   );
@@ -742,13 +742,13 @@ const PillarNebula: React.FC<PillarNebulaProps> = ({
   rotationSpeed = 0.0000375,
   seed
 }) => {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const materialRef = useRef<THREE.ShaderMaterial>(null);
+  const meshRef = useRef<Mesh>(null);
+  const materialRef = useRef<ShaderMaterial>(null);
 
   const uniforms = useMemo(() => ({
-    color1: { value: new THREE.Color(color1) },
-    color2: { value: new THREE.Color(color2) },
-    color3: { value: new THREE.Color(color3) },
+    color1: { value: new Color(color1) },
+    color2: { value: new Color(color2) },
+    color3: { value: new Color(color3) },
     opacity: { value: opacity },
     time: { value: 0 },
     seed: { value: seed }
@@ -773,8 +773,8 @@ const PillarNebula: React.FC<PillarNebulaProps> = ({
         uniforms={uniforms}
         transparent
         depthWrite={false}
-        side={THREE.DoubleSide}
-        blending={THREE.AdditiveBlending}
+        side={DoubleSide}
+        blending={AdditiveBlending}
       />
     </mesh>
   );
@@ -804,13 +804,13 @@ const WispyNebula: React.FC<WispyNebulaProps> = ({
   rotationSpeed = 0.0001,
   seed
 }) => {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const materialRef = useRef<THREE.ShaderMaterial>(null);
+  const meshRef = useRef<Mesh>(null);
+  const materialRef = useRef<ShaderMaterial>(null);
 
   const uniforms = useMemo(() => ({
-    color1: { value: new THREE.Color(color1) },
-    color2: { value: new THREE.Color(color2) },
-    color3: { value: new THREE.Color(color3) },
+    color1: { value: new Color(color1) },
+    color2: { value: new Color(color2) },
+    color3: { value: new Color(color3) },
     opacity: { value: opacity },
     time: { value: 0 },
     seed: { value: seed }
@@ -835,8 +835,8 @@ const WispyNebula: React.FC<WispyNebulaProps> = ({
         uniforms={uniforms}
         transparent
         depthWrite={false}
-        side={THREE.DoubleSide}
-        blending={THREE.AdditiveBlending}
+        side={DoubleSide}
+        blending={AdditiveBlending}
       />
     </mesh>
   );
@@ -849,7 +849,7 @@ const NebulaDust: React.FC<{
   count: number;
   spread: number;
 }> = ({ position, color, count, spread }) => {
-  const pointsRef = useRef<THREE.Points>(null);
+  const pointsRef = useRef<Points>(null);
 
   const [positions, sizes] = useMemo(() => {
     const pos = new Float32Array(count * 3);
@@ -902,7 +902,7 @@ const NebulaDust: React.FC<{
         opacity={0.4}
         sizeAttenuation
         depthWrite={false}
-        blending={THREE.AdditiveBlending}
+        blending={AdditiveBlending}
       />
     </points>
   );
@@ -917,6 +917,7 @@ interface NebulaConfig {
   rotationSpeed: number;
   dustColor: string;
   dustCount: number;
+  rotation: [number, number, number];
 }
 
 interface SpiralConfig {
@@ -982,28 +983,64 @@ const wispyColorPalettes = [
 ];
 
 const Nebula: React.FC = () => {
-  // Generate truly random nebulae - different each page load
+  // Generate truly random nebulae - SPHERICALLY distributed with CLUSTERING
   const nebulae: NebulaConfig[] = useMemo(() => {
-    const count = 5 + Math.floor(Math.random() * 3); // 5-7 nebulae
+    const count = 6 + Math.floor(Math.random() * 12); // 10-17 nebulae
     const generated: NebulaConfig[] = [];
     
+    // Generate 2-4 cluster centers for nebulae to group around
+    const numClusters = 2 + Math.floor(Math.random() * 3);
+    const clusterCenters: [number, number, number][] = [];
+    
+    for (let c = 0; c < numClusters; c++) {
+      const cTheta = Math.random() * Math.PI * 2;
+      const cPhi = Math.acos(2 * Math.random() - 1);
+      const cRadius = 100 + Math.random() * 80;
+      clusterCenters.push([
+        cRadius * Math.sin(cPhi) * Math.cos(cTheta),
+        cRadius * Math.sin(cPhi) * Math.sin(cTheta),
+        cRadius * Math.cos(cPhi)
+      ]);
+    }
+    
     for (let i = 0; i < count; i++) {
-      // Random position distributed around the scene
-      const angle = Math.random() * Math.PI * 2;
-      const distance = 80 + Math.random() * 80; // 80-160 units from center
-      const x = Math.cos(angle) * distance;
-      const y = (Math.random() - 0.5) * 80; // -40 to 40 vertical
-      const z = -90 - Math.random() * 70; // -90 to -160 depth
+      let x: number, y: number, z: number;
       
-      // Random color palette
+      // 60% chance to spawn near a cluster center, 40% random
+      if (Math.random() < 0.6 && clusterCenters.length > 0) {
+        // Pick a random cluster center
+        const cluster = clusterCenters[Math.floor(Math.random() * clusterCenters.length)];
+        
+        // Offset from cluster center (spread of 30-60 units)
+        const spread = 30 + Math.random() * 30;
+        x = cluster[0] + (Math.random() - 0.5) * spread * 2;
+        y = cluster[1] + (Math.random() - 0.5) * spread * 2;
+        z = cluster[2] + (Math.random() - 0.5) * spread * 2;
+      } else {
+        // Completely random spherical distribution
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.acos(2 * Math.random() - 1);
+        const radius = 90 + Math.random() * 110;
+        
+        x = radius * Math.sin(phi) * Math.cos(theta);
+        y = radius * Math.sin(phi) * Math.sin(theta);
+        z = radius * Math.cos(phi);
+      }
+      
+      // Random color palette - nebulae in same cluster often share similar colors
       const paletteIndex = Math.floor(Math.random() * nebulaColorPalettes.length);
       const palette = nebulaColorPalettes[paletteIndex];
       
       // Random scale and properties
-      const scale = 60 + Math.random() * 50; // 60-110
-      const opacity = 0.2 + Math.random() * 0.2; // 0.2-0.4
-      const rotationSpeed = (Math.random() - 0.5) * 0.001; // -0.0005 to 0.0005
-      const dustCount = 100 + Math.floor(Math.random() * 150); // 100-250
+      const scale = 10 + Math.random() * 50; // 10-60
+      const opacity = 0.175 + Math.random() * 0.2; // 0.175-0.375
+      const rotationSpeed = (Math.random() - 0.5) * 0.001;
+      const dustCount = 100 + Math.floor(Math.random() * 150);
+      
+      // Random rotation so nebulae face different directions
+      const rotX = Math.random() * Math.PI * 2;
+      const rotY = Math.random() * Math.PI * 2;
+      const rotZ = Math.random() * Math.PI * 2;
       
       generated.push({
         position: [x, y, z] as [number, number, number],
@@ -1013,7 +1050,8 @@ const Nebula: React.FC = () => {
         opacity,
         rotationSpeed,
         dustColor: palette.dust,
-        dustCount
+        dustCount,
+        rotation: [rotX, rotY, rotZ] as [number, number, number]
       });
     }
     
@@ -1043,7 +1081,7 @@ const Nebula: React.FC = () => {
       color1: palette.c1,
       color2: palette.c2,
       color3: palette.c3,
-      scale: 10 + Math.random() * 40,
+      scale: 10 + Math.random() * 30,
       opacity: 0.225 + Math.random() * 0.1,
       rotationSpeed: 0.0006 + Math.random() * 0.01,
       seed: Math.random() * 10,
@@ -1072,8 +1110,8 @@ const Nebula: React.FC = () => {
       color1: palette.c1,
       color2: palette.c2,
       color3: palette.c3,
-      scaleX: 50 + Math.random() * 40, // More balanced size
-      scaleY: 50 + Math.random() * 40, // Similar to width for cloud shape
+      scaleX: 30 + Math.random() * 40, // More balanced size
+      scaleY: 30 + Math.random() * 40, // Similar to width for cloud shape
       opacity: 0.3 + Math.random() * 0.15,
       rotationSpeed: (Math.random() - 0.5) * 0.0003,
       seed: Math.random() * 10,
@@ -1098,8 +1136,8 @@ const Nebula: React.FC = () => {
       color1: palette.c1,
       color2: palette.c2,
       color3: palette.c3,
-      scaleX: 80 + Math.random() * 40, // Wider than tall
-      scaleY: 40 + Math.random() * 30,
+      scaleX: 60 + Math.random() * 40, // Wider than tall
+      scaleY: 30 + Math.random() * 30,
       opacity: 0.275 + Math.random() * 0.1,
       rotationSpeed: (Math.random() - 0.5) * 0.0001,
       seed: Math.random() * 10,
@@ -1111,9 +1149,9 @@ const Nebula: React.FC = () => {
     <group>
       {/* Random cloud nebulae */}
       {nebulae.map((nebula, index) => (
-        <group key={index}>
+        <group key={index} position={nebula.position} rotation={nebula.rotation}>
           <NebulaCloud
-            position={nebula.position}
+            position={[0, 0, 0]}
             color1={nebula.color1}
             color2={nebula.color2}
             scale={nebula.scale}
@@ -1121,7 +1159,7 @@ const Nebula: React.FC = () => {
             rotationSpeed={nebula.rotationSpeed}
           />
           <NebulaDust
-            position={nebula.position}
+            position={[0, 0, 0]}
             color={nebula.dustColor}
             count={nebula.dustCount}
             spread={nebula.scale * 0.4}

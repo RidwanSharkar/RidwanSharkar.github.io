@@ -283,7 +283,7 @@ const EnhancedPlanet = forwardRef<Mesh, EnhancedPlanetProps>(({
       {/* Orbital Trail - comet-like effect following planet */}
       <PlanetTrail
         color={new Color(planetColor)}
-        size={size}
+        size={size*0.725}
         meshRef={meshRef}
         orbitRadius={orbitRadius}
         orbitSpeed={orbitSpeed}
