@@ -309,6 +309,309 @@ const spiralFragmentShader = `
   }
 `;
 
+// Pillar nebula shader - Pillars of Creation style
+const pillarFragmentShader = `
+  uniform vec3 color1;
+  uniform vec3 color2;
+  uniform vec3 color3;
+  uniform float opacity;
+  uniform float time;
+  uniform float seed;
+  
+  varying vec2 vUv;
+  
+  vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+  vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+  vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
+  vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
+  
+  float snoise(vec3 v) {
+    const vec2 C = vec2(1.0/6.0, 1.0/3.0);
+    const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
+    vec3 i  = floor(v + dot(v, C.yyy));
+    vec3 x0 = v - i + dot(i, C.xxx);
+    vec3 g = step(x0.yzx, x0.xyz);
+    vec3 l = 1.0 - g;
+    vec3 i1 = min(g.xyz, l.zxy);
+    vec3 i2 = max(g.xyz, l.zxy);
+    vec3 x1 = x0 - i1 + C.xxx;
+    vec3 x2 = x0 - i2 + C.yyy;
+    vec3 x3 = x0 - D.yyy;
+    i = mod289(i);
+    vec4 p = permute(permute(permute(
+      i.z + vec4(0.0, i1.z, i2.z, 1.0))
+      + i.y + vec4(0.0, i1.y, i2.y, 1.0))
+      + i.x + vec4(0.0, i1.x, i2.x, 1.0));
+    float n_ = 0.142857142857;
+    vec3 ns = n_ * D.wyz - D.xzx;
+    vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
+    vec4 x_ = floor(j * ns.z);
+    vec4 y_ = floor(j - 7.0 * x_);
+    vec4 x = x_ *ns.x + ns.yyyy;
+    vec4 y = y_ *ns.x + ns.yyyy;
+    vec4 h = 1.0 - abs(x) - abs(y);
+    vec4 b0 = vec4(x.xy, y.xy);
+    vec4 b1 = vec4(x.zw, y.zw);
+    vec4 s0 = floor(b0)*2.0 + 1.0;
+    vec4 s1 = floor(b1)*2.0 + 1.0;
+    vec4 sh = -step(h, vec4(0.0));
+    vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy;
+    vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww;
+    vec3 p0 = vec3(a0.xy, h.x);
+    vec3 p1 = vec3(a0.zw, h.y);
+    vec3 p2 = vec3(a1.xy, h.z);
+    vec3 p3 = vec3(a1.zw, h.w);
+    vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2,p2), dot(p3,p3)));
+    p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
+    vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+    m = m * m;
+    return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
+  }
+  
+  float fbm(vec3 p, int octaves) {
+    float value = 0.0;
+    float amplitude = 0.5;
+    float frequency = 1.0;
+    for (int i = 0; i < 6; i++) {
+      if (i >= octaves) break;
+      value += amplitude * snoise(p * frequency);
+      amplitude *= 0.5;
+      frequency *= 2.0;
+    }
+    return value;
+  }
+  
+  float ridgedNoise(vec3 p) {
+    float n = snoise(p);
+    n = 1.0 - abs(n);
+    return n * n;
+  }
+  
+  float ridgedFbm(vec3 p) {
+    float value = 0.0;
+    float amplitude = 0.5;
+    float frequency = 1.0;
+    float prev = 1.0;
+    for (int i = 0; i < 5; i++) {
+      float n = ridgedNoise(p * frequency);
+      n *= prev;
+      value += n * amplitude;
+      prev = n;
+      amplitude *= 0.5;
+      frequency *= 2.2;
+    }
+    return value;
+  }
+  
+  float turbulence(vec3 p) {
+    float value = 0.0;
+    float amplitude = 1.0;
+    float frequency = 1.0;
+    for (int i = 0; i < 4; i++) {
+      value += amplitude * abs(snoise(p * frequency));
+      amplitude *= 0.5;
+      frequency *= 2.0;
+    }
+    return value;
+  }
+  
+  void main() {
+    vec2 uv = vUv;
+    
+    // Vertical elongation
+    vec2 pillarUv = vec2(uv.x, uv.y * 0.4);
+    vec3 pillarCoord = vec3(pillarUv * 3.0 + seed, time * 0.01);
+    
+    // Multiple pillar-like structures
+    float pillar1 = ridgedFbm(pillarCoord + vec3(0.0, 0.0, seed));
+    float pillar2 = ridgedFbm(pillarCoord * 1.5 + vec3(seed * 2.0, 0.0, 0.0));
+    
+    // Create vertical streaks
+    float verticalStreak = sin(uv.x * 8.0 + seed * 10.0) * 0.5 + 0.5;
+    verticalStreak *= sin(uv.x * 3.0 + seed * 5.0) * 0.5 + 0.5;
+    
+    float noise = pillar1 * 0.6 + pillar2 * 0.4;
+    noise *= verticalStreak;
+    
+    // Jagged top edge, solid bottom
+    float topEdge = smoothstep(0.7, 0.9, uv.y + fbm(vec3(uv.x * 5.0, 0.0, seed), 4) * 0.3);
+    float bottomEdge = smoothstep(0.0, 0.15, uv.y);
+    float sideEdge = smoothstep(0.0, 0.2, uv.x) * smoothstep(1.0, 0.8, uv.x);
+    
+    // Add irregular edges using noise
+    sideEdge *= 1.0 - turbulence(vec3(uv * 4.0, seed)) * 0.3;
+    
+    float falloff = (1.0 - topEdge) * bottomEdge * sideEdge;
+    float colorMix = pillar1;
+    
+    // Mix three colors
+    vec3 finalColor;
+    if (colorMix < 0.5) {
+      finalColor = mix(color1, color2, colorMix * 2.0);
+    } else {
+      finalColor = mix(color2, color3, (colorMix - 0.5) * 2.0);
+    }
+    
+    finalColor *= 0.7 + noise * 0.5;
+    
+    float edgeGlow = falloff * (1.0 - falloff) * 4.0;
+    finalColor += color2 * edgeGlow * 0.3;
+    
+    float alpha = falloff * opacity;
+    alpha *= 0.8 + noise * 0.4;
+    alpha = clamp(alpha, 0.0, 1.0);
+    
+    gl_FragColor = vec4(finalColor, alpha);
+  }
+`;
+
+// Wispy nebula shader - flowing ethereal tendrils
+const wispyFragmentShader = `
+  uniform vec3 color1;
+  uniform vec3 color2;
+  uniform vec3 color3;
+  uniform float opacity;
+  uniform float time;
+  uniform float seed;
+  
+  varying vec2 vUv;
+  
+  vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+  vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+  vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
+  vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
+  
+  float snoise(vec3 v) {
+    const vec2 C = vec2(1.0/6.0, 1.0/3.0);
+    const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
+    vec3 i  = floor(v + dot(v, C.yyy));
+    vec3 x0 = v - i + dot(i, C.xxx);
+    vec3 g = step(x0.yzx, x0.xyz);
+    vec3 l = 1.0 - g;
+    vec3 i1 = min(g.xyz, l.zxy);
+    vec3 i2 = max(g.xyz, l.zxy);
+    vec3 x1 = x0 - i1 + C.xxx;
+    vec3 x2 = x0 - i2 + C.yyy;
+    vec3 x3 = x0 - D.yyy;
+    i = mod289(i);
+    vec4 p = permute(permute(permute(
+      i.z + vec4(0.0, i1.z, i2.z, 1.0))
+      + i.y + vec4(0.0, i1.y, i2.y, 1.0))
+      + i.x + vec4(0.0, i1.x, i2.x, 1.0));
+    float n_ = 0.142857142857;
+    vec3 ns = n_ * D.wyz - D.xzx;
+    vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
+    vec4 x_ = floor(j * ns.z);
+    vec4 y_ = floor(j - 7.0 * x_);
+    vec4 x = x_ *ns.x + ns.yyyy;
+    vec4 y = y_ *ns.x + ns.yyyy;
+    vec4 h = 1.0 - abs(x) - abs(y);
+    vec4 b0 = vec4(x.xy, y.xy);
+    vec4 b1 = vec4(x.zw, y.zw);
+    vec4 s0 = floor(b0)*2.0 + 1.0;
+    vec4 s1 = floor(b1)*2.0 + 1.0;
+    vec4 sh = -step(h, vec4(0.0));
+    vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy;
+    vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww;
+    vec3 p0 = vec3(a0.xy, h.x);
+    vec3 p1 = vec3(a0.zw, h.y);
+    vec3 p2 = vec3(a1.xy, h.z);
+    vec3 p3 = vec3(a1.zw, h.w);
+    vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2,p2), dot(p3,p3)));
+    p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
+    vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+    m = m * m;
+    return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
+  }
+  
+  float fbm(vec3 p, int octaves) {
+    float value = 0.0;
+    float amplitude = 0.5;
+    float frequency = 1.0;
+    for (int i = 0; i < 6; i++) {
+      if (i >= octaves) break;
+      value += amplitude * snoise(p * frequency);
+      amplitude *= 0.5;
+      frequency *= 2.0;
+    }
+    return value;
+  }
+  
+  float turbulence(vec3 p) {
+    float value = 0.0;
+    float amplitude = 1.0;
+    float frequency = 1.0;
+    for (int i = 0; i < 4; i++) {
+      value += amplitude * abs(snoise(p * frequency));
+      amplitude *= 0.5;
+      frequency *= 2.0;
+    }
+    return value;
+  }
+  
+  void main() {
+    vec2 uv = vUv;
+    vec2 center = uv - 0.5;
+    float dist = length(center);
+    
+    vec3 wispCoord = vec3(uv * 2.5, time * 0.02 + seed);
+    
+    // Flowing curves - gentler
+    float flow = sin(uv.y * 4.0 + uv.x * 1.5 + time * 0.08 + seed * 3.0) * 0.4;
+    flow += sin(uv.y * 2.5 - uv.x * 3.0 + seed * 7.0) * 0.25;
+    
+    // Turbulent wisps
+    float wisp = turbulence(wispCoord + vec3(flow, 0.0, 0.0));
+    float detail = fbm(wispCoord * 1.5, 5);
+    
+    float noise = wisp * 0.6 + (detail + 1.0) * 0.4;
+    
+    // Soft radial falloff - very gradual fade at edges
+    float radialFade = 1.0 - smoothstep(0.2, 0.5, dist);
+    radialFade = pow(radialFade, 0.6); // Softer falloff curve
+    
+    // Add noise-based edge variation for organic feel
+    float edgeNoise = fbm(vec3(center * 4.0, seed), 4);
+    float noisyRadius = dist - edgeNoise * 0.15;
+    float softEdge = 1.0 - smoothstep(0.25, 0.55, noisyRadius);
+    
+    // Organic, flowing shape - softer mask
+    float flowMask = sin(uv.x * 3.14159 * 0.8 + 0.3 + flow * 1.5) * sin(uv.y * 3.14159 * 0.8 + 0.3);
+    flowMask = pow(max(flowMask, 0.0), 0.5); // Softer power for gradual transition
+    
+    // Gentle streaky variation (not hard edges)
+    float streaks = fbm(vec3(uv.x * 5.0, uv.y * 1.5, seed), 3);
+    streaks = (streaks + 1.0) * 0.5; // Normalize to 0-1
+    
+    // Combine all falloffs for very soft edges
+    float falloff = flowMask * softEdge * radialFade;
+    falloff *= 0.7 + streaks * 0.3; // Subtle variation, not harsh cutoff
+    falloff = smoothstep(0.0, 0.4, falloff); // Extra smoothing
+    
+    float colorMix = wisp * 0.5 + 0.25;
+    
+    // Mix three colors
+    vec3 finalColor;
+    if (colorMix < 0.5) {
+      finalColor = mix(color1, color2, colorMix * 2.0);
+    } else {
+      finalColor = mix(color2, color3, (colorMix - 0.5) * 2.0);
+    }
+    
+    finalColor *= 0.7 + noise * 0.4;
+    
+    // Soft edge glow
+    float edgeGlow = falloff * (1.0 - falloff) * 3.0;
+    finalColor += color2 * edgeGlow * 0.2;
+    
+    float alpha = falloff * opacity;
+    alpha *= 0.7 + noise * 0.3;
+    alpha = clamp(alpha, 0.0, 1.0);
+    
+    gl_FragColor = vec4(finalColor, alpha);
+  }
+`;
+
 const NebulaCloud: React.FC<NebulaCloudProps> = ({
   position,
   color1,
@@ -372,7 +675,7 @@ const SpiralNebula: React.FC<SpiralNebulaProps> = ({
   color3,
   scale,
   opacity,
-  rotationSpeed = 0.0008,
+  rotationSpeed = 0.0025,
   seed
 }) => {
   const meshRef = useRef<THREE.Mesh>(null);
@@ -403,6 +706,130 @@ const SpiralNebula: React.FC<SpiralNebulaProps> = ({
         ref={materialRef}
         vertexShader={nebulaVertexShader}
         fragmentShader={spiralFragmentShader}
+        uniforms={uniforms}
+        transparent
+        depthWrite={false}
+        side={THREE.DoubleSide}
+        blending={THREE.AdditiveBlending}
+      />
+    </mesh>
+  );
+};
+
+// Pillar nebula component - Pillars of Creation style
+interface PillarNebulaProps {
+  position: [number, number, number];
+  color1: string;
+  color2: string;
+  color3: string;
+  scaleX: number;
+  scaleY: number;
+  opacity: number;
+  rotationSpeed?: number;
+  seed: number;
+}
+
+const PillarNebula: React.FC<PillarNebulaProps> = ({
+  position,
+  color1,
+  color2,
+  color3,
+  scaleX,
+  scaleY,
+  opacity,
+  rotationSpeed = 0.0000375,
+  seed
+}) => {
+  const meshRef = useRef<THREE.Mesh>(null);
+  const materialRef = useRef<THREE.ShaderMaterial>(null);
+
+  const uniforms = useMemo(() => ({
+    color1: { value: new THREE.Color(color1) },
+    color2: { value: new THREE.Color(color2) },
+    color3: { value: new THREE.Color(color3) },
+    opacity: { value: opacity },
+    time: { value: 0 },
+    seed: { value: seed }
+  }), [color1, color2, color3, opacity, seed]);
+
+  useFrame(({ clock }) => {
+    if (materialRef.current) {
+      materialRef.current.uniforms.time.value = clock.getElapsedTime();
+    }
+    if (meshRef.current) {
+      meshRef.current.rotation.z += rotationSpeed;
+    }
+  });
+
+  return (
+    <mesh ref={meshRef} position={position}>
+      <planeGeometry args={[scaleX, scaleY, 1, 1]} />
+      <shaderMaterial
+        ref={materialRef}
+        vertexShader={nebulaVertexShader}
+        fragmentShader={pillarFragmentShader}
+        uniforms={uniforms}
+        transparent
+        depthWrite={false}
+        side={THREE.DoubleSide}
+        blending={THREE.AdditiveBlending}
+      />
+    </mesh>
+  );
+};
+
+// Wispy nebula component - flowing ethereal tendrils
+interface WispyNebulaProps {
+  position: [number, number, number];
+  color1: string;
+  color2: string;
+  color3: string;
+  scaleX: number;
+  scaleY: number;
+  opacity: number;
+  rotationSpeed?: number;
+  seed: number;
+}
+
+const WispyNebula: React.FC<WispyNebulaProps> = ({
+  position,
+  color1,
+  color2,
+  color3,
+  scaleX,
+  scaleY,
+  opacity,
+  rotationSpeed = 0.0001,
+  seed
+}) => {
+  const meshRef = useRef<THREE.Mesh>(null);
+  const materialRef = useRef<THREE.ShaderMaterial>(null);
+
+  const uniforms = useMemo(() => ({
+    color1: { value: new THREE.Color(color1) },
+    color2: { value: new THREE.Color(color2) },
+    color3: { value: new THREE.Color(color3) },
+    opacity: { value: opacity },
+    time: { value: 0 },
+    seed: { value: seed }
+  }), [color1, color2, color3, opacity, seed]);
+
+  useFrame(({ clock }) => {
+    if (materialRef.current) {
+      materialRef.current.uniforms.time.value = clock.getElapsedTime();
+    }
+    if (meshRef.current) {
+      meshRef.current.rotation.z += rotationSpeed;
+    }
+  });
+
+  return (
+    <mesh ref={meshRef} position={position}>
+      <planeGeometry args={[scaleX, scaleY, 1, 1]} />
+      <shaderMaterial
+        ref={materialRef}
+        vertexShader={nebulaVertexShader}
+        fragmentShader={wispyFragmentShader}
         uniforms={uniforms}
         transparent
         depthWrite={false}
@@ -502,27 +929,43 @@ interface SpiralConfig {
   dustColor: string;
 }
 
-// Color palettes for nebulae - each has dark base and bright accent
+// Color palettes for nebulae - matching planet/moon colors
 const nebulaColorPalettes = [
-  { dark: '#1a0533', bright: '#2d5a7b', dust: '#4a2c6a' },   // Purple/teal
-  { dark: '#4a1a0a', bright: '#8b4513', dust: '#cd853f' },   // Orange/red
-  { dark: '#0a1a3a', bright: '#1e90ff', dust: '#4169e1' },   // Blue
-  { dark: '#0a2a2a', bright: '#20b2aa', dust: '#40e0d0' },   // Cyan/teal
-  { dark: '#2a0a2a', bright: '#8b008b', dust: '#9932cc' },   // Purple/magenta
-  { dark: '#1a2a0a', bright: '#32cd32', dust: '#228b22' },   // Green
-  { dark: '#3a1a1a', bright: '#dc143c', dust: '#b22222' },   // Crimson
-  { dark: '#0a1a2a', bright: '#4682b4', dust: '#5f9ea0' },   // Steel blue
-  { dark: '#2a1a3a', bright: '#9370db', dust: '#8a2be2' },   // Medium purple
-  { dark: '#1a3a3a', bright: '#00ced1', dust: '#008b8b' },   // Dark cyan
+  { dark: '#1a0a2a', bright: '#A55BFF', dust: '#CCA2FF' },   // Purple (GitHub)
+  { dark: '#0a1a2a', bright: '#4FB8FF', dust: '#A0C4E2' },   // Blue (LinkedIn)
+  { dark: '#0a2020', bright: '#2DE1FC', dust: '#00FFFF' },   // Cyan (Eidolon)
+  { dark: '#1a1a2a', bright: '#BAB9FF', dust: '#B8B3E9' },   // Lavender (Avernus)
+  { dark: '#0a2a2a', bright: '#84DCC6', dust: '#2DE1FC' },   // Teal/Mint (Mythos)
+  { dark: '#2a1a2a', bright: '#FFCAE2', dust: '#FFA1CB' },   // Pink (Spotify)
+  { dark: '#2a1a1a', bright: '#F4ACB7', dust: '#F694C1' },   // Rose Pink (Instagram)
+  { dark: '#1a1a2a', bright: '#809BCE', dust: '#D9C6E8' },   // Blue/Purple (Threads)
+  { dark: '#2a0a1a', bright: '#ff00ff', dust: '#FFA1CB' },   // Magenta (Exoplanet)
+  { dark: '#1a2a1a', bright: '#66ff33', dust: '#84DCC6' },   // Green (Exoplanet)
 ];
 
-// Spiral color palettes - 3 colors each
+// Spiral color palettes - 3 colors each (matching planets)
 const spiralColorPalettes = [
-  { c1: '#2a0a2a', c2: '#8b008b', c3: '#da70d6', dust: '#9932cc' },  // Purple
-  { c1: '#0a1a3a', c2: '#1e90ff', c3: '#87ceeb', dust: '#4169e1' },  // Blue
-  { c1: '#2a1a0a', c2: '#ff6347', c3: '#ffa07a', dust: '#cd5c5c' },  // Coral
-  { c1: '#0a2a2a', c2: '#20b2aa', c3: '#7fffd4', dust: '#40e0d0' },  // Aqua
-  { c1: '#1a1a3a', c2: '#6a5acd', c3: '#e6e6fa', dust: '#9370db' },  // Lavender
+  { c1: '#1a0a2a', c2: '#A55BFF', c3: '#CCA2FF', dust: '#B8B3E9' },  // Purple (GitHub)
+  { c1: '#0a1a2a', c2: '#4FB8FF', c3: '#A0C4E2', dust: '#2DE1FC' },  // Blue (LinkedIn)
+  { c1: '#0a2020', c2: '#2DE1FC', c3: '#84DCC6', dust: '#00FFFF' },  // Cyan/Teal (Eidolon/Mythos)
+  { c1: '#2a1a2a', c2: '#F4ACB7', c3: '#FFCAE2', dust: '#FFA1CB' },  // Pink (Instagram/Spotify)
+  { c1: '#1a1a2a', c2: '#BAB9FF', c3: '#D9C6E8', dust: '#809BCE' },  // Lavender (Avernus)
+];
+
+// Pillar color palettes - cosmic dust pillar colors (matching planets)
+const pillarColorPalettes = [
+  { c1: '#1a0a2a', c2: '#A55BFF', c3: '#BAB9FF', dust: '#CCA2FF' },  // Purple/Lavender
+  { c1: '#0a1a2a', c2: '#4FB8FF', c3: '#2DE1FC', dust: '#A0C4E2' },  // Blue/Cyan
+  { c1: '#0a2020', c2: '#84DCC6', c3: '#2DE1FC', dust: '#00FFFF' },  // Teal/Cyan
+  { c1: '#2a1a2a', c2: '#809BCE', c3: '#B8B3E9', dust: '#D9C6E8' },  // Blue-Purple
+];
+
+// Wispy color palettes - ethereal flowing colors (matching planets)
+const wispyColorPalettes = [
+  { c1: '#2a1a2a', c2: '#FFCAE2', c3: '#F4ACB7', dust: '#FFA1CB' },  // Pink (Spotify/Instagram)
+  { c1: '#1a1a2a', c2: '#BAB9FF', c3: '#D9C6E8', dust: '#B8B3E9' },  // Lavender (Avernus)
+  { c1: '#0a2020', c2: '#84DCC6', c3: '#2DE1FC', dust: '#00FFFF' },  // Mint/Cyan (Mythos)
+  { c1: '#2a0a1a', c2: '#F87666', c3: '#FF7F11', dust: '#ff3366' },  // Coral/Orange (Exoplanet)
 ];
 
 const Nebula: React.FC = () => {
@@ -582,13 +1025,68 @@ const Nebula: React.FC = () => {
       color1: palette.c1,
       color2: palette.c2,
       color3: palette.c3,
-      scale: 20 + Math.random() * 30,
-      opacity: 0.28 + Math.random() * 0.1,
+      scale: 15 + Math.random() * 40,
+      opacity: 0.25 + Math.random() * 0.1,
       rotationSpeed: 0.0006 + Math.random() * 0.0004,
       seed: Math.random() * 10,
       dustColor: palette.dust
     };
   }, []);
+
+  // Random flag to swap pillar and wispy positions (50% chance)
+  const swapPositions = useMemo(() => Math.random() > 0.5, []);
+
+  // Generate random pillar nebula - positioned BEHIND the camera (positive Z)
+  const pillarNebula = useMemo(() => {
+    // Position behind the camera - swap sides half the time
+    const x = swapPositions 
+      ? 80 + Math.random() * 60   // Right side (swapped)
+      : -60 + Math.random() * 40 - 100; // Left side (default)
+    const y = 20 + Math.random() * 50; // Upper area
+    const z = 80 + Math.random() * 60; // POSITIVE Z - behind camera
+    
+    const paletteIndex = Math.floor(Math.random() * pillarColorPalettes.length);
+    const palette = pillarColorPalettes[paletteIndex];
+    
+    return {
+      position: [x, y, z] as [number, number, number],
+      color1: palette.c1,
+      color2: palette.c2,
+      color3: palette.c3,
+      scaleX: 15 + Math.random() * 30,
+      scaleY: 30 + Math.random() * 50, // Taller than wide
+      opacity: 0.3 + Math.random() * 0.1,
+      rotationSpeed: (Math.random() - 0.5) * 0.0004,
+      seed: Math.random() * 10,
+      dustColor: palette.dust
+    };
+  }, [swapPositions]);
+
+  // Generate random wispy nebula - positioned BEHIND the camera (positive Z)
+  const wispyNebula = useMemo(() => {
+    // Position behind the camera - swap sides half the time
+    const x = swapPositions 
+      ? -60 + Math.random() * 40 - 100  // Left side (swapped)
+      : 80 + Math.random() * 60; // Right side (default)
+    const y = -10 + Math.random() * 140; // Middle area
+    const z = 90 + Math.random() * 70; // POSITIVE Z - behind camera
+    
+    const paletteIndex = Math.floor(Math.random() * wispyColorPalettes.length);
+    const palette = wispyColorPalettes[paletteIndex];
+    
+    return {
+      position: [x, y, z] as [number, number, number],
+      color1: palette.c1,
+      color2: palette.c2,
+      color3: palette.c3,
+      scaleX: 80 + Math.random() * 40, // Wider than tall
+      scaleY: 40 + Math.random() * 30,
+      opacity: 0.32 + Math.random() * 0.1,
+      rotationSpeed: (Math.random() - 0.5) * 0.0006,
+      seed: Math.random() * 10,
+      dustColor: palette.dust
+    };
+  }, [swapPositions]);
 
   return (
     <group>
@@ -628,6 +1126,44 @@ const Nebula: React.FC = () => {
         color={spiralNebula.dustColor}
         count={200}
         spread={spiralNebula.scale * 0.4}
+      />
+
+      {/* Pillar nebula - Pillars of Creation style */}
+      <PillarNebula
+        position={pillarNebula.position}
+        color1={pillarNebula.color1}
+        color2={pillarNebula.color2}
+        color3={pillarNebula.color3}
+        scaleX={pillarNebula.scaleX}
+        scaleY={pillarNebula.scaleY}
+        opacity={pillarNebula.opacity}
+        rotationSpeed={pillarNebula.rotationSpeed}
+        seed={pillarNebula.seed}
+      />
+      <NebulaDust
+        position={pillarNebula.position}
+        color={pillarNebula.dustColor}
+        count={180}
+        spread={Math.max(pillarNebula.scaleX, pillarNebula.scaleY) * 0.35}
+      />
+
+      {/* Wispy nebula - flowing ethereal tendrils */}
+      <WispyNebula
+        position={wispyNebula.position}
+        color1={wispyNebula.color1}
+        color2={wispyNebula.color2}
+        color3={wispyNebula.color3}
+        scaleX={wispyNebula.scaleX}
+        scaleY={wispyNebula.scaleY}
+        opacity={wispyNebula.opacity}
+        rotationSpeed={wispyNebula.rotationSpeed}
+        seed={wispyNebula.seed}
+      />
+      <NebulaDust
+        position={wispyNebula.position}
+        color={wispyNebula.dustColor}
+        count={150}
+        spread={Math.max(wispyNebula.scaleX, wispyNebula.scaleY) * 0.35}
       />
     </group>
   );
