@@ -1,3 +1,12 @@
+# Planetfolio v4.0
+- Neutron Star Sun
+- Periodic Solar Flares
+- Periodic Pulsars
+- Randomized Nebulae
+- Planet Atmospheres
+
+**https://www.youtube.com/watch?v=imO1EJ0X5qg**
+
 # Planetfolio v3.0
 - Collision Logic + Explosions
 - Hyperbolic Trajectories
