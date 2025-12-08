@@ -1,25 +1,26 @@
 import React, { useRef, useState } from 'react';
+import Image from 'next/image';
 import styles from './SoundPlayer.module.css';
 
 interface Track {
   id: number;
-  name: string;
+  icon: string;
   src: string;
 }
 
 const tracks: Track[] = [
-  { id: 1, name: "⚙", src: "/audio/BrownNoise.MP3" },
-  { id: 2, name: "⚘", src: "/audio/Fireplace.MP3" }, // ☘ ⚙ ♔ ♕♗
-  { id: 3, name: "⚛", src: "/audio/Weightless.MP3" }, 
-  { id: 4, name: "⚜", src: "/audio/DeepOm1.MP3" }, //  ☢ ♾ ♖
-  { id: 5, name: "☮", src: "/audio/BinauralBeats.MP3" }, // 432 Hz 
-  { id: 6, name: "♾", src: "/audio/DeepOm2.MP3" }, // ⚂
-  { id: 7, name: "●", src: "/audio/Underwater.MP3" }, 
-  { id: 8, name: "♔", src: "/audio/AmBackingTrack.MP3" }, 
-  { id: 9, name: "☣︎", src: "/audio/40HzTone.MP3" }, 
-  { id: 10, name: "☢", src: "/audio/528PureTone.MP3" },
-  { id: 11, name: "☘", src: "/audio/GuidedMeditation.MP3" }, 
-];                  // ✧ ☮ ☸ ♨ ☯ ❃ ✾ ♝ ♗ ⚜ ☼ ⚜ 𖡨 ꗈ 𖣨 ❃ ♪ 𝄞⚕⚛⚕☢☘⏲♾⚙☯⛱☂♣♛⤲☠︎
+  { id: 1, icon: "/icons/10.svg", src: "/audio/BrownNoise.MP3" }, //10 5 8 9 
+  { id: 2, icon: "/icons/6.svg", src: "/audio/Fireplace.MP3" },
+  { id: 3, icon: "/icons/2.svg", src: "/audio/Weightless.MP3" }, 
+  { id: 4, icon: "/icons/5.svg", src: "/audio/DeepOm1.MP3" },
+  { id: 5, icon: "/icons/11.svg", src: "/audio/BinauralBeats.MP3" },
+  { id: 6, icon: "/icons/13.svg", src: "/audio/DeepOm2.MP3" },
+  { id: 7, icon: "/icons/15.svg", src: "/audio/AmBackingTrack.MP3" }, 
+  { id: 8, icon: "/icons/4.svg", src: "/audio/Underwater.MP3" }, 
+  { id: 9, icon: "/icons/7.svg", src: "/audio/40HzTone.MP3" }, 
+  { id: 10, icon: "/icons/14.svg", src: "/audio/528PureTone.MP3" },
+  { id: 11, icon: "/icons/9.svg", src: "/audio/GuidedMeditation.MP3" }, 
+];
 
 interface AudioPlayerProps {
   src: string;
@@ -32,7 +33,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [volume, setVolume] = useState(0.5);
-  const [currentTrack, setCurrentTrack] = useState<Track>({ id: 0, name: "Custom Track", src });
+  const [currentTrack, setCurrentTrack] = useState<Track>({ id: 0, icon: "", src });
   const [trackOffset, setTrackOffset] = useState(0);
 
   const visibleTracks = tracks.slice(trackOffset, trackOffset + VISIBLE_TRACKS);
@@ -123,7 +124,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
               onClick={() => selectTrack(track)}
               className={`${styles.trackButton} ${currentTrack.id === track.id ? styles.activeTrack : ''}`}
             >
-              {track.name}
+              <Image src={track.icon} alt={`Track ${track.id}`} width={20} height={20} />
             </button>
           ))}
         </div>
@@ -139,14 +140,33 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
         <button 
           onClick={togglePlayPause} 
           className={`${styles.playPauseButton} ${isPlaying ? styles.playPauseButtonPlaying : ''}`}
+          aria-label={isPlaying ? 'Pause' : 'Play'}
         >
-          {isPlaying ? '⏸️' : '▶️'}
+          {isPlaying ? (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="6" y="4" width="4" height="16" rx="1"/>
+              <rect x="14" y="4" width="4" height="16" rx="1"/>
+            </svg>
+          ) : (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          )}
         </button>
         <button 
           onClick={toggleMute} 
           className={`${styles.muteButton} ${isMuted ? styles.muteButtonMuted : ''}`}
+          aria-label={isMuted ? 'Unmute' : 'Mute'}
         >
-          {isMuted ? '🔇' : '🔊'}
+          {isMuted ? (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+            </svg>
+          ) : (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+            </svg>
+          )}
         </button>
         <div className={styles.volumeSliderContainer}>
           <input
