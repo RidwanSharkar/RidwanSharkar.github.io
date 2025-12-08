@@ -12,7 +12,7 @@
 - Hyperbolic Trajectories
 - Sun Gravity Influence
 - Binary Planet System
-- Am Backing Tracks 
+- Backing Tracks 
 
 ![Planetfolio v3.0](Planetfolio-3.0.gif)
 
