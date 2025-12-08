@@ -31,7 +31,7 @@ const convertSpeed = (speed: number, planetLabel: string): string => {
     'Fretboard-x': 62670,
     'LinkedIn': 41250,
     'GitHub': 21510,
-    'The Nutrimancer\'s Codex - Vol. II': 21510,
+    'The Nutrimancer\'s Codex': 21510,
     'Instagram': 58375,
     'Mythos': 31250,
     'Spotify': 62670,
@@ -53,7 +53,7 @@ const getPlanetTemperature = (planetLabel: string): string => {
     'Fretboard-x': 420.0,
     'LinkedIn': 69.0,
     'GitHub': 11.8,
-    'The Nutrimancer\'s Codex - Vol. II': 108.4,
+    'The Nutrimancer\'s Codex': 108.4,
     'Instagram': -41.7,
     'Mythos': -59.7,
     'Spotify': 420,
@@ -114,7 +114,7 @@ const getPlanetMass = (planetLabel: string): string => {
     'Fretboard-x': 1.4e24,
     'LinkedIn': 1.7e25,
     'GitHub': 5.7e26,
-    'The Nutrimancer\'s Codex - Vol. II': 1.5e25,
+    'The Nutrimancer\'s Codex': 1.5e25,
     'Instagram': 2.3e26,
     'Mythos': 9.8e25,
     'Spotify': 1.2e24,
@@ -138,7 +138,7 @@ const MoonStatsPanel: React.FC<{ moons: MoonData[] }> = ({ moons }) => {
     >
       <h3 
         className={`${styles.statsTitle} ${
-          moons.some(moon => moon.label === "The Nutrimancer's Codex - Vol. II") ? styles.nutrimancerTitle : ''
+          moons.some(moon => moon.label === "The Nutrimancer's Codex") ? styles.nutrimancerTitle : ''
         }`}
       >
         {"Satellites:"}
@@ -175,7 +175,7 @@ const calculateGravity = (planetLabel: string, size: number): string => {
     'Fretboard-x': 1.4e24,
     'LinkedIn': 1.7e25,
     'GitHub': 5.7e26,
-    'The Nutrimancer\'s Codex - Vol. II': 1.5e25,
+    'The Nutrimancer\'s Codex': 1.5e25,
     'Instagram': 2.3e26,
     'Mythos': 1.8e25,
     'Spotify': 1.2e24,
@@ -237,7 +237,7 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ planet, onClose }) => {
             >
               <h3 
                 className={`${styles.statsTitle} ${
-                  planet.label === "The Nutrimancer's Codex - Vol. II" ? styles.nutrimancerTitle : ''
+                  planet.label === "The Nutrimancer's Codex" ? styles.nutrimancerTitle : ''
                 }`}
               >
                 {"{ "}{planet.label}{" }"}
@@ -284,7 +284,7 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ planet, onClose }) => {
               <div>
                 <h2 
                   className={
-                    planet.label === "The Nutrimancer's Codex - Vol. II" 
+                    planet.label === "The Nutrimancer's Codex" 
                       ? styles.nutrimancerTitle 
                       : ''
                   }

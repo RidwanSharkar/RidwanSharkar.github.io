@@ -86,6 +86,16 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       planetColor: '#4FB8FF',
       size: 0.375,
       rotationSpeed: 0.01,
+      moons: [
+        {
+          orbitRadius: 0.75,
+          orbitSpeed: 2.25,
+          size: 0.1125,
+          moonColor: '#E8E9ED',
+          link: 'https://www.youtube.com/@ridwansharkar638',
+          label: 'YouTube',
+        },
+      ],
       rings: [
         { color: '#00FFFF', innerScale: 1.3, outerScale: 1.45, inclination: -Math.PI / 3 }
       ],
@@ -159,7 +169,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
           size: 0.14,
           moonColor: '#A0C4E2',
           link: 'https://github.com/RidwanSharkar/The-Nutrimancers-Codex',
-          label: 'The Nutrimancer\'s Codex - Vol. II',
+          label: 'The Nutrimancer\'s Codex',
         },
         { 
           orbitRadius: 1.59,
@@ -174,8 +184,8 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
           orbitSpeed: 2.25,
           size: 0.11,
           moonColor: '#B8B3E9',
-          link: 'https://ridwansharkar.github.io/Borrowed-Order/',
-          label: 'Algorithm Visualizer',
+          link: 'https://github.com/RidwanSharkar/Erebus',
+          label: 'Erebus',
           startAngle: Math.PI
         },
       ],
@@ -194,7 +204,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       rings: [
         { color: '#2DE1FC', innerScale: 1.3, outerScale: 1.75, inclination: -Math.PI }, 
       ],
-      size: 0.27,
+      size: 0.30,
       rotationSpeed: 0.01,
       logoTexturePath: '/textures/mythos.png',
     },
@@ -217,8 +227,8 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
         {
           orbitRadius: 1.0,
           orbitSpeed: 1.8,
-          size: 0.11,
-          moonColor: '#E8E9ED',
+          size: 0.117,
+          moonColor: '#CDCDCE',
           link: 'https://www.artstation.com/ridwansharkar',
           label: 'Art Station',
         },
@@ -235,7 +245,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       orbitSpeed: 0.23, 
       startAngle: Math.PI, 
       planetColor: '#809BCE',
-      size: 0.28,
+      size: 0.275,
       rotationSpeed: 0.01,
       logoTexturePath: '/textures/Threads_logo.svg',
     },
