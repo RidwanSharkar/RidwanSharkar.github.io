@@ -11,16 +11,16 @@ const tracks: Track[] = [
   { id: 1, name: "⚛", src: "/audio/BrownNoise.MP3" },
   { id: 2, name: "⚘", src: "/audio/Fireplace.MP3" }, // ☘ ⚙ ♔ ♕♗
   { id: 3, name: "☮", src: "/audio/Weightless.MP3" }, 
-  { id: 4, name: "♾", src: "/audio/RainCafe.MP3" }, // ☢ ♾ ♖
-  { id: 5, name: "⚙", src: "/audio/BinauralBeats.MP3" }, // 432 Hz 
-  { id: 6, name: "⚜", src: "/audio/DeepOm1.MP3" }, // 
-  { id: 7, name: "♔ ", src: "/audio/DeepOm2.MP3" }, // ⚂
-  { id: 8, name: "☢", src: "/audio/Underwater.MP3" }, 
-  { id: 9, name: "⚙", src: "/audio/AmBackingTrack.MP3" }, 
+  { id: 4, name: "⚜", src: "/audio/AmBackingTrack.MP3" }, // ☢ ♾ ♖
+  { id: 5, name: "♾", src: "/audio/BinauralBeats.MP3" }, // 432 Hz 
+  { id: 6, name: "♗", src: "/audio/DeepOm1.MP3" }, // 
+  { id: 7, name: "♝", src: "/audio/DeepOm2.MP3" }, // ⚂
+  { id: 8, name: "●", src: "/audio/Underwater.MP3" }, 
+  { id: 9, name: "⚙", src: "/audio/RainCafe.MP3" }, 
   { id: 10, name: "☣︎", src: "/audio/40HzTone.MP3" }, 
-  { id: 11, name: "☠︎", src: "/audio/528PureTone.MP3" },
+  { id: 11, name: "☢", src: "/audio/528PureTone.MP3" },
   { id: 12, name: "☘", src: "/audio/GuidedMeditation.MP3" }, 
-];                  // ✧ ☮ ☸ ♨ ☯ ❃ ✾ ♝ ♗ ⚜ ☼ ⚜ 𖡨 ꗈ 𖣨 ❃ ♪ 𝄞⚕⚛⚕☢☘⏲♾⚙☯⛱☂♣♛⤲
+];                  // ✧ ☮ ☸ ♨ ☯ ❃ ✾ ♝ ♗ ⚜ ☼ ⚜ 𖡨 ꗈ 𖣨 ❃ ♪ 𝄞⚕⚛⚕☢☘⏲♾⚙☯⛱☂♣♛⤲☠︎
 
 interface AudioPlayerProps {
   src: string;
