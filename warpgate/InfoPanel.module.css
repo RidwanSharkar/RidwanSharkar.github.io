@@ -444,3 +444,14 @@
 .infoPanel h2.nutrimancerTitle {
   font-size: 0.86rem; 
 }
+
+/* Mobile: Hide top header info panel and sound player */
+@media (max-width: 768px) {
+  .infoPanel {
+    display: none !important;
+  }
+  
+  .fixedBottomLeftPanel {
+    display: none !important;
+  }
+}
