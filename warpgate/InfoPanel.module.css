@@ -110,19 +110,80 @@
   height: fit-content;
   margin: auto 0;
   padding: 8px 20px;
-  background: #00d2ff;
+  background: linear-gradient(135deg, #00d2ff 0%, #0099cc 50%, #00d2ff 100%);
+  background-size: 200% 200%;
   color: #ffffff;
   border: none;
   border-radius: 5px;
   text-decoration: none;
   font-weight: bold;
   font-family: 'Roboto', sans-serif;
-  transition: background 0.3s ease, transform 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 2px 8px rgba(0, 210, 255, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  animation: gradientShift 3s ease infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.infoButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.infoButton::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+  border-radius: 7px;
+  z-index: -1;
+  opacity: 0;
+  filter: blur(8px);
+  transition: opacity 0.3s ease;
 }
 
 .infoButton:hover {
-  background: #00aaff;
-  transform: scale(1.05);
+  background: linear-gradient(135deg, #00e5ff 0%, #00b8d4 50%, #00e5ff 100%);
+  background-size: 200% 200%;
+  transform: scale(1.05) translateY(-1px);
+  box-shadow: 
+    0 4px 15px rgba(0, 210, 255, 0.6),
+    0 0 20px rgba(0, 210, 255, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.infoButton:hover::before {
+  left: 100%;
+}
+
+.infoButton:hover::after {
+  opacity: 1;
+}
+
+.infoButton:active {
+  transform: scale(0.98);
+  box-shadow: 
+    0 1px 4px rgba(0, 210, 255, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .statsPanel {
@@ -296,19 +357,75 @@
 
 .moonButton {
   padding: 5px 12px;
-  background: #00d2ff;
+  background: linear-gradient(135deg, #00d2ff 0%, #0099cc 50%, #00d2ff 100%);
+  background-size: 200% 200%;
   color: #ffffff;
   border: none;
   border-radius: 4px;
   text-decoration: none;
   font-weight: 500;
   font-size: 0.65rem;
-  transition: background 0.3s ease, transform 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 2px 6px rgba(0, 210, 255, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  animation: gradientShift 3s ease infinite;
+}
+
+.moonButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+  transition: left 0.4s ease;
+}
+
+.moonButton::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+  border-radius: 6px;
+  z-index: -1;
+  opacity: 0;
+  filter: blur(6px);
+  transition: opacity 0.3s ease;
 }
 
 .moonButton:hover {
-  background: #00aaff;
-  transform: scale(1.05);
+  background: linear-gradient(135deg, #00e5ff 0%, #00b8d4 50%, #00e5ff 100%);
+  background-size: 200% 200%;
+  transform: scale(1.05) translateY(-1px);
+  box-shadow: 
+    0 4px 12px rgba(0, 210, 255, 0.5),
+    0 0 15px rgba(0, 210, 255, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.moonButton:hover::before {
+  left: 100%;
+}
+
+.moonButton:hover::after {
+  opacity: 1;
+}
+
+.moonButton:active {
+  transform: scale(0.98);
+  box-shadow: 
+    0 1px 3px rgba(0, 210, 255, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .panelsContainer {
