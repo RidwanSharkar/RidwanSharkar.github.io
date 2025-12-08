@@ -4,6 +4,7 @@
 - Periodic Pulsars
 - Randomized Nebulae
 - Planet Atmospheres
+- SoundBar Upgrades
 
 **https://www.youtube.com/watch?v=imO1EJ0X5qg**
 
@@ -12,7 +13,6 @@
 - Hyperbolic Trajectories
 - Sun Gravity Influence
 - Binary Planet System
-- Backing Tracks 
 
 ![Planetfolio v3.0](Planetfolio-3.0.gif)
 
