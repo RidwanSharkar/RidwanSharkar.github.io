@@ -25,9 +25,10 @@ const ResponsiveCamera: React.FC = () => {
 interface PlanetCanvasProps {
   onSelectPlanet: (index: number, planet: PlanetData) => void;
   selectedPlanet: { index: number; planet: PlanetData } | null;
+  showNebulas?: boolean;
 }
 
-const PlanetCanvas: React.FC<PlanetCanvasProps> = ({ onSelectPlanet, selectedPlanet }) => {
+const PlanetCanvas: React.FC<PlanetCanvasProps> = ({ onSelectPlanet, selectedPlanet, showNebulas = true }) => {
   return (
     <Canvas camera={{ position: [0, 20, 25], fov: 60 }} className="w-full h-full">
       <ResponsiveCamera />
@@ -46,7 +47,7 @@ const PlanetCanvas: React.FC<PlanetCanvasProps> = ({ onSelectPlanet, selectedPla
       />
       
       {/* Distant nebula clouds */}
-      <Nebula />
+      {showNebulas && <Nebula />}
 
       <React.Suspense fallback={<Html center>Loading...</Html>}>
         <EnhancedPlanetGroup 

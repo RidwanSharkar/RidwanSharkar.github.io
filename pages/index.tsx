@@ -8,9 +8,11 @@ import InfoPanel from '../warpgate/InfoPanel';
 import FixedInfoPanel from '../warpgate/SoundBar'; 
 import AudioPlayer from '../warpgate/SoundPlayer'; 
 import { PlanetData } from '../warpgate/EnhancedPlanetGroup';
+import styles from '../styles/NebulaToggle.module.css';
 
 const HomePage: NextPage = () => {
   const [selectedPlanet, setSelectedPlanet] = useState<{ index: number; planet: PlanetData } | null>(null);
+  const [showNebulas, setShowNebulas] = useState(true);
 
   const handleSelectPlanet = (index: number, planet: PlanetData) => {
     setSelectedPlanet(prev => (prev?.index === index ? null : { index, planet }));
@@ -18,6 +20,10 @@ const HomePage: NextPage = () => {
 
   const handleClosePanel = () => {
     setSelectedPlanet(null);
+  };
+
+  const toggleNebulas = () => {
+    setShowNebulas(prev => !prev);
   };
 
   return (
@@ -31,6 +37,7 @@ const HomePage: NextPage = () => {
       <PlanetCanvas 
         onSelectPlanet={handleSelectPlanet} 
         selectedPlanet={selectedPlanet}
+        showNebulas={showNebulas}
       />
 
       {/* InfoPanel overlay */}
@@ -40,6 +47,17 @@ const HomePage: NextPage = () => {
           onClose={handleClosePanel}
         />
       )}
+
+      {/* Toggle Nebulas Button */}
+      <button
+        onClick={toggleNebulas}
+        className={`${styles.nebulaToggle} ${showNebulas ? styles.active : ''}`}
+      >
+        <span className={styles.label}>Nebulas</span>
+        <span className={styles.toggle}>
+          <span className={styles.toggleIndicator}></span>
+        </span>
+      </button>
 
       {/* Fixed Bottom Panel */}
       <FixedInfoPanel
