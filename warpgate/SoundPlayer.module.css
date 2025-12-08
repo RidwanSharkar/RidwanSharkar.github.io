@@ -8,15 +8,15 @@
 
 .trackButtonsContainer {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
   width: 100%;
+  align-items: center;
+  gap: 2px;
 }
 
 .trackButtons {
   display: flex;
   gap: 2px;
-  width: 100%;
+  flex: 1;
   justify-content: space-between;
 }
 
@@ -24,13 +24,34 @@
   background: rgba(0, 123, 189, 0.3);
   border: 1px solid #007bbd;
   color: #ffffff;
-  padding: 2px 4px;
+  padding: 2px 7px;
   border-radius: 4px;
   cursor: pointer;
   font-size: 1.15rem;
   transition: all 0.2s;
   flex: 1;
   min-width: 0;
+}
+
+.navArrow {
+  background: rgba(0, 123, 189, 0.3);
+  border: 1px solid #007bbd;
+  color: #ffffff;
+  padding: 2px 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.navArrow:hover:not(.navArrowDisabled) {
+  background: rgba(0, 123, 189, 0.5);
+}
+
+.navArrowDisabled {
+  opacity: 0.3;
+  cursor: default;
 }
 
 .trackButton:hover {

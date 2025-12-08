@@ -686,7 +686,7 @@ const Sun = forwardRef<Mesh, SunProps>(({
     
     // Spawn pulsar beam every 20 seconds
     const timeSinceLastPulsar = t - lastPulsarTimeRef.current;
-    const pulsarInterval = 20 + Math.random() * 10; // Every 20-30 seconds
+    const pulsarInterval = 20 + Math.random() * 30; // Every 20-50 seconds
     
     if (timeSinceLastPulsar > pulsarInterval || lastPulsarTimeRef.current === 0) {
       const newBeam: PulsarBeam = {

@@ -53,7 +53,7 @@ const HomePage: NextPage = () => {
         onClick={toggleNebulas}
         className={`${styles.nebulaToggle} ${showNebulas ? styles.active : ''}`}
       >
-        <span className={styles.label}>Nebulas</span>
+        <span className={styles.label}>𖥂</span>
         <span className={styles.toggle}>
           <span className={styles.toggleIndicator}></span>
         </span>
