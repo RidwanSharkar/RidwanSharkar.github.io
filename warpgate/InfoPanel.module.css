@@ -445,13 +445,17 @@
   font-size: 0.86rem; 
 }
 
-/* Mobile: Hide top header info panel and sound player */
+/* Mobile: Hide stats container only, keep InfoPanel and SoundBar */
 @media (max-width: 768px) {
-  .infoPanel {
+  .panelsContainer {
     display: none !important;
   }
   
-  .fixedBottomLeftPanel {
-    display: none !important;
+  /* Adjust InfoPanel positioning for mobile */
+  .infoPanel {
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    min-width: unset;
   }
 }

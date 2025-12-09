@@ -6,8 +6,6 @@
 - Planet Atmospheres
 - SoundBar Upgrades
 
-**https://www.youtube.com/watch?v=imO1EJ0X5qg**
-
 # Planetfolio v3.0
 - Collision Logic + Explosions
 - Hyperbolic Trajectories
