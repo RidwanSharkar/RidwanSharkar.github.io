@@ -453,9 +453,11 @@
   
   /* Adjust InfoPanel positioning for mobile */
   .infoPanel {
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    min-width: unset;
+    left: 5% !important;
+    right: 5% !important;
+    width: 90% !important;
+    min-width: unset !important;
+    max-width: none !important;
+    transform: none !important;
   }
 }
