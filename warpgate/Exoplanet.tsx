@@ -16,6 +16,9 @@ const Exoplanet: React.FC<ExoplanetProps> = ({ onRemove }) => {
   const size = 0.14 + Math.random() * (0.20 - 0.14);
   const colors = useMemo(() => ['#00ffff', '#ff00ff', '#FF7F11', '#ff3366', '#66ff33', '#B8B3E9', '#B8B3E9', '#F87666', '6EFAFB', 'BEEE62', 'CD9FCC', '93FF96', 'B2FFA8' ], []);
   const color = useMemo(() => colors[Math.floor(Math.random() * colors.length)], [colors]);
+  
+  // Memoize Color objects to prevent recreation on every render
+  const planetColor = useMemo(() => new Color(color), [color]);
 
   // SIMULATION CONSTANTS
   const SPAWN_RADIUS = 50;
@@ -149,11 +152,11 @@ const Exoplanet: React.FC<ExoplanetProps> = ({ onRemove }) => {
     <group>
       <mesh ref={meshRef} visible={isVisible}>
         <sphereGeometry args={[size, 32, 32]} />
-        <meshStandardMaterial color={new Color(color)} transparent opacity={opacity} />
+        <meshStandardMaterial color={planetColor} transparent opacity={opacity} />
       </mesh>
 
       <PlanetTrail
-        color={new Color(color)}
+        color={planetColor}
         size={size}
         meshRef={meshRef}
         orbitRadius={10} 

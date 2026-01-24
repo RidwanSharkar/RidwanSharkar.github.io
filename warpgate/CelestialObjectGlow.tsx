@@ -1,6 +1,6 @@
 // warpgate/CelestialObjectGlow.tsx
 
-import React, { useRef } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { ShaderMaterial, Color, AdditiveBlending, DoubleSide } from 'three';
 import { glowVertexShader, glowFragmentShader } from './Glow';
@@ -20,6 +20,12 @@ export const CelestialObjectGlow: React.FC<GlowProps> = ({
 }) => {
   const glowRef = useRef<ShaderMaterial>(null);
 
+  // Memoize uniforms to prevent recreation on every render
+  const uniforms = useMemo(() => ({
+    glowColor: { value: new Color(color) },
+    intensity: { value: intensity }
+  }), [color, intensity]);
+
   useFrame(({ clock }) => {
     if (glowRef.current) {
       const t = clock.getElapsedTime();
@@ -38,10 +44,7 @@ export const CelestialObjectGlow: React.FC<GlowProps> = ({
         transparent
         vertexShader={glowVertexShader}
         fragmentShader={glowFragmentShader}
-        uniforms={{
-          glowColor: { value: new Color(color) },
-          intensity: { value: intensity }
-        }}
+        uniforms={uniforms}
         blending={AdditiveBlending}
         side={DoubleSide}
       />

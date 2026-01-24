@@ -8,7 +8,7 @@ import { PlanetData } from './EnhancedPlanetGroup';
 import { ThreeEvent } from '@react-three/fiber';
 import PlanetTrail from './PlanetTrail';
 
-/* ====================================== SHADERS(move) ====================================== */
+/* ====================================== SHADERS (PRECOMPILE AT SOME POINT) ====================================== */
 
 const atmosphereVertexShader = `
 varying vec3 vNormal;
@@ -152,6 +152,20 @@ const EnhancedPlanet = forwardRef<Mesh, EnhancedPlanetProps>(({
     logoTexturePath || '/textures/transparent.png' // Placeholder texture
   );
 
+  // Load ring alpha texture once and cache it
+  const ringAlphaTexture = useLoader(
+    TextureLoader,
+    '/textures/ring-alpha.jpg'
+  );
+
+  // Memoize planet color for PlanetTrail
+  const planetTrailColor = useMemo(() => new Color(planetColor), [planetColor]);
+
+  // Memoize ring rotations to avoid creating new Euler objects on every render
+  const ringRotations = useMemo(() => {
+    return rings?.map(ring => new Euler(ring.inclination || 0, 0, 0)) || [];
+  }, [rings]);
+
   // Memoize atm material
   const atmosphereMaterial = useMemo(() => new ShaderMaterial({
     uniforms: {
@@ -282,7 +296,7 @@ const EnhancedPlanet = forwardRef<Mesh, EnhancedPlanetProps>(({
     <group>
       {/* Orbital Trail - comet-like effect following planet */}
       <PlanetTrail
-        color={new Color(planetColor)}
+        color={planetTrailColor}
         size={size*0.725}
         meshRef={meshRef}
         orbitRadius={orbitRadius}
@@ -323,7 +337,7 @@ const EnhancedPlanet = forwardRef<Mesh, EnhancedPlanetProps>(({
         {rings?.map((ring, idx) => (
           <mesh 
             key={idx} 
-            rotation={new Euler(ring.inclination || 0, 0, 0)}
+            rotation={ringRotations[idx]}
           >
             <ringGeometry
               args={[
@@ -337,7 +351,7 @@ const EnhancedPlanet = forwardRef<Mesh, EnhancedPlanetProps>(({
               side={DoubleSide} 
               transparent 
               opacity={1.0}
-              alphaMap={new TextureLoader().load('/textures/ring-alpha.jpg')}
+              alphaMap={ringAlphaTexture}
             />
           </mesh>
         ))}

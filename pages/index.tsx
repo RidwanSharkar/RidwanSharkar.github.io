@@ -31,7 +31,8 @@ const HomePage: NextPage = () => {
       <Head>
         <title>Planetfolio</title>
         <meta name="description" content="Ridwan Sharkar Landing Page" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" type="image/svg+xml" href="/textures/mythos.png" />
+        <link rel="alternate icon" href="/favicon.ico" />
       </Head>
 
       <PlanetCanvas 

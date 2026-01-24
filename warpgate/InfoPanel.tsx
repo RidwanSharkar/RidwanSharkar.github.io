@@ -28,16 +28,16 @@ const convertSize = (size: number): string => {
 
 const convertSpeed = (speed: number, planetLabel: string): string => {
   const speeds: { [key: string]: number } = {
-    'Fretboard-x': 62670,
+    'Fretboard-x': 117420,
     'LinkedIn': 41250,
     'GitHub': 21510,
     'The Nutrimancer\'s Codex': 21510,
-    'Instagram': 58375,
-    'Mythos': 31250,
+    'Instagram': 78375,
+    'Mythos': 38250,
     'Spotify': 62670,
     'Borrowed Order': 21510,
     'Eidolon': 21510,
-    'Threads': 58375,
+    'Threads': 78375,
     'Avernus': 21510,
   };
   return `${speeds[planetLabel]?.toLocaleString() || 0} mph`;
@@ -50,7 +50,7 @@ const convertDistance = (distance: number): string => {
 
 const getPlanetTemperature = (planetLabel: string): string => {
   const temperatures: { [key: string]: number } = {
-    'Fretboard-x': 420.0,
+    'Fretboard-x': -173.6,
     'LinkedIn': 69.0,
     'GitHub': 11.8,
     'The Nutrimancer\'s Codex': 108.4,
@@ -58,9 +58,9 @@ const getPlanetTemperature = (planetLabel: string): string => {
     'Mythos': -59.7,
     'Spotify': 420,
     'Borrowed Order': -112.3,
-    'Eidolon': -359.7,
+    'Eidolon': -78.5,
     'Threads': -157.3,
-    'Avernus': 431.3,
+    'Avernus': 231.3,
   };
   
   return `${temperatures[planetLabel] || 0}°F`;
@@ -68,40 +68,34 @@ const getPlanetTemperature = (planetLabel: string): string => {
 
 // Updated getAtmosphereComposition function with chemical formulas and subscripts
 const getAtmosphereComposition = (planetColor: string): string => {
-  const atmospheres: { [key: string]: string } = {
-    // Fretboard-x: Aqua/Cyan (#C3F6EE)
-    '#C3F6EE': '• [N₂] Nitrogen (78%)\n• [O₂] Oxygen (21%)\n• [Ar] Argon (1%)',
+  const atmospheres: { [key: string]: string } = {      
+    // Spotify: PINK (#FFCAE2) ATMOSPHERE: Pink from alkali metals + iron haze.
+    '#FFCAE2': '• [CO₂] Carbon Dioxide (68%)\n• [SO₂] Sulfur Dioxide (12%)\n• [Na] Sodium Vapor (7%)\n• [K] Potassium Vapor (5%)\n• [O] Atomic Oxygen (3%)\n• [FeO] Iron Oxides (3%)\n• [Ar] Argon (2%)', 
+  
+    // LinkedIn: BLUE (#4FB8FF) ATMOSPHERE: Blue from Rayleigh scattering.
+    '#4FB8FF': '• [N₂] Nitrogen (72%)\n• [O₂] Oxygen (21%)\n• [H₂O] Water Vapor (4%)\n• [Ar] Argon (1.5%)\n• [CO₂] Carbon Dioxide (0.8%)\n• [O₃] Ozone (0.4%)\n• [Ne] Neon (0.3%)',
     
-    // Fretboard 2.0 Moon: Light blue (#B7D3F2)
-    '#B7D3F2': '• [N₂] Nitrogen (95%)\n• [CH₄] Methane (4%)\n• [H₂] Hydrogen (1%)',
+    // GitHub: PURPLE (#A55BFF) ATMOSPHERE: Purple from hydrogen emission + alkali metals + aurorae.
+    '#A55BFF': '• [H₂] Hydrogen (61%)\n• [He] Helium (24%)\n• [CH₄] Methane (6%)\n• [NH₃] Ammonia (3%)\n• [Xe] Xenon (3%)\n• [K] Potassium Vapor (2%)\n• [Ca⁺] Ionized Calcium (1%)',
+
+    // Eidolon: TURQUOISE (#84DCC6) ATMOSPHERE: Turquoise from methane + clouds + nitrogen scattering.
+    '#2DE1FC': '• [N₂] Nitrogen (48%)\n• [CH₄] Methane (22%)\n• [NH₃] Ammonia (10%)\n• [H₂O] Ice Clouds (7%)\n• [Ar] Argon (6%)\n• [Ne] Neon (4%) \n• [C₂H₆] Ethane (3%)',
+
+    // Avernus: LAVENDER (#BAB9FF) ATMOSPHERE: Lavender caused by metal oxides absorbing green/yellow.
+    '#BAB9FF': '• [CO₂] Carbon Dioxide (52%)\n• [SO₂] Sulfur Dioxide (20%)\n• [TiO] Titanium Oxide (8%)\n• [VO] Vanadium Oxide (6%)\n• [Na] Sodium Vapor (6%)\n• [K] Potassium Vapor (5%)\n• [Kr] Krypton (3%)',
     
-    // Spotify: Pink (#F9B9F2)
-    '#F9B9F2': '• [CO₂] Carbon Dioxide (96%)\n• [SO₂] Sulfur Dioxide (3%)\n• [Ar] Argon (1%)',
+    // Mythos: GREEN (#84DCC6) ATMOSPHERE: Green from oxygen absorption + chlorine chemistry + ice cloud haze.
+    '#84DCC6': '• [N₂] Nitrogen (54%)\n• [O₂] Oxygen (18%)\n• [H₂O] Ice Clouds (9%)\n• [CH₄] Methane (6%)\n• [Ar] Argon (6%)\n• [Cl] Chlorine (4%)\n• [Kr] Krypton (3%)',
     
-    // LinkedIn: Blue (#4FB8FF)
-    '#4FB8FF': '• [H₂] Hydrogen (89%)\n• [He] Helium (10%)\n• [CH₄] Methane (1%)',
+    // Instagram: RED (#F4ACB7) ATMOSPHERE: Red from iron dust filtered through methane.
+    '#F4ACB7': '• [H₂] Hydrogen (44%)\n• [He] Helium (26%)\n• [CH₄] Methane (12%)\n• [CO₂] Carbon Dioxide (7%)\n• [FeO] Iron Oxides (6%)\n• [H₂S] Hydrogen Sulfide (3%)\n• [Xe] Xenon (2%)',
     
-    // Borrowed Order: Navy blue (#809BCE)
-    '#809BCE': '• [N₂] Nitrogen (78%)\n• [O₂] Oxygen (20%)\n• [H₂O] Water Vapor (2%)',
+    // Threads: NAVY (#809BCE) ATMOSPHERE: Deep blue from heavy methane absorption.
+    '#809BCE': '• [N₂] Nitrogen (41%)\n• [CH₄] Methane (29%)\n• [H₂] Hydrogen (12%)\n• [He] Helium (8%)\n• [NH₃] Ammonia (5%)\n• [Ne] Neon (3%) \n• [HD] Hydrogen Deuteride (2%)',
     
-    // Nutrimancer: Bright cyan (#2DE1FC)
-    '#2DE1FC': '• [He] Helium (85%)\n• [H₂] Hydrogen (13%)\n• [CH₄] Methane (2%)',
-    
-    // GitHub: Purple (#A55BFF)
-    '#A55BFF': '• [H₂] Hydrogen (82%)\n• [He] Helium (17%)\n• [NH₃] Ammonia (1%)',
-    
-    // Mythos: Beige (#F0C59D)
-    '#F0C59D': '• [CO₂] Carbon Dioxide (95%)\n• [N₂] Nitrogen (3%)\n• [SO₂] Sulfur Dioxide (2%)',
-    
-    // Instagram: Pink (#F4ACB7)
-    '#F4ACB7': '• [SO₂] Sulfur Dioxide (80%)\n• [CO₂] Carbon Dioxide (18%)\n• [H₂O] Water Vapor (2%)',
-    
-    // Eidolon: Mint (#84DCC6)
-    '#84DCC6': '• [CO₂] Carbon Dioxide (95%)\n• [N₂] Nitrogen (4%)\n• [Ar] Argon (1%)',
-    
-    // New/Changed colors that need to be added
-    '#FFCAE2': '• [CO₂] Carbon Dioxide (96%)\n• [SO₂] Sulfur Dioxide (3%)\n• [Ar] Argon (1%)', // New Spotify color
-    '#8C8CD1': '• [N₂] Nitrogen (75%)\n• [O₂] Oxygen (23%)\n• [Ar] Argon (2%)', // New Threads color
+    // Fretboard-x: ORANGE (#FFD0BA) ATMOSPHERE: Orange from tholins + alkali metals
+    '#FFD0BA': '• [N₂] Nitrogen (46%)\n• [CO] Carbon Monoxide (18%)\n• [CH₄] Methane (12%)\n• [Na(s)] Sodium (7%)\n• [K(s)] Potassium (6%)\n• [Th] Organic Tholins (8%) \n• [Ar] Argon (3%)',
+
   };
   return atmospheres[planetColor]?.split('\n').map(line => 
     `<div style="margin-left: 1rem">${line}</div>`
@@ -111,9 +105,9 @@ const getAtmosphereComposition = (planetColor: string): string => {
 // merge*
 const getPlanetMass = (planetLabel: string): string => {
   const masses: { [key: string]: number } = {
-    'Fretboard-x': 1.4e24,
+    'Fretboard-x': 1.9e24,
     'LinkedIn': 1.7e25,
-    'GitHub': 5.7e26,
+    'GitHub': 7.5e26,
     'The Nutrimancer\'s Codex': 1.5e25,
     'Instagram': 2.3e26,
     'Mythos': 9.8e25,
@@ -172,17 +166,17 @@ const MILES_TO_METERS = 1609.344;  // miles to meters
 
 const calculateGravity = (planetLabel: string, size: number): string => {
   const masses: Record<string, number> = {
-    'Fretboard-x': 1.4e24,
-    'LinkedIn': 1.7e25,
-    'GitHub': 5.7e26,
+    'Fretboard-x': 1.9e24,
+    'LinkedIn': 1.2e25,
+    'GitHub': 5.7e25,
     'The Nutrimancer\'s Codex': 1.5e25,
-    'Instagram': 2.3e26,
-    'Mythos': 1.8e25,
+    'Instagram': 2.3e25,
+    'Mythos': 9.8e24,
     'Spotify': 1.2e24,
     'Borrowed Order': 1.4e25,
-    'Eidolon': 3.1e26,
+    'Eidolon': 1e25,
     'Threads': 9.6e24,
-    'Avernus': 1.5e25,
+    'Avernus': 3.1e25,
   };
 
   const mass = masses[planetLabel];
