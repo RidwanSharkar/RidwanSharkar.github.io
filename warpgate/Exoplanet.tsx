@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useMemo, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Mesh, Vector3, MathUtils, Color } from 'three';
+import { Mesh, Vector3, MathUtils, Color, MeshStandardMaterial } from 'three';
 import PlanetTrail from './PlanetTrail';
 import Explosion from './Explosion';
 
@@ -91,7 +91,16 @@ const Exoplanet: React.FC<ExoplanetProps> = ({ onRemove }) => {
       return () => clearTimeout(removeTimer);
     }, 15000); // 15000 ms = 15 seconds
 
-    return () => clearTimeout(fadeOutTimer);
+    return () => {
+      clearTimeout(fadeOutTimer);
+      // Dispose geometry and material on unmount
+      if (meshRef.current) {
+        meshRef.current.geometry.dispose();
+        if (meshRef.current.material instanceof MeshStandardMaterial) {
+          meshRef.current.material.dispose();
+        }
+      }
+    };
   }, [onRemove]);
 
   useFrame(() => {

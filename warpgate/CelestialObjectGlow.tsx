@@ -1,8 +1,8 @@
 // warpgate/CelestialObjectGlow.tsx
 
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useMemo, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { ShaderMaterial, Color, AdditiveBlending, DoubleSide } from 'three';
+import { ShaderMaterial, Color, AdditiveBlending, DoubleSide, Mesh } from 'three';
 import { glowVertexShader, glowFragmentShader } from './Glow';
 
 interface GlowProps {
@@ -19,12 +19,25 @@ export const CelestialObjectGlow: React.FC<GlowProps> = ({
   isSelected = false,
 }) => {
   const glowRef = useRef<ShaderMaterial>(null);
+  const meshRef = useRef<Mesh>(null);
 
   // Memoize uniforms to prevent recreation on every render
   const uniforms = useMemo(() => ({
     glowColor: { value: new Color(color) },
     intensity: { value: intensity }
   }), [color, intensity]);
+
+  // Cleanup geometry and material on unmount
+  useEffect(() => {
+    return () => {
+      if (meshRef.current) {
+        meshRef.current.geometry.dispose();
+        if (meshRef.current.material instanceof ShaderMaterial) {
+          meshRef.current.material.dispose();
+        }
+      }
+    };
+  }, []);
 
   useFrame(({ clock }) => {
     if (glowRef.current) {
@@ -37,7 +50,7 @@ export const CelestialObjectGlow: React.FC<GlowProps> = ({
   });
 
   return (
-    <mesh scale={[1.1, 1.1, 1.1]}>
+    <mesh ref={meshRef} scale={[1.1, 1.1, 1.1]}>
       <sphereGeometry args={[size, 32, 32]} />
       <shaderMaterial
         ref={glowRef}

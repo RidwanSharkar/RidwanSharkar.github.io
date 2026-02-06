@@ -23,6 +23,7 @@ interface MoonData {
   moonColor: string;
   link?: string;
   label?: string;
+  verticalOrbit?: boolean;
 }
 
 export interface PlanetData {
@@ -227,10 +228,19 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
         {
           orbitRadius: 1.0,
           orbitSpeed: 1.8,
-          size: 0.117,
+          size: 0.098,
           moonColor: '#CDCDCE',
           link: 'https://www.artstation.com/ridwansharkar',
           label: 'Art Station',
+        },
+        {
+          orbitRadius: 0.5,
+          orbitSpeed: 1.8,
+          size: 0.0775,
+          moonColor: '#E8E9ED',
+          link: 'https://www.facebook.com/MythosCarver/',
+          label: 'Facebook',
+          verticalOrbit: true,
         },
       ],
       logoTexturePath: '/textures/Instagram_logo.svg',

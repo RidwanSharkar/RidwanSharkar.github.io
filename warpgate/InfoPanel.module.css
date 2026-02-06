@@ -215,7 +215,7 @@
 .statsGrid {
   display: flex;
   flex-direction: column;
-  gap: 0.36rem;
+  gap: 0.15rem;
   width: 100%;
 }
 
@@ -226,9 +226,56 @@
 }
 
 /* atmosphere section */
-.statsGrid > div:last-child {
+.atmosphereSection {
+  display: flex;
   flex-direction: column;
-  margin-top: 0.45rem;
+  gap: 0.1rem;
+}
+
+.atmosphereHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 0 0 2px 0;
+  user-select: none;
+}
+
+.atmosphereHeader:hover {
+  opacity: 0.8;
+}
+
+.expandArrow {
+  font-size: 0.7rem;
+  transition: transform 0.3s ease;
+  opacity: 0.6;
+}
+
+.expandArrow.expanded {
+  transform: rotate(180deg);
+}
+
+.atmosphereDescription {
+  font-size: 0.73rem;
+  opacity: 0.85;
+  margin-top: 0.15rem;
+  line-height: 1.2;
+  color: #ffffff;
+  padding-left: 0.5rem;
+  border-left: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.atmosphereComposition {
+  font-size: 0.68rem;
+  opacity: 0.9;
+  line-height: 1.4;
+}
+
+/* Override for the atmosphere section to not use the default row flex */
+.statsGrid > div.atmosphereSection {
+  display: flex;
+  flex-direction: column;
+  white-space: normal;
 }
 
 .linkPanel {
@@ -307,6 +354,11 @@
   z-index: 1000;
   border: 2px solid transparent;
   background-clip: padding-box;
+}
+
+.moonStatsPanel h3 {
+  font-size: 0.82rem;
+  margin-bottom: 0.81rem;
 }
 
 .moonStatsPanel::before {
@@ -434,7 +486,7 @@
   left: 20px;
   display: flex;
   flex-direction: column;
-  gap: 1.22rem;
+  gap: 0.9rem;
   z-index: 1000;
 }
 

@@ -1,5 +1,5 @@
 // AsteroidField.tsx
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useMemo, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Mesh, Vector3, MeshStandardMaterial } from 'three';
 import { v4 as uuidv4 } from 'uuid';
@@ -49,6 +49,18 @@ interface AsteroidFieldProps {
    // const [hasCollided, setHasCollided] = useState(false);
     //const lastCollisionTime = useRef(0);
     //const collisionsRef = useRef<Set<number>>(new Set());
+
+    // Cleanup geometry and material on unmount
+    useEffect(() => {
+      return () => {
+        if (meshRef.current) {
+          meshRef.current.geometry.dispose();
+          if (materialRef.current) {
+            materialRef.current.dispose();
+          }
+        }
+      };
+    }, []);
   
     // Calculate collision point on planet surface
    // const calculateCollisionPoint = (asteroidPos: Vector3, planetPos: Vector3, planetSize: number): Vector3 => {

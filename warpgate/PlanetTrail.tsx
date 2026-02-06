@@ -1,6 +1,6 @@
-import React, { useRef } from 'react';
+import React, { useRef, useMemo, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Color, Mesh, Points, BufferAttribute, AdditiveBlending } from 'three';
+import { Color, Mesh, Points, BufferAttribute, AdditiveBlending, ShaderMaterial } from 'three';
 
 interface PlanetTrailProps {
   color: Color;
@@ -23,6 +23,44 @@ const PlanetTrail: React.FC<PlanetTrailProps> = ({
   const positionsRef = useRef<Float32Array>(new Float32Array(particlesCount * 3));
   const opacitiesRef = useRef<Float32Array>(new Float32Array(particlesCount));
   const scalesRef = useRef<Float32Array>(new Float32Array(particlesCount));
+
+  // Memoize shader material
+  const trailMaterial = useMemo(() => new ShaderMaterial({
+    transparent: true,
+    depthWrite: false,
+    blending: AdditiveBlending,
+    vertexShader: `
+      attribute float opacity;
+      attribute float scale;
+      varying float vOpacity;
+      void main() {
+        vOpacity = opacity;
+        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+        gl_Position = projectionMatrix * mvPosition;
+        gl_PointSize = scale * 15.0 * (300.0 / -mvPosition.z);
+      }
+    `,
+    fragmentShader: `
+      varying float vOpacity;
+      uniform vec3 uColor;
+      void main() {
+        float d = length(gl_PointCoord - vec2(0.5));
+        float strength = smoothstep(0.5, 0.1, d);
+        vec3 glowColor = mix(uColor, vec3(1.0), 0.3);
+        gl_FragColor = vec4(glowColor, vOpacity * strength);
+      }
+    `,
+    uniforms: {
+      uColor: { value: color },
+    },
+  }), [color]);
+
+  // Dispose material on unmount
+  useEffect(() => {
+    return () => {
+      trailMaterial.dispose();
+    };
+  }, [trailMaterial]);
 
   useFrame(() => {
     if (!particlesRef.current?.parent || !meshRef.current) return;
@@ -54,20 +92,27 @@ const PlanetTrail: React.FC<PlanetTrailProps> = ({
     if (particlesRef.current) {
       const geometry = particlesRef.current.geometry;
 
-      (geometry.attributes.position as BufferAttribute).array =
-        positionsRef.current;
-      geometry.attributes.position.needsUpdate = true;
+      // Update buffer attributes in place instead of reassigning array
+      const positionAttr = geometry.attributes.position as BufferAttribute;
+      for (let i = 0; i < positionsRef.current.length; i++) {
+        positionAttr.array[i] = positionsRef.current[i];
+      }
+      positionAttr.needsUpdate = true;
 
       if (geometry.attributes.opacity) {
-        (geometry.attributes.opacity as BufferAttribute).array =
-          opacitiesRef.current;
-        geometry.attributes.opacity.needsUpdate = true;
+        const opacityAttr = geometry.attributes.opacity as BufferAttribute;
+        for (let i = 0; i < opacitiesRef.current.length; i++) {
+          opacityAttr.array[i] = opacitiesRef.current[i];
+        }
+        opacityAttr.needsUpdate = true;
       }
 
       if (geometry.attributes.scale) {
-        (geometry.attributes.scale as BufferAttribute).array =
-          scalesRef.current;
-        geometry.attributes.scale.needsUpdate = true;
+        const scaleAttr = geometry.attributes.scale as BufferAttribute;
+        for (let i = 0; i < scalesRef.current.length; i++) {
+          scaleAttr.array[i] = scalesRef.current[i];
+        }
+        scaleAttr.needsUpdate = true;
       }
     }
   });
@@ -94,35 +139,7 @@ const PlanetTrail: React.FC<PlanetTrailProps> = ({
           itemSize={1}
         />
       </bufferGeometry>
-      <shaderMaterial
-        transparent
-        depthWrite={false}
-        blending={AdditiveBlending}
-        vertexShader={`
-          attribute float opacity;
-          attribute float scale;
-          varying float vOpacity;
-          void main() {
-            vOpacity = opacity;
-            vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-            gl_Position = projectionMatrix * mvPosition;
-            gl_PointSize = scale * 15.0 * (300.0 / -mvPosition.z);
-          }
-        `}
-        fragmentShader={`
-          varying float vOpacity;
-          uniform vec3 uColor;
-          void main() {
-            float d = length(gl_PointCoord - vec2(0.5));
-            float strength = smoothstep(0.5, 0.1, d);
-            vec3 glowColor = mix(uColor, vec3(1.0), 0.3);
-            gl_FragColor = vec4(glowColor, vOpacity * strength);
-          }
-        `}
-        uniforms={{
-          uColor: { value: color },
-        }}
-      />
+      <primitive object={trailMaterial} attach="material" />
     </points>
   );
 };

@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useMemo, useState, useCallback } from 'react';
+import React, { forwardRef, useRef, useMemo, useState, useCallback, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Mesh, ShaderMaterial, Color, AdditiveBlending, Points, BufferGeometry, Float32BufferAttribute, Vector3 } from 'three';
 
@@ -371,6 +371,12 @@ const PulsarBeamParticles: React.FC<PulsarBeamParticlesProps> = ({ beam, geometr
     });
   }, [beam.duration, direction, beamLength]);
   
+  useEffect(() => {
+    return () => {
+      material.dispose();
+    };
+  }, [material]);
+  
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
     if (materialRef.current) {
@@ -419,6 +425,12 @@ const SolarFlareParticles: React.FC<SolarFlareParticlesProps> = ({ flare, geomet
     });
   }, [flare.origin, flare.direction, flare.duration, flare.scale, flare.spread, flare.distance, flare.speed]);
   
+  useEffect(() => {
+    return () => {
+      material.dispose();
+    };
+  }, [material]);
+  
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
     if (materialRef.current) {
@@ -454,6 +466,7 @@ const Sun = forwardRef<Mesh, SunProps>(({
   const flareIdCounterRef = useRef<number>(0);
   const lastPulsarTimeRef = useRef<number>(0);
   const pulsarIdCounterRef = useRef<number>(0);
+  const flareTimersRef = useRef<NodeJS.Timeout[]>([]);
   
   // Track active solar flares
   const [activeFlares, setActiveFlares] = useState<SolarFlare[]>([]);
@@ -643,6 +656,21 @@ const Sun = forwardRef<Mesh, SunProps>(({
     return geometry;
   }, []);
 
+  // Cleanup timers and dispose resources on unmount
+  useEffect(() => {
+    return () => {
+      // Clear all pending flare timers
+      flareTimersRef.current.forEach(timer => clearTimeout(timer));
+      flareTimersRef.current = [];
+      
+      // Dispose geometries and materials
+      particleGeometry.dispose();
+      particleMaterial.dispose();
+      flareGeometry.dispose();
+      pulsarGeometry.dispose();
+    };
+  }, [particleGeometry, particleMaterial, flareGeometry, pulsarGeometry]);
+
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
     
@@ -674,7 +702,8 @@ const Sun = forwardRef<Mesh, SunProps>(({
       // Spawn 1-3 flares at once for more dramatic effect
       const flareCount = 1 + Math.floor(Math.random() * 2);
       for (let i = 0; i < flareCount; i++) {
-        setTimeout(() => spawnFlare(t + i * 0.3), i * 300);
+        const timer = setTimeout(() => spawnFlare(t + i * 0.3), i * 300);
+        flareTimersRef.current.push(timer);
       }
       lastFlareTimeRef.current = t;
     }

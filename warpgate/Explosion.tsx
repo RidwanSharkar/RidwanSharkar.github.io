@@ -31,10 +31,6 @@ const Explosion: React.FC<ExplosionProps> = ({
 
     // Create particles
     for (let i = 0; i < particleCount; i++) {
-      const geometry = new BufferGeometry();
-      const vertices = new Float32Array([0, 0, 0]); // Single point
-      geometry.setAttribute('position', new BufferAttribute(vertices, 3));
-
       const particle = new Mesh(
         new SphereGeometry(0.05 * size, 8, 8),
         new MeshStandardMaterial({
@@ -67,6 +63,11 @@ const Explosion: React.FC<ExplosionProps> = ({
 
     return () => {
       particles.current.forEach(particle => {
+        // Dispose geometry and material
+        particle.mesh.geometry.dispose();
+        if (particle.mesh.material instanceof MeshStandardMaterial) {
+          particle.mesh.material.dispose();
+        }
         group.remove(particle.mesh);
       });
       particles.current = [];
@@ -80,6 +81,11 @@ const Explosion: React.FC<ExplosionProps> = ({
     if (elapsedTime > duration) {       // Remove explosion
       if (groupRef.current) {
         particles.current.forEach(particle => {
+          // Dispose geometry and material
+          particle.mesh.geometry.dispose();
+          if (particle.mesh.material instanceof MeshStandardMaterial) {
+            particle.mesh.material.dispose();
+          }
           groupRef.current?.remove(particle.mesh);
         });
         particles.current = [];

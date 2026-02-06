@@ -1,7 +1,7 @@
 // Moon.tsx
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Mesh } from 'three';
+import { Mesh, MeshStandardMaterial } from 'three';
 import { Html } from '@react-three/drei';
 
 interface MoonProps {
@@ -12,6 +12,7 @@ interface MoonProps {
   link?: string;
   label?: string;
   startAngle?: number;
+  verticalOrbit?: boolean;
 }
 
 const Moon: React.FC<MoonProps> = ({
@@ -22,16 +23,37 @@ const Moon: React.FC<MoonProps> = ({
   link,
   label,
   startAngle,
+  verticalOrbit = false,
 }) => {
   const meshRef = useRef<Mesh>(null);
   const [hovered, setHovered] = useState(false);
+
+  // Cleanup geometry and material on unmount
+  useEffect(() => {
+    return () => {
+      if (meshRef.current) {
+        meshRef.current.geometry.dispose();
+        if (meshRef.current.material instanceof MeshStandardMaterial) {
+          meshRef.current.material.dispose();
+        }
+      }
+    };
+  }, []);
 
   useFrame(({ clock }) => {
     const elapsed = clock.getElapsedTime();
     if (meshRef.current) {
       const angle = (elapsed * orbitSpeed) + (startAngle || 0);
-      meshRef.current.position.x = Math.cos(angle) * orbitRadius;
-      meshRef.current.position.z = Math.sin(angle) * orbitRadius;
+      if (verticalOrbit) {
+        // Vertical orbit: orbit in the x-y plane
+        meshRef.current.position.x = Math.cos(angle) * orbitRadius;
+        meshRef.current.position.y = Math.sin(angle) * orbitRadius;
+        meshRef.current.position.z = 0;
+      } else {
+        // Horizontal orbit: orbit in the x-z plane
+        meshRef.current.position.x = Math.cos(angle) * orbitRadius;
+        meshRef.current.position.z = Math.sin(angle) * orbitRadius;
+      }
     }
   });
 

@@ -8,7 +8,7 @@ import { PlanetData } from './EnhancedPlanetGroup';
 import { ThreeEvent } from '@react-three/fiber';
 import PlanetTrail from './PlanetTrail';
 
-/* ====================================== SHADERS (PRECOMPILE AT SOME POINT) ====================================== */
+/* ====================================== SHADERS (PRECOMPILE if necessary?) ====================================== */
 
 const atmosphereVertexShader = `
 varying vec3 vNormal;
@@ -146,6 +146,7 @@ const EnhancedPlanet = forwardRef<Mesh, EnhancedPlanetProps>(({
 }, ref) => {
   const atmosphereRef = useRef<Mesh>(null);
   const [hovered, setHovered] = useState(false);
+  const hoverTimeoutRef = useRef<NodeJS.Timeout>();
 
   const logoTexture = useLoader(
     TextureLoader,
@@ -201,6 +202,22 @@ const EnhancedPlanet = forwardRef<Mesh, EnhancedPlanetProps>(({
       (ref as React.MutableRefObject<Mesh | null>).current = node;
     }
   };
+
+  // Cleanup resources on unmount
+  useEffect(() => {
+    return () => {
+      // Clear any pending hover timeouts
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
+      
+      // Dispose textures and materials
+      logoTexture.dispose();
+      ringAlphaTexture.dispose();
+      atmosphereMaterial.dispose();
+      surfaceMaterial.dispose();
+    };
+  }, [logoTexture, ringAlphaTexture, atmosphereMaterial, surfaceMaterial]);
 
   useFrame(({ clock }) => {
     const elapsed = clock.getElapsedTime();
@@ -268,13 +285,15 @@ const EnhancedPlanet = forwardRef<Mesh, EnhancedPlanetProps>(({
   /* ====================================== HOVER ====================================== */
   const handlePointerOver = (e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation();
-    setTimeout(() => setHovered(true), 50);
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    hoverTimeoutRef.current = setTimeout(() => setHovered(true), 50);
     document.body.style.cursor = 'pointer';
   };
   
   const handlePointerOut = (e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation();
-    setTimeout(() => setHovered(false), 50);
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    hoverTimeoutRef.current = setTimeout(() => setHovered(false), 50);
     if (!selected) document.body.style.cursor = 'auto';
   };
   
