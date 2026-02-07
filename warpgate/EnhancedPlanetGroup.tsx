@@ -397,7 +397,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       />
       
       {/* Render unique orbit paths */}
-      {uniqueOrbitRadii.map((orbitRadius, index) => (
+      {uniqueOrbitRadii.slice(0, -1).map((orbitRadius, index) => (
         <mesh key={`orbit-${index}`} rotation-x={Math.PI / 2}>
           <ringGeometry
             args={[
