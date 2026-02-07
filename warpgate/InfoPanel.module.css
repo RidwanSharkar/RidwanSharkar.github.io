@@ -261,8 +261,7 @@
   margin-top: 0.15rem;
   line-height: 1.2;
   color: #ffffff;
-  padding-left: 0.5rem;
-  border-left: 2px solid rgba(255, 255, 255, 0.1);
+  padding-left: -0.15rem;
 }
 
 .atmosphereComposition {
