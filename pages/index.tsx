@@ -7,12 +7,16 @@ import PlanetCanvas from '../warpgate/SpaceTime';
 import InfoPanel from '../warpgate/InfoPanel';
 import FixedInfoPanel from '../warpgate/SoundBar'; 
 import AudioPlayer from '../warpgate/SoundPlayer'; 
+import TimeWarp from '../warpgate/TimeWarp';
 import { PlanetData } from '../warpgate/EnhancedPlanetGroup';
 import styles from '../styles/NebulaToggle.module.css';
+import panelStyles from '../warpgate/InfoPanel.module.css';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const HomePage: NextPage = () => {
   const [selectedPlanet, setSelectedPlanet] = useState<{ index: number; planet: PlanetData } | null>(null);
   const [showNebulas, setShowNebulas] = useState(true);
+  const [timeScale, setTimeScale] = useState(1);
 
   const handleSelectPlanet = (index: number, planet: PlanetData) => {
     setSelectedPlanet(prev => (prev?.index === index ? null : { index, planet }));
@@ -39,6 +43,7 @@ const HomePage: NextPage = () => {
         onSelectPlanet={handleSelectPlanet} 
         selectedPlanet={selectedPlanet}
         showNebulas={showNebulas}
+        timeScale={timeScale}
       />
 
       {/* InfoPanel overlay */}
@@ -72,6 +77,19 @@ const HomePage: NextPage = () => {
           </div>
         }
       />
+
+      {/* Time Warp Center Panel */}
+      <AnimatePresence>
+        <motion.div
+          className={panelStyles.fixedBottomCenterPanel}
+          initial={{ opacity: 0, y: 20, x: '-50%' }}
+          animate={{ opacity: 1, y: 0, x: '-50%' }}
+          exit={{ opacity: 0, y: 20, x: '-50%' }}
+          transition={{ duration: 0.5 }}
+        >
+          <TimeWarp value={timeScale} onChange={setTimeScale} />
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 };

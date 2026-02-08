@@ -83,7 +83,7 @@ const getAtmosphereComposition = (planetColor: string) => {
     
     // GitHub: PURPLE (#A55BFF)
     '#A55BFF': {
-      description: 'The presence of ionized calcium coupled with heavy noble gases accumulation in the upper thermosphere result in intense magnetospheric activity, which interacts with the hydrogen base to produce planet-wide violet aurorae.',
+      description: 'The presence of ionized calcium coupled with heavy noble gas accumulation in the upper thermosphere result in intense magnetospheric activity, which interacts with the hydrogen base to produce planet-wide violet aurorae.',
       composition: '• [H₂] Hydrogen (61%)\n• [He] Helium (24%)\n• [CH₄] Methane (6%)\n• [NH₃] Ammonia (3%)\n• [Xe] Xenon (3%)\n• [K] Potassium Vapor (2%)\n• [Ca⁺] Ionized Calcium (1%)'
     },
 

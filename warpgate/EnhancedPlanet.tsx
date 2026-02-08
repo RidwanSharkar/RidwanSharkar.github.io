@@ -119,6 +119,7 @@ interface EnhancedPlanetProps extends PlanetData {
   isBinary?: boolean;
   binaryOffset?: number;
   binarySpeed?: number;
+  timeScale: number;
 }
 
 
@@ -143,10 +144,12 @@ const EnhancedPlanet = forwardRef<Mesh, EnhancedPlanetProps>(({
   isBinary,
   binaryOffset,
   binarySpeed,
+  timeScale,
 }, ref) => {
   const atmosphereRef = useRef<Mesh>(null);
   const [hovered, setHovered] = useState(false);
   const hoverTimeoutRef = useRef<NodeJS.Timeout>();
+  const accumulatedTimeRef = useRef(0);
 
   const logoTexture = useLoader(
     TextureLoader,
@@ -219,8 +222,10 @@ const EnhancedPlanet = forwardRef<Mesh, EnhancedPlanetProps>(({
     };
   }, [logoTexture, ringAlphaTexture, atmosphereMaterial, surfaceMaterial]);
 
-  useFrame(({ clock }) => {
-    const elapsed = clock.getElapsedTime();
+  useFrame(({ clock }, delta) => {
+    accumulatedTimeRef.current += delta * timeScale;
+    const elapsed = accumulatedTimeRef.current;
+    
     if (meshRef.current) {
       if (isBinary && binaryOffset !== undefined && binarySpeed !== undefined) {
         // Calculate the binary orbit position
@@ -243,7 +248,7 @@ const EnhancedPlanet = forwardRef<Mesh, EnhancedPlanetProps>(({
         meshRef.current.position.z = orbitRadius * Math.sin(angle);
       }
 
-      meshRef.current.rotation.y += rotationSpeed;
+      meshRef.current.rotation.y += rotationSpeed * timeScale;
 
       // Update atmosphere and logo positions
       if (atmosphereRef.current) {
@@ -251,7 +256,7 @@ const EnhancedPlanet = forwardRef<Mesh, EnhancedPlanetProps>(({
         atmosphereRef.current.rotation.copy(meshRef.current.rotation);
       }
       if (logoRef.current) {
-        logoRef.current.rotation.y += 0.01;
+        logoRef.current.rotation.y += 0.01 * timeScale;
       }
       
       // Animate surface shader time for surface animation
@@ -380,6 +385,7 @@ const EnhancedPlanet = forwardRef<Mesh, EnhancedPlanetProps>(({
           <Moon
             key={`moon-${idx}`}
             {...moon}
+            timeScale={timeScale}
           />
         ))}
 

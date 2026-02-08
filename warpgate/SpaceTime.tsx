@@ -26,9 +26,10 @@ interface PlanetCanvasProps {
   onSelectPlanet: (index: number, planet: PlanetData) => void;
   selectedPlanet: { index: number; planet: PlanetData } | null;
   showNebulas?: boolean;
+  timeScale: number;
 }
 
-const PlanetCanvas: React.FC<PlanetCanvasProps> = ({ onSelectPlanet, selectedPlanet, showNebulas = true }) => {
+const PlanetCanvas: React.FC<PlanetCanvasProps> = ({ onSelectPlanet, selectedPlanet, showNebulas = true, timeScale }) => {
   return (
     <Canvas camera={{ position: [0, 20, 25], fov: 60 }} className="w-full h-full">
       <ResponsiveCamera />
@@ -53,6 +54,7 @@ const PlanetCanvas: React.FC<PlanetCanvasProps> = ({ onSelectPlanet, selectedPla
         <EnhancedPlanetGroup 
           onSelectPlanet={onSelectPlanet} 
           selectedPlanet={selectedPlanet} 
+          timeScale={timeScale}
         />
       </React.Suspense>
 

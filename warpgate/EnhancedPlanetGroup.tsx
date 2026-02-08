@@ -14,6 +14,7 @@ extend({ OrbitControls, TransformControls });
 interface EnhancedPlanetGroupProps {
   onSelectPlanet: (index: number, planet: PlanetData) => void;
   selectedPlanet: { index: number; planet: PlanetData } | null;
+  timeScale: number;
 }
 
 interface MoonData {
@@ -57,7 +58,7 @@ interface ExplosionData {
 }
 
 //========================================================================================================
-const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlanet, selectedPlanet }) => {
+const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlanet, selectedPlanet, timeScale }) => {
   const [explosions, setExplosions] = useState<ExplosionData[]>([]);
   const planetRefs = useRef<Array<React.RefObject<Mesh>>>([]);
 
@@ -388,12 +389,13 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
 
   return (
     <Suspense fallback={null}> 
-      <Sun />
+      <Sun timeScale={timeScale} />
       
       <AsteroidField 
         planetPositions={getPlanetPositions()} 
         planetSizes={getPlanetSizes()}
         onCollision={handleCollision} 
+        timeScale={timeScale}
       />
       
       {/* Render unique orbit paths */}
@@ -433,12 +435,13 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
           selected={selectedPlanet?.index === index}
           collisionTriggered={false} // Initialize
           ref={planetRefs.current[index]} // tracks position
+          timeScale={timeScale}
         />
       ))}
 
       {/* Render Exoplanets */}
       {exoplanets.map(id => (
-        <Exoplanet key={id} onRemove={() => removeExoplanet(id)} />
+        <Exoplanet key={id} onRemove={() => removeExoplanet(id)} timeScale={timeScale} />
       ))}
 
       {/* Render active explosions */}

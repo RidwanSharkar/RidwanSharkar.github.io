@@ -13,6 +13,7 @@ interface MoonProps {
   label?: string;
   startAngle?: number;
   verticalOrbit?: boolean;
+  timeScale?: number;
 }
 
 const Moon: React.FC<MoonProps> = ({
@@ -24,9 +25,11 @@ const Moon: React.FC<MoonProps> = ({
   label,
   startAngle,
   verticalOrbit = false,
+  timeScale = 1,
 }) => {
   const meshRef = useRef<Mesh>(null);
   const [hovered, setHovered] = useState(false);
+  const accumulatedTimeRef = useRef(0);
 
   // Cleanup geometry and material on unmount
   useEffect(() => {
@@ -40,8 +43,9 @@ const Moon: React.FC<MoonProps> = ({
     };
   }, []);
 
-  useFrame(({ clock }) => {
-    const elapsed = clock.getElapsedTime();
+  useFrame(({ clock }, delta) => {
+    accumulatedTimeRef.current += delta * timeScale;
+    const elapsed = accumulatedTimeRef.current;
     if (meshRef.current) {
       const angle = (elapsed * orbitSpeed) + (startAngle || 0);
       if (verticalOrbit) {

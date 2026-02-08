@@ -14,6 +14,7 @@ interface AsteroidProps {
     planetSizes: number[];
     onCollision: (planetIndex: number, position: Vector3) => void;
     color: string;
+    timeScale: number;
 }
 
 interface AsteroidData {
@@ -29,6 +30,7 @@ interface AsteroidFieldProps {
     planetPositions: Vector3[];
     planetSizes: number[];
     onCollision: (planetIndex: number, position: Vector3) => void;
+    timeScale: number;
 }
 
   
@@ -39,16 +41,15 @@ interface AsteroidFieldProps {
     orbitCenter,
     //planetPositions,
     //planetSizes,
-   //onCollision,
-    color
+    //onCollision,
+    color,
+    timeScale
   }) => {
     const meshRef = useRef<Mesh | null>(null);
     const materialRef = useRef<MeshStandardMaterial | null>(null);
     const initialAngle = useMemo(() => Math.random() * Math.PI * 2, []);
     const yOffset = useMemo(() => (Math.random() - 0.5) * 2.2, []); // field height 
-   // const [hasCollided, setHasCollided] = useState(false);
-    //const lastCollisionTime = useRef(0);
-    //const collisionsRef = useRef<Set<number>>(new Set());
+    const accumulatedTimeRef = useRef(0);
 
     // Cleanup geometry and material on unmount
     useEffect(() => {
@@ -89,10 +90,11 @@ interface AsteroidFieldProps {
       }
     };*/
   
-    useFrame(({ clock }) => {
+    useFrame(({ clock }, delta) => {
       if (!meshRef.current) return;
   
-      const time = clock.getElapsedTime();
+      accumulatedTimeRef.current += delta * timeScale;
+      const time = accumulatedTimeRef.current;
   
       // if (hasCollided) {
       //   if (time - lastCollisionTime.current > 2) {
@@ -110,8 +112,8 @@ interface AsteroidFieldProps {
       meshRef.current.position.z = orbitCenter.z + Math.sin(angle) * orbitRadius;
   
 
-      meshRef.current.rotation.x += 0.01;
-      meshRef.current.rotation.y += 0.01;
+      meshRef.current.rotation.x += 0.01 * timeScale;
+      meshRef.current.rotation.y += 0.01 * timeScale;
   
 
       // Commenting out collision detection
@@ -158,7 +160,8 @@ interface AsteroidFieldProps {
   export const AsteroidField: React.FC<AsteroidFieldProps> = ({ 
     planetPositions, 
     planetSizes,
-    onCollision 
+    onCollision,
+    timeScale
   }) => {
     const asteroidCount = 450;
     const asteroids: AsteroidData[] = useMemo(() => {
@@ -188,6 +191,7 @@ interface AsteroidFieldProps {
         planetSizes={planetSizes}
         onCollision={onCollision}
         color={asteroid.color}
+        timeScale={timeScale}
     />
         ))}
       </group>
