@@ -9,6 +9,7 @@ const nextConfig = {
     config.ignoreWarnings = [/Module\.issuer/];
     return config;
   },
+  turbopack: {},
 };
 
 export default nextConfig;

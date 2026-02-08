@@ -389,7 +389,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
 
   return (
     <Suspense fallback={null}> 
-      <Sun timeScale={timeScale} />
+      <Sun />
       
       <AsteroidField 
         planetPositions={getPlanetPositions()} 
@@ -441,7 +441,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
 
       {/* Render Exoplanets */}
       {exoplanets.map(id => (
-        <Exoplanet key={id} onRemove={() => removeExoplanet(id)} timeScale={timeScale} />
+        <Exoplanet key={id} onRemove={() => removeExoplanet(id)} />
       ))}
 
       {/* Render active explosions */}

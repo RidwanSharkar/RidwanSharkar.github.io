@@ -33,7 +33,10 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [volume, setVolume] = useState(0.5);
-  const [currentTrack, setCurrentTrack] = useState<Track>({ id: 0, icon: "", src });
+  const [currentTrack, setCurrentTrack] = useState<Track>(() => {
+    const initialTrack = tracks.find(t => t.src === src);
+    return initialTrack || { id: 0, icon: "", src };
+  });
   const [trackOffset, setTrackOffset] = useState(0);
 
   const visibleTracks = tracks.slice(trackOffset, trackOffset + VISIBLE_TRACKS);
@@ -124,7 +127,13 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
               onClick={() => selectTrack(track)}
               className={`${styles.trackButton} ${currentTrack.id === track.id ? styles.activeTrack : ''}`}
             >
-              <Image src={track.icon} alt={`Track ${track.id}`} width={20} height={20} />
+              <Image 
+                src={track.icon} 
+                alt={`Track ${track.id}`} 
+                width={20} 
+                height={20} 
+                priority={track.id <= VISIBLE_TRACKS}
+              />
             </button>
           ))}
         </div>

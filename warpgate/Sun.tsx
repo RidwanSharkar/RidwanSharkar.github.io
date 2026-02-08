@@ -464,7 +464,7 @@ const Sun = forwardRef<Mesh, SunProps>(({
   const particleMaterialRef = useRef<ShaderMaterial>(null!);
   const lastFlareTimeRef = useRef<number>(0);
   const flareIdCounterRef = useRef<number>(0);
-  const lastPulsarTimeRef = useRef<number>(0);
+  const nextPulsarTimeRef = useRef<number>(30 + Math.random() * 60);
   const pulsarIdCounterRef = useRef<number>(0);
   const flareTimersRef = useRef<NodeJS.Timeout[]>([]);
   
@@ -713,18 +713,15 @@ const Sun = forwardRef<Mesh, SunProps>(({
       prev.filter(flare => (t - flare.startTime) < flare.duration + 0.5)
     );
     
-    // Spawn pulsar beam every 20 seconds
-    const timeSinceLastPulsar = t - lastPulsarTimeRef.current;
-    const pulsarInterval = 20 + Math.random() * 30; // Every 20-50 seconds
-    
-    if (timeSinceLastPulsar > pulsarInterval || lastPulsarTimeRef.current === 0) {
+    // Spawn pulsar beam every 30-90 seconds
+    if (t > nextPulsarTimeRef.current) {
       const newBeam: PulsarBeam = {
         id: pulsarIdCounterRef.current++,
         startTime: t,
         duration: 2.0 + Math.random() * 4.0, // 2-6 seconds
       };
       setActivePulsarBeam(newBeam);
-      lastPulsarTimeRef.current = t;
+      nextPulsarTimeRef.current = t + 30 + Math.random() * 60;
     }
     
     // Clean up expired pulsar beam

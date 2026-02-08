@@ -302,10 +302,6 @@ const EnhancedPlanet = forwardRef<Mesh, EnhancedPlanetProps>(({
     if (!selected) document.body.style.cursor = 'auto';
   };
   
-  useEffect(() => {
-    console.log(`Planet ${index} selected: ${selected}`);
-  }, [selected, index]);
-
   // cursor style
   useEffect(() => {
     if (selected) {
