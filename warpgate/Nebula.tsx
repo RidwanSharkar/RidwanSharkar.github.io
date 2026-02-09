@@ -612,6 +612,12 @@ const NebulaCloud: React.FC<NebulaCloudProps> = ({
   const meshRef = useRef<Mesh>(null);
   const materialRef = useRef<ShaderMaterial>(null);
 
+  // Individual pulse parameters to avoid synchronization
+  const { pulseSpeed, pulseOffset } = useMemo(() => ({
+    pulseSpeed: 0.3 + Math.random() * 0.4,
+    pulseOffset: Math.random() * Math.PI * 2
+  }), []);
+
   const uniforms = useMemo(() => ({
     color1: { value: new Color(color1) },
     color2: { value: new Color(color2) },
@@ -620,8 +626,12 @@ const NebulaCloud: React.FC<NebulaCloudProps> = ({
   }), [color1, color2, opacity]);
 
   useFrame(({ clock }) => {
+    const t = clock.getElapsedTime();
     if (materialRef.current) {
-      materialRef.current.uniforms.time.value = clock.getElapsedTime();
+      materialRef.current.uniforms.time.value = t;
+      // Pulse opacity: fluctuates between 40% and 100% of base opacity
+      const pulse = 0.5 + 0.5 * Math.sin(t * pulseSpeed + pulseOffset);
+      materialRef.current.uniforms.opacity.value = opacity * pulse;
     }
     if (meshRef.current) {
       meshRef.current.rotation.z += rotationSpeed;
@@ -673,6 +683,12 @@ const SpiralNebula: React.FC<SpiralNebulaProps> = ({
   const materialRef = useRef<ShaderMaterial>(null);
   const baseRotation = useRef(initialRotation);
 
+  // Individual pulse parameters based on seed
+  const { pulseSpeed, pulseOffset } = useMemo(() => ({
+    pulseSpeed: 0.3 + (seed % 0.4),
+    pulseOffset: seed * Math.PI
+  }), [seed]);
+
   const uniforms = useMemo(() => ({
     color1: { value: new Color(color1) },
     color2: { value: new Color(color2) },
@@ -692,12 +708,16 @@ const SpiralNebula: React.FC<SpiralNebulaProps> = ({
   }, [initialRotation]);
 
   useFrame(({ clock }) => {
+    const t = clock.getElapsedTime();
     if (materialRef.current) {
-      materialRef.current.uniforms.time.value = clock.getElapsedTime();
+      materialRef.current.uniforms.time.value = t;
+      // Pulse opacity: fluctuates between 40% and 100% of base opacity
+      const pulse = 0.5 + 0.5 * Math.sin(t * pulseSpeed + pulseOffset);
+      materialRef.current.uniforms.opacity.value = opacity * pulse;
     }
     if (meshRef.current) {
       // Spin around the spiral's local Z axis while maintaining tilt
-      meshRef.current.rotation.z = baseRotation.current[2] + clock.getElapsedTime() * rotationSpeed * 10;
+      meshRef.current.rotation.z = baseRotation.current[2] + t * rotationSpeed * 10;
     }
   });
 
@@ -745,6 +765,12 @@ const PillarNebula: React.FC<PillarNebulaProps> = ({
   const meshRef = useRef<Mesh>(null);
   const materialRef = useRef<ShaderMaterial>(null);
 
+  // Individual pulse parameters based on seed
+  const { pulseSpeed, pulseOffset } = useMemo(() => ({
+    pulseSpeed: 0.2 + (seed % 0.3),
+    pulseOffset: seed * Math.PI
+  }), [seed]);
+
   const uniforms = useMemo(() => ({
     color1: { value: new Color(color1) },
     color2: { value: new Color(color2) },
@@ -755,8 +781,12 @@ const PillarNebula: React.FC<PillarNebulaProps> = ({
   }), [color1, color2, color3, opacity, seed]);
 
   useFrame(({ clock }) => {
+    const t = clock.getElapsedTime();
     if (materialRef.current) {
-      materialRef.current.uniforms.time.value = clock.getElapsedTime();
+      materialRef.current.uniforms.time.value = t;
+      // Pulse opacity: fluctuates between 40% and 100% of base opacity
+      const pulse = 0.7 + 0.3 * Math.sin(t * pulseSpeed + pulseOffset);
+      materialRef.current.uniforms.opacity.value = opacity * pulse;
     }
     if (meshRef.current) {
       meshRef.current.rotation.z += rotationSpeed;
@@ -807,6 +837,12 @@ const WispyNebula: React.FC<WispyNebulaProps> = ({
   const meshRef = useRef<Mesh>(null);
   const materialRef = useRef<ShaderMaterial>(null);
 
+  // Individual pulse parameters based on seed
+  const { pulseSpeed, pulseOffset } = useMemo(() => ({
+    pulseSpeed: 0.25 + (seed % 0.35),
+    pulseOffset: seed * Math.PI
+  }), [seed]);
+
   const uniforms = useMemo(() => ({
     color1: { value: new Color(color1) },
     color2: { value: new Color(color2) },
@@ -817,8 +853,12 @@ const WispyNebula: React.FC<WispyNebulaProps> = ({
   }), [color1, color2, color3, opacity, seed]);
 
   useFrame(({ clock }) => {
+    const t = clock.getElapsedTime();
     if (materialRef.current) {
-      materialRef.current.uniforms.time.value = clock.getElapsedTime();
+      materialRef.current.uniforms.time.value = t;
+      // Pulse opacity: fluctuates between 40% and 100% of base opacity
+      const pulse = 0.7 + 0.3 * Math.sin(t * pulseSpeed + pulseOffset);
+      materialRef.current.uniforms.opacity.value = opacity * pulse;
     }
     if (meshRef.current) {
       meshRef.current.rotation.z += rotationSpeed;
@@ -848,8 +888,16 @@ const NebulaDust: React.FC<{
   color: string; 
   count: number;
   spread: number;
-}> = ({ position, color, count, spread }) => {
+  opacity?: number;
+}> = ({ position, color, count, spread, opacity = 0.1 }) => {
   const pointsRef = useRef<Points>(null);
+  const materialRef = useRef<any>(null);
+
+  // Individual pulse parameters
+  const { pulseSpeed, pulseOffset } = useMemo(() => ({
+    pulseSpeed: 0.2 + Math.random() * 0.4,
+    pulseOffset: Math.random() * Math.PI * 2
+  }), []);
 
   const [positions, sizes] = useMemo(() => {
     const pos = new Float32Array(count * 3);
@@ -873,9 +921,15 @@ const NebulaDust: React.FC<{
   }, [count, spread]);
 
   useFrame(({ clock }) => {
+    const t = clock.getElapsedTime();
     if (pointsRef.current) {
-      pointsRef.current.rotation.y = clock.getElapsedTime() * 0.005;
-      pointsRef.current.rotation.x = clock.getElapsedTime() * 0.003;
+      pointsRef.current.rotation.y = t * 0.005;
+      pointsRef.current.rotation.x = t * 0.003;
+    }
+    if (materialRef.current) {
+      // Pulse opacity: fluctuates between 40% and 100% of base opacity
+      const pulse = 0.7 + 0.3 * Math.sin(t * pulseSpeed + pulseOffset);
+      materialRef.current.opacity = opacity * pulse;
     }
   });
 
@@ -896,10 +950,11 @@ const NebulaDust: React.FC<{
         />
       </bufferGeometry>
       <pointsMaterial
+        ref={materialRef}
         color={color}
         size={0.3}
         transparent
-        opacity={0.1}
+        opacity={opacity}
         sizeAttenuation
         depthWrite={false}
         blending={AdditiveBlending}
@@ -985,7 +1040,7 @@ const wispyColorPalettes = [
 const Nebula: React.FC = () => {
   // Generate truly random nebulae - SPHERICALLY distributed with CLUSTERING
   const nebulae: NebulaConfig[] = useMemo(() => {
-    const count = 12 + Math.floor(Math.random() * 16); // 10-17 nebulae
+    const count = 20 + Math.floor(Math.random() * 15); // 10-17 nebulae
     const generated: NebulaConfig[] = [];
     
     // Generate 2-4 cluster centers for nebulae to group around
@@ -1110,8 +1165,8 @@ const Nebula: React.FC = () => {
       color1: palette.c1,
       color2: palette.c2,
       color3: palette.c3,
-      scaleX: 12.5 + Math.random() * 40, // More balanced size
-      scaleY: 12.5 + Math.random() * 40, // Similar to width for cloud shape
+      scaleX: 10 + Math.random() * 30, // More balanced size
+      scaleY: 15 + Math.random() * 30, // Similar to width for cloud shape
       opacity: 0.225 + Math.random() * 0.15,
       rotationSpeed: (Math.random() - 0.5) * 0.0003,
       seed: Math.random() * 10,
@@ -1136,8 +1191,8 @@ const Nebula: React.FC = () => {
       color1: palette.c1,
       color2: palette.c2,
       color3: palette.c3,
-      scaleX: 25 + Math.random() * 40,
-      scaleY: 12.5 + Math.random() * 30,
+      scaleX: 15 + Math.random() * 40,
+      scaleY: 10 + Math.random() * 30,
       opacity: 0.25 + Math.random() * 0.1,
       rotationSpeed: (Math.random() - 0.5) * 0.0001,
       seed: Math.random() * 10,
