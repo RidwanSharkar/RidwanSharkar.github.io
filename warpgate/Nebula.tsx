@@ -629,8 +629,8 @@ const NebulaCloud: React.FC<NebulaCloudProps> = ({
     const t = clock.getElapsedTime();
     if (materialRef.current) {
       materialRef.current.uniforms.time.value = t;
-      // Pulse opacity: fluctuates between 40% and 100% of base opacity
-      const pulse = 0.5 + 0.5 * Math.sin(t * pulseSpeed + pulseOffset);
+      // Pulse opacity: fluctuates between 50% and 100% of base opacity
+      const pulse = 0.6 + 0.4 * Math.sin(t * pulseSpeed + pulseOffset);
       materialRef.current.uniforms.opacity.value = opacity * pulse;
     }
     if (meshRef.current) {
@@ -711,8 +711,8 @@ const SpiralNebula: React.FC<SpiralNebulaProps> = ({
     const t = clock.getElapsedTime();
     if (materialRef.current) {
       materialRef.current.uniforms.time.value = t;
-      // Pulse opacity: fluctuates between 40% and 100% of base opacity
-      const pulse = 0.5 + 0.5 * Math.sin(t * pulseSpeed + pulseOffset);
+      // Pulse opacity: fluctuates between 50% and 100% of base opacity
+      const pulse = 0.6 + 0.4 * Math.sin(t * pulseSpeed + pulseOffset);
       materialRef.current.uniforms.opacity.value = opacity * pulse;
     }
     if (meshRef.current) {
@@ -784,8 +784,8 @@ const PillarNebula: React.FC<PillarNebulaProps> = ({
     const t = clock.getElapsedTime();
     if (materialRef.current) {
       materialRef.current.uniforms.time.value = t;
-      // Pulse opacity: fluctuates between 40% and 100% of base opacity
-      const pulse = 0.7 + 0.3 * Math.sin(t * pulseSpeed + pulseOffset);
+      // Pulse opacity: fluctuates between 50% and 100% of base opacity
+      const pulse = 0.6 + 0.4 * Math.sin(t * pulseSpeed + pulseOffset);
       materialRef.current.uniforms.opacity.value = opacity * pulse;
     }
     if (meshRef.current) {
@@ -856,8 +856,8 @@ const WispyNebula: React.FC<WispyNebulaProps> = ({
     const t = clock.getElapsedTime();
     if (materialRef.current) {
       materialRef.current.uniforms.time.value = t;
-      // Pulse opacity: fluctuates between 40% and 100% of base opacity
-      const pulse = 0.7 + 0.3 * Math.sin(t * pulseSpeed + pulseOffset);
+      // Pulse opacity: fluctuates between 50% and 100% of base opacity
+      const pulse = 0.6 + 0.4 * Math.sin(t * pulseSpeed + pulseOffset);
       materialRef.current.uniforms.opacity.value = opacity * pulse;
     }
     if (meshRef.current) {
@@ -927,8 +927,8 @@ const NebulaDust: React.FC<{
       pointsRef.current.rotation.x = t * 0.003;
     }
     if (materialRef.current) {
-      // Pulse opacity: fluctuates between 40% and 100% of base opacity
-      const pulse = 0.7 + 0.3 * Math.sin(t * pulseSpeed + pulseOffset);
+      // Pulse opacity: fluctuates between 50% and 100% of base opacity
+      const pulse = 0.6 + 0.4 * Math.sin(t * pulseSpeed + pulseOffset);
       materialRef.current.opacity = opacity * pulse;
     }
   });

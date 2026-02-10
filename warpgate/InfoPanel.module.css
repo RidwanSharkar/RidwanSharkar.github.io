@@ -547,7 +547,6 @@
   }
 
   .fixedBottomCenterPanel {
-    bottom: 125px; /* Move up slightly on mobile to not overlap with browser bars */
-    padding: 6px;
+    display: none; /* Hide TimeWarp on mobile */
   }
 }
