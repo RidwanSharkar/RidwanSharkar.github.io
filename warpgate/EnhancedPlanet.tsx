@@ -7,6 +7,7 @@ import { CelestialObjectGlow } from './CelestialObjectGlow';
 import { PlanetData } from './EnhancedPlanetGroup';
 import { ThreeEvent } from '@react-three/fiber';
 import PlanetTrail from './PlanetTrail';
+import { useTargetRegistry } from './targetRegistry';
 
 /* ====================================== SHADERS (PRECOMPILE if necessary?) ====================================== */
 
@@ -150,6 +151,7 @@ const EnhancedPlanet = forwardRef<Mesh, EnhancedPlanetProps>(({
   const [hovered, setHovered] = useState(false);
   const hoverTimeoutRef = useRef<NodeJS.Timeout>();
   const accumulatedTimeRef = useRef(0);
+  const targetRegistry = useTargetRegistry();
 
   const logoTexture = useLoader(
     TextureLoader,
@@ -205,6 +207,16 @@ const EnhancedPlanet = forwardRef<Mesh, EnhancedPlanetProps>(({
       (ref as React.MutableRefObject<Mesh | null>).current = node;
     }
   };
+
+  // Register this planet's collidable mesh with the missile target registry
+  useEffect(() => {
+    const mesh = meshRef.current;
+    if (!mesh || !targetRegistry) return;
+    targetRegistry.register({ mesh, size, color: planetColor, type: 'planet' });
+    return () => {
+      targetRegistry.unregister(mesh);
+    };
+  }, [targetRegistry, size, planetColor]);
 
   // Cleanup resources on unmount
   useEffect(() => {

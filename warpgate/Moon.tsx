@@ -3,6 +3,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Mesh, MeshStandardMaterial } from 'three';
 import { Html } from '@react-three/drei';
+import { useTargetRegistry } from './targetRegistry';
 
 interface MoonProps {
   orbitRadius: number;
@@ -30,6 +31,17 @@ const Moon: React.FC<MoonProps> = ({
   const meshRef = useRef<Mesh>(null);
   const [hovered, setHovered] = useState(false);
   const accumulatedTimeRef = useRef(0);
+  const targetRegistry = useTargetRegistry();
+
+  // Register this moon's collidable mesh with the missile target registry
+  useEffect(() => {
+    const mesh = meshRef.current;
+    if (!mesh || !targetRegistry) return;
+    targetRegistry.register({ mesh, size, color: moonColor, type: 'moon' });
+    return () => {
+      targetRegistry.unregister(mesh);
+    };
+  }, [targetRegistry, size, moonColor]);
 
   // Cleanup geometry and material on unmount
   useEffect(() => {

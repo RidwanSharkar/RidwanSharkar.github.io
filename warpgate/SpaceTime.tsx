@@ -6,6 +6,8 @@ import { OrbitControls, Stars, Html } from '@react-three/drei';
 import EnhancedPlanetGroup, { PlanetData } from './EnhancedPlanetGroup';
 import Nebula from './Nebula';
 import { MOUSE } from 'three';
+import { TargetRegistryProvider } from './targetRegistry';
+import MissileSystem from './MissileSystem';
 
 
 const ResponsiveCamera: React.FC = () => {
@@ -50,13 +52,17 @@ const PlanetCanvas: React.FC<PlanetCanvasProps> = ({ onSelectPlanet, selectedPla
       {/* Distant nebula clouds */}
       {showNebulas && <Nebula />}
 
-      <React.Suspense fallback={<Html center>Loading...</Html>}>
-        <EnhancedPlanetGroup 
-          onSelectPlanet={onSelectPlanet} 
-          selectedPlanet={selectedPlanet} 
-          timeScale={timeScale}
-        />
-      </React.Suspense>
+      <TargetRegistryProvider>
+        <React.Suspense fallback={<Html center>Loading...</Html>}>
+          <EnhancedPlanetGroup 
+            onSelectPlanet={onSelectPlanet} 
+            selectedPlanet={selectedPlanet} 
+            timeScale={timeScale}
+          />
+        </React.Suspense>
+
+        <MissileSystem />
+      </TargetRegistryProvider>
 
       <OrbitControls
         enableZoom={true}
