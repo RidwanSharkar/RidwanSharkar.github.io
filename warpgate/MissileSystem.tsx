@@ -8,6 +8,8 @@ import { useTargetRegistry, TargetEntry } from './targetRegistry';
 
 /* ====================================== TUNING CONSTANTS ====================================== */
 const LAUNCH_DISTANCE = 70;      // how far back along the aim ray missiles spawn
+const LAUNCH_SIDE_OFFSET = 12;   // units to the right of the aim ray (perpendicular offset)
+const LAUNCH_DOWN_OFFSET = 6;    // units below the aim ray
 const MISSILE_COLOR = '#7DF9FF'; // body/trail color of the missiles themselves
 
 interface ActiveMissile {
@@ -24,7 +26,13 @@ interface ActiveExplosion {
   color: string;
 }
 
-const MissileSystem: React.FC = () => {
+interface MissileSystemProps {
+  // When provided, the launch trigger is registered here instead of firing on key press.
+  // The charging UI (rendered in the DOM, outside the canvas) calls this once a charge completes.
+  fireRef?: React.MutableRefObject<(() => void) | null>;
+}
+
+const MissileSystem: React.FC<MissileSystemProps> = ({ fireRef }) => {
   const three = useThree();
   const threeRef = useRef(three);
   threeRef.current = three;
@@ -48,6 +56,8 @@ const MissileSystem: React.FC = () => {
     closestHit: new Vector3(),
     origin: new Vector3(0, 0, 0),
     rayDir: new Vector3(),
+    sideDir: new Vector3(),
+    upVec: new Vector3(0, 1, 0),
   }), []);
 
   const launchSalvo = useCallback(() => {
@@ -80,9 +90,14 @@ const MissileSystem: React.FC = () => {
       aimPoint = scratch.closestHit.clone();
     }
 
-    // Launch from far away, streaking in along the aim direction
+    // Launch from an off-axis origin so the missile arcs across the view
     scratch.rayDir.copy(raycaster.ray.direction).normalize();
-    const launchOrigin = aimPoint.clone().addScaledVector(scratch.rayDir, -LAUNCH_DISTANCE);
+    scratch.sideDir.crossVectors(scratch.rayDir, scratch.upVec).normalize();
+    if (scratch.sideDir.lengthSq() < 0.01) scratch.sideDir.set(1, 0, 0);
+    const launchOrigin = aimPoint.clone()
+      .addScaledVector(scratch.rayDir, -LAUNCH_DISTANCE)
+      .addScaledVector(scratch.sideDir, LAUNCH_SIDE_OFFSET)
+      .addScaledVector(scratch.upVec, -LAUNCH_DOWN_OFFSET);
 
     const baseId = idRef.current;
     idRef.current += 2;
@@ -93,15 +108,14 @@ const MissileSystem: React.FC = () => {
     ]);
   }, [scratch]);
 
+  // Register the launch trigger so the DOM charging UI can fire it once a charge completes.
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.code !== 'Space' || e.repeat) return;
-      e.preventDefault();
-      launchSalvo();
+    if (!fireRef) return;
+    fireRef.current = launchSalvo;
+    return () => {
+      if (fireRef.current === launchSalvo) fireRef.current = null;
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [launchSalvo]);
+  }, [fireRef, launchSalvo]);
 
   const removeMissile = useCallback((id: number) => {
     setMissiles(prev => prev.filter(m => m.id !== id));

@@ -1,0 +1,134 @@
+/* warpgate/MissileChargeUI.module.css */
+
+/* Hide the native cursor everywhere while charging so the reticle reads as "the cursor" */
+:global(html.missile-charging),
+:global(html.missile-charging) * {
+  cursor: none !important;
+}
+
+.reticle {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  pointer-events: none;
+  transform: translate3d(-50%, -50%, 0);
+  will-change: transform;
+  color: #7df9ff;
+}
+
+.reticleSvg {
+  display: block;
+  filter: drop-shadow(0 0 4px rgba(125, 249, 255, 0.85));
+}
+
+/* Outer ring rotates slowly to feel like an active scanner */
+.ringSpin {
+  transform-origin: 32px 32px;
+  animation: reticleSpin 4s linear infinite;
+}
+
+.ringSpinReverse {
+  transform-origin: 32px 32px;
+  animation: reticleSpin 6s linear infinite reverse;
+}
+
+@keyframes reticleSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes reticlePulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+.pulse {
+  animation: reticlePulse 1.1s ease-in-out infinite;
+}
+
+/* ---- Charging bar (sits under the reticle) ---- */
+.barWrap {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  pointer-events: none;
+  /* offset below the reticle center */
+  transform: translate3d(-50%, 42px, 0);
+  will-change: transform;
+  width: 132px;
+  font-family: 'Courier New', monospace;
+}
+
+.barLabel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: #aef6ff;
+  text-shadow: 0 0 6px rgba(125, 249, 255, 0.8);
+  margin-bottom: 3px;
+  text-transform: uppercase;
+}
+
+.barPct {
+  color: #ffffff;
+}
+
+.barTrack {
+  position: relative;
+  height: 10px;
+  background: rgba(8, 22, 30, 0.78);
+  border: 1px solid rgba(125, 249, 255, 0.5);
+  box-shadow:
+    0 0 8px rgba(125, 249, 255, 0.45),
+    inset 0 0 6px rgba(0, 0, 0, 0.7);
+  /* clipped, angular sci-fi frame */
+  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  overflow: hidden;
+}
+
+.barFill {
+  position: absolute;
+  inset: 1px;
+  width: 0%;
+  background: linear-gradient(90deg, #1bc7e6 0%, #7df9ff 60%, #ffffff 100%);
+  box-shadow: 0 0 10px rgba(125, 249, 255, 0.9);
+  transition: width 60ms linear;
+}
+
+/* animated scan-line sheen sweeping across the fill */
+.barFill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 100%
+  );
+  background-size: 40% 100%;
+  animation: barSheen 0.9s linear infinite;
+}
+
+@keyframes barSheen {
+  from { background-position: -40% 0; }
+  to { background-position: 140% 0; }
+}
+
+/* tick marks overlaid on the track */
+.barTicks {
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(125, 249, 255, 0.25) 0,
+    rgba(125, 249, 255, 0.25) 1px,
+    transparent 1px,
+    transparent 16px
+  );
+  pointer-events: none;
+}

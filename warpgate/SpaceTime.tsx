@@ -8,6 +8,7 @@ import Nebula from './Nebula';
 import { MOUSE } from 'three';
 import { TargetRegistryProvider } from './targetRegistry';
 import MissileSystem from './MissileSystem';
+import MissileChargeUI from './MissileChargeUI';
 
 
 const ResponsiveCamera: React.FC = () => {
@@ -32,7 +33,11 @@ interface PlanetCanvasProps {
 }
 
 const PlanetCanvas: React.FC<PlanetCanvasProps> = ({ onSelectPlanet, selectedPlanet, showNebulas = true, timeScale }) => {
+  // Bridges the DOM charging UI to the in-canvas launch logic (which needs camera/raycaster access).
+  const fireRef = React.useRef<(() => void) | null>(null);
+
   return (
+    <>
     <Canvas camera={{ position: [0, 20, 25], fov: 60 }} className="w-full h-full">
       <ResponsiveCamera />
       <ambientLight intensity={0.45} />
@@ -61,7 +66,7 @@ const PlanetCanvas: React.FC<PlanetCanvasProps> = ({ onSelectPlanet, selectedPla
           />
         </React.Suspense>
 
-        <MissileSystem />
+        <MissileSystem fireRef={fireRef} />
       </TargetRegistryProvider>
 
       <OrbitControls
@@ -80,6 +85,9 @@ const PlanetCanvas: React.FC<PlanetCanvasProps> = ({ onSelectPlanet, selectedPla
       />
 
     </Canvas>
+
+    <MissileChargeUI fireRef={fireRef} />
+    </>
   );
 };
 

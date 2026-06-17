@@ -13,12 +13,13 @@ import {
 import { TargetEntry } from './targetRegistry';
 
 /* ====================================== TUNING CONSTANTS ====================================== */
-const MISSILE_SPEED = 60;        // world units per second along the flight path
+const MISSILE_SPEED = 65;        // world units per second along the flight path
 const COILS = 4;                 // number of times the pair winds around the center line
-const R0 = 2.0;                  // starting helix radius (tightens to 0 at the aim point)
-const MISSILE_RADIUS = 0.18;     // collision radius of the missile body
-const TRAIL_COUNT = 14;          // ring-buffer trail length
-const BODY_SIZE = 0.09;          // glowing body radius
+const R0 = 1.0;                  // starting helix radius (tightens to 0 at the aim point)
+const MISSILE_RADIUS = 0.125;     // collision radius of the missile body
+const TRAIL_COUNT = 30;          // ring-buffer trail length
+const BODY_SIZE = 0.19;          // glowing body radius
+const TRAIL_SIZE = 0.9;          // base scale fed into gl_PointSize — keep well under hw cap
 
 interface MissileProps {
   launchOrigin: Vector3;
@@ -98,7 +99,7 @@ const Missile: React.FC<MissileProps> = ({
     `,
   }), [bodyColor]);
 
-  // Additive point-sprite trail material (mirrors PlanetTrail)
+  // Trail material — matches PlanetTrail's soft-disc approach, adds a hot white core
   const trailMaterial = useMemo(() => new ShaderMaterial({
     transparent: true,
     depthWrite: false,
@@ -114,7 +115,7 @@ const Missile: React.FC<MissileProps> = ({
         vOpacity = opacity;
         vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
         gl_Position = projectionMatrix * mvPosition;
-        gl_PointSize = scale * 18.0 * (300.0 / -mvPosition.z);
+        gl_PointSize = scale * 15.0 * (300.0 / -mvPosition.z);
       }
     `,
     fragmentShader: `
@@ -122,9 +123,13 @@ const Missile: React.FC<MissileProps> = ({
       uniform vec3 uColor;
       void main() {
         float d = length(gl_PointCoord - vec2(0.5));
-        float strength = smoothstep(0.5, 0.05, d);
-        vec3 glow = mix(uColor, vec3(1.0), 0.4);
-        gl_FragColor = vec4(glow, vOpacity * strength);
+        if (d > 0.5) discard;
+        // Outer soft halo — same curve as PlanetTrail
+        float strength = smoothstep(0.5, 0.08, d);
+        // Hot white core — brightens the centre of each sprite
+        float core = smoothstep(0.22, 0.0, d);
+        vec3 glowColor = mix(uColor, vec3(1.0), 0.3 + core * 0.6);
+        gl_FragColor = vec4(glowColor, vOpacity * strength);
       }
     `,
   }), [trailColor]);
@@ -175,14 +180,16 @@ const Missile: React.FC<MissileProps> = ({
       positions.current[i * 3] = positions.current[(i - 1) * 3];
       positions.current[i * 3 + 1] = positions.current[(i - 1) * 3 + 1];
       positions.current[i * 3 + 2] = positions.current[(i - 1) * 3 + 2];
-      opacities.current[i] = Math.pow(1 - i / TRAIL_COUNT, 1.5) * 0.8;
-      scales.current[i] = BODY_SIZE * 6 * Math.pow(1 - i / TRAIL_COUNT, 0.5);
+      // Opacity: squared decay (PlanetTrail style) but at full brightness
+      opacities.current[i] = Math.pow(1 - i / TRAIL_COUNT, 1.6) * 0.95;
+      // Scale: sqrt decay so the trail stays fat down its length
+      scales.current[i] = TRAIL_SIZE * Math.pow(1 - i / TRAIL_COUNT, 0.45);
     }
     positions.current[0] = pos.x;
     positions.current[1] = pos.y;
     positions.current[2] = pos.z;
-    opacities.current[0] = 0.9;
-    scales.current[0] = BODY_SIZE * 7;
+    opacities.current[0] = 1.0;
+    scales.current[0] = TRAIL_SIZE * 1.15;
 
     if (trailRef.current) {
       const geometry = trailRef.current.geometry;

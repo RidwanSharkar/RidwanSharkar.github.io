@@ -106,7 +106,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
     // AVERNUS AND EIDOLON
     {
       position: [0, 0, 0],
-      link: 'https://eidolon-flame.vercel.app/',
+      link: 'https://empyrea.vercel.app/',
       label: 'Eidolon', 
       description: 'play()',
       orbitRadius: 5.25,
@@ -268,7 +268,7 @@ const EnhancedPlanetGroup: React.FC<EnhancedPlanetGroupProps> = ({ onSelectPlane
       position: [0, 0, 0],
       link: 'https://ridwansharkar.github.io/Fretboard-Explorer/',
       label: 'Fretboard-x',
-      description: 'learnGuitar()',
+      description: 'exploreFretboard()',
       orbitRadius: 10,
       orbitSpeed: 0.275,
       planetColor: '#FFD0BA',
