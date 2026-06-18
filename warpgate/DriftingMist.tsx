@@ -112,50 +112,67 @@ const mistFragmentShader = `
   }
 `;
 
-interface MistQuadParams {
-  scale: number;
+// A single mist chunk within a cluster
+interface PuffDef {
+  localX: number;     // offset from cluster center along camera-right (world units)
+  localY: number;     // offset from cluster center along camera-up (world units)
+  scale: number;      // quad size
+  seed: number;       // noise seed for unique texture
+  opacityMul: number; // relative opacity within the cluster
+}
+
+// A drifting cluster of chunks that travels across the view as a unit
+interface ClusterParams {
   driftSpeed: number;   // horizontal units per second in world space
   phase: number;        // 0-1 starting offset in the drift cycle
-  vertOffset: number;   // vertical offset in camera-up space (world units)
+  vertOffset: number;   // cluster vertical offset in camera-up space (world units)
   forwardDist: number;  // how far in front of camera (world units)
-  seed: number;
-  baseOpacity: number;
+  baseOpacity: number;  // cluster master opacity
+  puffs: PuffDef[];     // chunks that make up the cluster
 }
 
 // Scratch objects allocated once, reused every frame
-const _fwd   = new Vector3();
-const _right = new Vector3();
-const _up    = new Vector3();
-const _pos   = new Vector3();
-const _camQ  = new Quaternion();
+const _fwd    = new Vector3();
+const _right  = new Vector3();
+const _up     = new Vector3();
+const _center = new Vector3();
+const _pos    = new Vector3();
+const _camQ   = new Quaternion();
 
 // How wide the drift sweep is in world-space units (camera-right direction).
-// Quads travel from -SWEEP_HALF to +SWEEP_HALF and wrap.
+// Clusters travel from -SWEEP_HALF to +SWEEP_HALF and wrap.
 const SWEEP_HALF = 42;
 
-const MistQuad: React.FC<{ params: MistQuadParams }> = ({ params }) => {
-  const { camera } = useThree();
-  const meshRef    = useRef<Mesh>(null);
-  const matRef     = useRef<ShaderMaterial>(null);
+function smoothstep(edge0: number, edge1: number, x: number): number {
+  const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
+  return t * t * (3 - 2 * t);
+}
 
-  // Looping sweep position (0→1). Initialised to phase so quads start staggered.
+const MistCluster: React.FC<{ params: ClusterParams }> = ({ params }) => {
+  const { camera } = useThree();
+  const meshRefs = useRef<(Mesh | null)[]>([]);
+  const matRefs  = useRef<(ShaderMaterial | null)[]>([]);
+
+  // Looping sweep position (0→1). Initialised to phase so clusters start staggered.
   const uRef = useRef(params.phase);
 
-  const uniforms = useMemo(() => ({
-    opacity: { value: params.baseOpacity },
-    time:    { value: 0 },
-    seed:    { value: params.seed },
-  }), [params.baseOpacity, params.seed]);
+  // One uniform set per puff, created once
+  const puffUniforms = useMemo(
+    () => params.puffs.map((p) => ({
+      opacity: { value: params.baseOpacity * p.opacityMul },
+      time:    { value: 0 },
+      seed:    { value: p.seed },
+    })),
+    [params.puffs, params.baseOpacity]
+  );
 
   useFrame(({ clock }, delta) => {
-    if (!meshRef.current || !matRef.current) return;
-
     // Advance the sweep parameter
     const speed = params.driftSpeed / (SWEEP_HALF * 2);  // convert to u/s
     uRef.current = (uRef.current + delta * speed) % 1.0;
     const u = uRef.current;
 
-    // Horizontal position: map 0→1 to -SWEEP_HALF→+SWEEP_HALF
+    // Cluster center horizontal position: map 0→1 to -SWEEP_HALF→+SWEEP_HALF
     const hPos = (u - 0.5) * SWEEP_HALF * 2;
 
     // Extract camera basis vectors (world space)
@@ -164,61 +181,106 @@ const MistQuad: React.FC<{ params: MistQuadParams }> = ({ params }) => {
     _right.set(1, 0, 0).applyQuaternion(_camQ);
     _up.set(0, 1, 0).applyQuaternion(_camQ);
 
-    // Place quad: forward + horizontal sweep + vertical offset
-    _pos.copy(camera.position)
+    // Cluster center: forward + horizontal sweep + vertical offset
+    _center.copy(camera.position)
       .addScaledVector(_fwd,   params.forwardDist)
       .addScaledVector(_right, hPos)
       .addScaledVector(_up,    params.vertOffset);
 
-    meshRef.current.position.copy(_pos);
-    meshRef.current.quaternion.copy(_camQ);
-
-    // Edge fade: smoothly ramp opacity in/out at the left and right edges of the sweep
+    // Edge fade: smoothly ramp the whole cluster in/out at the sweep edges
     const edgeFade = Math.min(
       smoothstep(0, 0.12, u),
       smoothstep(0, 0.12, 1 - u)
     );
-    matRef.current.uniforms.opacity.value = params.baseOpacity * edgeFade;
-    matRef.current.uniforms.time.value    = clock.getElapsedTime();
+    const t = clock.getElapsedTime();
+
+    // Place each chunk relative to the cluster center
+    for (let i = 0; i < params.puffs.length; i++) {
+      const mesh = meshRefs.current[i];
+      const mat  = matRefs.current[i];
+      if (!mesh || !mat) continue;
+
+      const puff = params.puffs[i];
+      _pos.copy(_center)
+        .addScaledVector(_right, puff.localX)
+        .addScaledVector(_up,    puff.localY);
+
+      mesh.position.copy(_pos);
+      mesh.quaternion.copy(_camQ);
+
+      mat.uniforms.opacity.value = params.baseOpacity * puff.opacityMul * edgeFade;
+      mat.uniforms.time.value    = t;
+    }
   });
 
   return (
-    <mesh ref={meshRef}>
-      <planeGeometry args={[params.scale, params.scale * 0.6, 1, 1]} />
-      <shaderMaterial
-        ref={matRef}
-        vertexShader={mistVertexShader}
-        fragmentShader={mistFragmentShader}
-        uniforms={uniforms}
-        transparent
-        depthWrite={false}
-        depthTest={false}
-        side={DoubleSide}
-      />
-    </mesh>
+    <group>
+      {params.puffs.map((puff, i) => (
+        <mesh
+          key={i}
+          ref={(el) => { meshRefs.current[i] = el; }}
+        >
+          <planeGeometry args={[puff.scale, puff.scale * 0.75, 1, 1]} />
+          <shaderMaterial
+            ref={(el) => { matRefs.current[i] = el; }}
+            vertexShader={mistVertexShader}
+            fragmentShader={mistFragmentShader}
+            uniforms={puffUniforms[i]}
+            transparent
+            depthWrite={false}
+            depthTest={false}
+            side={DoubleSide}
+          />
+        </mesh>
+      ))}
+    </group>
   );
 };
 
-function smoothstep(edge0: number, edge1: number, x: number): number {
-  const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
-  return t * t * (3 - 2 * t);
-}
-
-// Deterministic mist quad definitions - staggered phases for continuous coverage
-const MIST_PARAMS: MistQuadParams[] = [
-  { scale: 32, driftSpeed: 2.4, phase: 0.00, vertOffset:  2.0, forwardDist: 12, seed: 1.1,  baseOpacity: 0.16 },
-  { scale: 28, driftSpeed: 2.0, phase: 0.22, vertOffset: -1.5, forwardDist: 10, seed: 3.7,  baseOpacity: 0.14 },
-  { scale: 36, driftSpeed: 2.8, phase: 0.44, vertOffset:  0.5, forwardDist: 14, seed: 6.2,  baseOpacity: 0.18 },
-  { scale: 24, driftSpeed: 1.8, phase: 0.62, vertOffset:  3.5, forwardDist: 11, seed: 8.9,  baseOpacity: 0.13 },
-  { scale: 30, driftSpeed: 2.2, phase: 0.80, vertOffset: -3.0, forwardDist: 13, seed: 2.4,  baseOpacity: 0.15 },
-  { scale: 26, driftSpeed: 3.0, phase: 0.12, vertOffset:  1.2, forwardDist:  9, seed: 5.5,  baseOpacity: 0.12 },
-  { scale: 38, driftSpeed: 1.6, phase: 0.70, vertOffset: -0.8, forwardDist: 15, seed: 7.3,  baseOpacity: 0.17 },
+// 4 clusters, staggered phases for continuous coverage. Each cluster is a handful
+// of smaller chunks offset around its drifting center, so the mist reads as
+// clumps rather than one uniform sheet.
+const MIST_CLUSTERS: ClusterParams[] = [
+  {
+    driftSpeed: 2.4, phase: 0.00, vertOffset: 2.5, forwardDist: 12, baseOpacity: 0.17,
+    puffs: [
+      { localX: -6.0, localY:  1.5, scale: 14, seed: 1.1, opacityMul: 1.0 },
+      { localX:  0.5, localY: -1.0, scale: 16, seed: 3.7, opacityMul: 0.9 },
+      { localX:  6.5, localY:  2.5, scale: 12, seed: 6.2, opacityMul: 0.8 },
+      { localX:  2.0, localY:  4.0, scale: 10, seed: 8.9, opacityMul: 0.6 },
+    ],
+  },
+  {
+    driftSpeed: 2.0, phase: 0.25, vertOffset: -2.0, forwardDist: 10, baseOpacity: 0.15,
+    puffs: [
+      { localX: -5.0, localY: -0.5, scale: 13, seed: 2.4, opacityMul: 0.9 },
+      { localX:  1.5, localY:  1.5, scale: 15, seed: 5.5, opacityMul: 1.0 },
+      { localX:  6.0, localY: -1.5, scale: 11, seed: 7.3, opacityMul: 0.7 },
+    ],
+  },
+  {
+    driftSpeed: 2.8, phase: 0.50, vertOffset: 0.5, forwardDist: 14, baseOpacity: 0.18,
+    puffs: [
+      { localX: -7.0, localY:  0.5, scale: 15, seed: 4.2, opacityMul: 0.85 },
+      { localX: -1.0, localY:  2.5, scale: 13, seed: 9.6, opacityMul: 1.0 },
+      { localX:  5.5, localY: -2.0, scale: 14, seed: 1.8, opacityMul: 0.9 },
+      { localX:  8.0, localY:  3.0, scale:  9, seed: 6.9, opacityMul: 0.55 },
+    ],
+  },
+  {
+    driftSpeed: 1.7, phase: 0.75, vertOffset: 3.5, forwardDist: 13, baseOpacity: 0.14,
+    puffs: [
+      { localX: -4.5, localY: -1.0, scale: 12, seed: 3.3, opacityMul: 0.9 },
+      { localX:  2.0, localY:  0.5, scale: 14, seed: 7.7, opacityMul: 1.0 },
+      { localX:  6.5, localY:  2.0, scale: 10, seed: 5.1, opacityMul: 0.65 },
+    ],
+  },
 ];
 
 const DriftingMist: React.FC = () => (
   <group>
-    {MIST_PARAMS.map((params, i) => (
-      <MistQuad key={i} params={params} />
+    {MIST_CLUSTERS.map((params, i) => (
+      <MistCluster key={i} params={params} />
     ))}
   </group>
 );
