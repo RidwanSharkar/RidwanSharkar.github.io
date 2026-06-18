@@ -9,6 +9,7 @@ import { MOUSE } from 'three';
 import { TargetRegistryProvider } from './targetRegistry';
 import MissileSystem from './MissileSystem';
 import MissileChargeUI from './MissileChargeUI';
+import DriftingMist from './DriftingMist';
 
 
 const ResponsiveCamera: React.FC = () => {
@@ -56,6 +57,9 @@ const PlanetCanvas: React.FC<PlanetCanvasProps> = ({ onSelectPlanet, selectedPla
       
       {/* Distant nebula clouds */}
       {showNebulas && <Nebula />}
+
+      {/* Foreground drifting mist */}
+      {showNebulas && <DriftingMist />}
 
       <TargetRegistryProvider>
         <React.Suspense fallback={<Html center>Loading...</Html>}>
