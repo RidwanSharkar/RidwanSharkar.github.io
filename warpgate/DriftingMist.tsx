@@ -131,7 +131,7 @@ const _camQ  = new Quaternion();
 
 // How wide the drift sweep is in world-space units (camera-right direction).
 // Quads travel from -SWEEP_HALF to +SWEEP_HALF and wrap.
-const SWEEP_HALF = 22;
+const SWEEP_HALF = 42;
 
 const MistQuad: React.FC<{ params: MistQuadParams }> = ({ params }) => {
   const { camera } = useThree();
