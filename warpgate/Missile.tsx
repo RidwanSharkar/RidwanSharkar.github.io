@@ -16,6 +16,7 @@ import { TargetEntry } from './targetRegistry';
 const MISSILE_SPEED = 65;        // world units per second along the flight path
 const COILS = 4;                 // number of times the pair winds around the center line
 const R0 = 1.0;                  // starting helix radius (tightens to 0 at the aim point)
+const OVERSHOOT_DISTANCE = 140;  // world units the missile keeps flying past the aim point before despawning
 const MISSILE_RADIUS = 0.125;     // collision radius of the missile body
 const TRAIL_COUNT = 30;          // ring-buffer trail length
 const BODY_SIZE = 0.19;          // glowing body radius
@@ -44,9 +45,12 @@ const Missile: React.FC<MissileProps> = ({
   const trailRef = useRef<Points>(null);
   const finishedRef = useRef(false);
   const tRef = useRef(0);
+  // Previous frame's body position — used to orient the nose along the real (helical) velocity
+  const prevPos = useRef<Vector3>(new Vector3());
+  const hasPrev = useRef(false);
 
   // Perpendicular basis built once from the (fixed) flight direction
-  const { dir, u, v, distance } = useMemo(() => {
+  const { dir, u, v, distance, maxT } = useMemo(() => {
     const d = new Vector3().subVectors(aimPoint, launchOrigin);
     const dist = d.length();
     d.normalize();
@@ -54,7 +58,9 @@ const Missile: React.FC<MissileProps> = ({
     const ref = Math.abs(d.y) < 0.99 ? new Vector3(0, 1, 0) : new Vector3(1, 0, 0);
     const uu = new Vector3().crossVectors(d, ref).normalize();
     const vv = new Vector3().crossVectors(d, uu).normalize();
-    return { dir: d, u: uu, v: vv, distance: dist || 1 };
+    const safeDist = dist || 1;
+    // Keep flying past the aim point: t = 1 is the aim point, despawn after the overshoot
+    return { dir: d, u: uu, v: vv, distance: safeDist, maxT: 1 + OVERSHOOT_DISTANCE / safeDist };
   }, [launchOrigin, aimPoint]);
 
   // Ring-buffer trail data, initialized at the launch origin so it doesn't streak from the origin
@@ -71,6 +77,8 @@ const Missile: React.FC<MissileProps> = ({
       positions.current[i * 3 + 1] = launchOrigin.y;
       positions.current[i * 3 + 2] = launchOrigin.z;
     }
+    prevPos.current.copy(launchOrigin);
+    hasPrev.current = false;
   }, [launchOrigin]);
 
   // Additive glow material for the missile body
@@ -149,6 +157,7 @@ const Missile: React.FC<MissileProps> = ({
     worldPos: new Vector3(),
     normal: new Vector3(),
     look: new Vector3(),
+    velDir: new Vector3(),
   }), []);
 
   useFrame((_, delta) => {
@@ -156,24 +165,34 @@ const Missile: React.FC<MissileProps> = ({
 
     // Advance along the path at a constant world-space speed
     tRef.current += (MISSILE_SPEED * delta) / distance;
-    const t = Math.min(tRef.current, 1);
+    const t = tRef.current;
 
-    // Center point along the line, then helix offset that tightens to 0 at the aim point
+    // Center point along the line (continues straight past the aim point at t > 1),
+    // then helix offset that tightens to 0 at the aim point and stays straight afterwards
     const { center, pos, offset } = scratch;
     center.copy(launchOrigin).lerp(aimPoint, t);
     const a = phase + t * COILS * Math.PI * 2;
-    const radius = R0 * (1 - t);
+    const radius = R0 * Math.max(0, 1 - t);
     offset.set(0, 0, 0)
       .addScaledVector(u, Math.cos(a) * radius)
       .addScaledVector(v, Math.sin(a) * radius);
     pos.copy(center).add(offset);
 
-    // Update body position + orientation (face along flight direction)
+    // Update body position + orientation. Face along the REAL velocity (the helix
+    // tangent), not the straight aim direction, so the nose lines up with the trail.
     if (bodyRef.current) {
       bodyRef.current.position.copy(pos);
-      scratch.look.copy(pos).add(dir);
+      scratch.velDir.copy(pos).sub(prevPos.current);
+      if (!hasPrev.current || scratch.velDir.lengthSq() < 1e-8) {
+        scratch.velDir.copy(dir);
+      } else {
+        scratch.velDir.normalize();
+      }
+      scratch.look.copy(pos).add(scratch.velDir);
       bodyRef.current.lookAt(scratch.look);
     }
+    prevPos.current.copy(pos);
+    hasPrev.current = true;
 
     // Advance the ring-buffer trail
     for (let i = TRAIL_COUNT - 1; i > 0; i--) {
@@ -227,8 +246,8 @@ const Missile: React.FC<MissileProps> = ({
       }
     }
 
-    // Reached the aim point with no hit -> ballistic miss, despawn quietly
-    if (t >= 1) {
+    // Flew past the aim point and the overshoot distance with no hit -> despawn quietly
+    if (t >= maxT) {
       finishedRef.current = true;
       onMiss();
     }
